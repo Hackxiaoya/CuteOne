@@ -1,0 +1,38 @@
+{% extends 'public/layout.html' %}
+
+{% block body %}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    系统日志 - (日志只保存一个月)
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="list-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    layui.use(['table'], function(){
+        var table = layui.table;
+        table.render({
+            elem: '#list-table',
+            url: './',
+            cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            cols: [[
+                {field:'id', width:80, title: 'ID'},
+                {field:'ip', width:150, title: 'IP'},
+                {field:'title', width:150, title: '标题'},
+                {field:'content', title: '详细', minWidth: 100}, //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                {field:'create_time', width:200, title: '时间'}
+            ]]
+        });
+    });
+</script>
+{% endblock %}

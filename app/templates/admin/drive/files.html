@@ -1,0 +1,199 @@
+{% extends 'admin/public/layout.html' %}
+
+{% block style %}
+<style>
+    .layui-btn-scan {
+        position: absolute;
+        right: 1%;
+        top: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    文件列表
+                </div>
+                <div class="layui-card-body">
+                    <div style="padding-bottom: 10px;">
+                        <button class="layui-btn" layadmin-event="add">上传文件</button>
+                    </div>
+                    <table class="layui-hide" id="list-table" lay-filter="list-table">
+                        <thead>
+                            <tr>
+                                <th lay-data="{field:'name', sort: true}">文件</th>
+                                <th lay-data="{field:'size', width:100, sort: true}">大小</th>
+                                <th lay-data="{field:'lastModifiedDateTime', width:200, sort: true}">修改时间</th>
+                                <th lay-data="{field:'operation', width:160}">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="layer-photos">
+                            {% for v in data %}
+                            <tr>
+                                <td>
+                                    {% if v.folder%}
+                                    <a href="{% if v.folder%}{{current_url}}/{{v.name}}{% else %}javasript:void(0);{% endif %}">
+                                        <i class="fa fa-folder"></i>
+                                        {{ v.name }}
+                                    </a>
+                                    {% else %}
+                                        {% if v.file.mimeType == "video/mp4" %}
+                                            <a href="javasript:void(0);" onclick="openvideo('{{ v.thumbnails[0].large.url }}');">
+                                                <i class="fa fa-video-camera"></i>
+                                                {{ v.name }}
+                                            </a>
+                                        {% elif v.file.mimeType == "image/jpeg" %}
+                                            <a href="javasript:void(0);" onclick="openimage('{{ v.thumbnails[0].large.url }}');">
+                                                <i class="fa fa-file-photo-o"></i>
+                                                {{ v.name }}
+                                            </a>
+                                        {% elif v.file.mimeType == "application/zip" %}
+                                            <a href="javasript:void(0);">
+                                                <i class="fa fa-file-zip-o"></i>
+                                                {{ v.name }}
+                                            </a>
+                                        {% elif v.file.mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" %}
+                                            <a href="javasript:void(0);">
+                                                <i class="fa fa-file-word-o"></i>
+                                                {{ v.name }}
+                                            </a>
+                                        {% elif v.file.mimeType == "application/octet-stream" %}
+                                            <a href="javasript:void(0);">
+                                                <i class="fa fa-font"></i>
+                                                {{ v.name }}
+                                            </a>
+                                        {% else %}
+                                            <a href="javasript:void(0);">
+                                                <i class="fa fa-file"></i>
+                                                {{ v.name }}
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ v.size }}
+                                </td>
+                                <td>
+                                    {{ v.lastModifiedDateTime }}
+                                </td>
+                                <td>
+                                    <a class="layui-btn layui-btn-normal layui-btn-xs" href="javascript:void(0);" onclick="rename_files('{{v.id}}')">
+                                        <i class="fa fa-edit"></i>
+                                        重命名
+                                    </a>
+                                    <a class="layui-btn layui-btn-danger layui-btn-xs" href="javascript:void(0);" onclick="delete_files('{{v.id}}')">
+                                        <i class="fa fa-recycle"></i>
+                                        删除
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    layui.use(['layer', 'table', 'form'], function(){
+        var $ = layui.$;
+        var form = layui.form;
+        var table = layui.table;
+        // 静态表格
+        table.init('list-table', {
+            height: 500 //设置高度
+            ,page: true //开启分页
+        });
+
+        // 相册弹出层
+        openimage = function(url){
+            var img_infor = "<img src='" + url + "' />";
+            layer.open({
+                type: 1,
+                title: false,
+                closeBtn: 0,
+                shadeClose: true,
+                content: img_infor,
+                success: function (layero, index) {
+                    parent.layer.iframeAuto(index);
+                }
+            });
+        };
+
+        // 视频弹出层
+        openvideo = function(url){
+            var video_infor = "<video src='" + url + "' />";
+            layer.open({
+                type: 1,
+                title: false,
+                closeBtn: 0,
+                skin: 'layui-layer-nobg', //没有背景色
+                shadeClose: true,
+                content: video_infor
+            });
+        };
+
+
+        // 重命名
+        rename_files = function (fileid){
+            layer.open({
+                type: 1
+                , title:'修改名称'
+                , area:['450px', 'auto']
+                , content: '<div class="layui-input-block" style="margin: 0 10px;"><input id="new_name" type="text" class="layui-input" placeholder="请输入新名称"></div>'
+                , btn:['保存','取消']
+                , btn1: function (index) {
+                    $.ajax({
+                        url: "/admin/drive/rename_files"
+                        ,type: "POST"
+                        ,dataType: "json"
+                        ,data: {id:'{{ id }}', fileid:fileid, new_name:$("#new_name").val()}
+                        ,success: function (data) {
+                            if(data.code==0){
+                                layer.close(index);
+                                location.reload()
+                            }else{
+                                layer.msg(data.msg)
+                            }
+                        }
+                    });
+                }
+                , btn2:function (index) {
+                     layer.close(index);
+                }
+            });
+        };
+
+        // 删除文件
+        delete_files = function (fileid){
+            layer.confirm('确认删除？', {
+                icon: 2,
+                btn: ['确认','取消'] //按钮
+            }, function(index){
+                $.ajax({
+                    url: "/admin/drive/delete_files"
+                    ,type: "POST"
+                    ,dataType: "json"
+                    ,data: {id:'{{ id }}', fileid:fileid}
+                    ,success: function (data) {
+                        if(data.code==0){
+                            layer.close(index);
+                            location.reload()
+                        }else{
+                            layer.msg(data.msg)
+                        }
+                    }
+                });
+            });
+        };
+    });
+</script>
+{% endblock %}

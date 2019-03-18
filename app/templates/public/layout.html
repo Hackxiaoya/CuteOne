@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+	<title>{{ webconfig.web_site_title }} - CuteOne网盘系统</title>
+    <meta name="keywords" content="{{ webconfig.web_site_keyword }}">
+    <meta name="description" content="{{ webconfig.web_site_description }}">
+	<link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/mdui/0.4.1/css/mdui.css">
+	<link rel="stylesheet" href="{{url_for('static', filename='css/lightbox.css')}}">
+	<style>
+		body {
+			background-color: #f2f5fa;
+			padding-bottom: 60px;
+			background-position: center bottom;
+			background-repeat: no-repeat;
+			background-attachment: fixed
+		}
+
+		.nexmoe-item {
+			margin: 20px -8px 0 !important;
+			padding: 15px !important;
+			border-radius: 5px;
+			background-color: #fff;
+			-webkit-box-shadow: 0 .5em 3em rgba(161, 177, 204, .4);
+			box-shadow: 0 .5em 3em rgba(161, 177, 204, .4);
+			background-color: #fff
+		}
+
+		.mdui-img-fluid,
+		.mdui-video-fluid {
+			border-radius: 5px;
+			border: 1px solid #eee
+		}
+
+		.mdui-list {
+			padding: 0
+		}
+
+		.mdui-list-item {
+			margin: 0 !important;
+			border-radius: 5px;
+			padding: 0 10px 0 5px !important;
+			border: 1px solid #eee;
+			margin-bottom: 10px !important
+		}
+
+		.mdui-list-item:last-child {
+			margin-bottom: 0 !important
+		}
+
+		.mdui-list-item:first-child {
+			border: none
+		}
+
+		.mdui-toolbar {
+			width: auto;
+			margin-top: 30px !important
+		}
+
+		.mdui-appbar .mdui-toolbar {
+			height: 56px;
+			font-size: 16px
+		}
+
+		.mdui-toolbar>* {
+			padding: 0 6px;
+			margin: 0 2px;
+			opacity: .5
+		}
+
+		.mdui-toolbar>.mdui-typo-headline {
+			padding: 0 16px 0 0
+		}
+
+		.mdui-toolbar>i {
+			padding: 0
+		}
+
+		.mdui-toolbar>a:hover,
+		a.mdui-typo-headline,
+		a.active {
+			opacity: 1
+		}
+
+		.mdui-container {
+			max-width: 980px
+		}
+
+		.mdui-list>.th {
+			background-color: initial
+		}
+
+		.mdui-list-item>a {
+			width: 100%;
+			line-height: 48px
+		}
+
+		.mdui-toolbar>a {
+			padding: 0 16px;
+			line-height: 30px;
+			border-radius: 30px;
+			border: 1px solid #eee
+		}
+
+		.mdui-toolbar>a:last-child {
+			opacity: 1;
+			background-color: #1e89f2;
+			color: #ffff
+		}
+        .mdui-drive {
+            overflow: hidden;
+        }
+        .mdui-drive ul {
+            padding: 0;
+            margin: 0;
+        }
+        .mdui-drive li {
+            list-style: none;
+            float: left;
+            margin: 0 10px;
+        }
+        .mdui-drive li a {
+            text-decoration: none;
+            padding: 10px;
+            color: #272727;
+            border-radius: 20px;
+        }
+        .mdui-drive li a:hover {
+            background: #1e89f2;
+            color: #fff;
+        }
+
+		@media screen and (max-width:980px) {
+			.mdui-list-item .mdui-text-right {
+				display: none
+			}
+
+			.mdui-container {
+				width: 100% !important;
+				margin: 0
+			}
+
+			.mdui-toolbar>* {
+				display: none
+			}
+
+			.mdui-toolbar>a:last-child,
+			.mdui-toolbar>.mdui-typo-headline,
+			.mdui-toolbar>i:first-child {
+				display: block
+			}
+		}
+	</style>
+	<style>
+		body {
+			background-image: url(http://ww1.sinaimg.cn/large/71c534f0ly1fw9tw14zb3j21hc0u01e4.jpg) !important;
+			background-position: center bottom !important;
+			background-size: cover !important;
+			background-attachment: fixed !important;
+			background-repeat: no-repeat !important;
+		}
+	</style>
+    <!-- 预留空间 给继承的CSS -->
+    {% block style %} {% endblock %}
+    <script type="application/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='js/lightbox.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='layui/layui.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='js/clipboard.min.js')}}"></script>
+	<script src="//cdnjs.loli.net/ajax/libs/mdui/0.4.1/js/mdui.min.js"></script>
+</head>
+
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-blue">
+	<div class="mdui-container">
+        <div class="mdui-container-fluid">
+			<div class="mdui-drive nexmoe-item">
+                <ul>
+                    {% for drive in drive_list %}
+                        <li>
+                            <a href="/?drive={{ drive.id }}">
+                                {{ drive.title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+			</div>
+		</div>
+		<div class="mdui-container-fluid">
+			<div class="mdui-toolbar nexmoe-item">
+				<a href="{{crumbs_url}}">CuteOne</a><i class="mdui-icon material-icons mdui-icon-dark" style="margin:0;">chevron_right</i>
+                {% for crumbs in crumbs_list_data %}
+                    <a href="{{crumbs_url}}path=/{{ crumbs.path }}">{{ crumbs.name }}</a>/
+                {% endfor %}
+			</div>
+		</div>
+
+        <div class="mdui-container-fluid">
+            <style>
+            .thumb .th{
+                display: none;
+            }
+            .thumb .mdui-text-right{
+                display: none;
+            }
+            .thumb .mdui-list-item a ,.thumb .mdui-list-item {
+                width:217px;
+                height: 230px;
+                float: left;
+                margin: 10px 10px !important;
+            }
+
+            .thumb .mdui-col-xs-12,.thumb .mdui-col-sm-7{
+                width:100% !important;
+                height:230px;
+            }
+
+            .thumb .mdui-list-item .mdui-icon{
+                font-size:100px;
+                display: block;
+                margin-top: 40px;
+                color: #7ab5ef;
+            }
+            .thumb .mdui-list-item span{
+                float: left;
+                display: block;
+                text-align: center;
+                width:100%;
+                position: absolute;
+                top: 180px;
+            }
+            </style>
+            <div class="nexmoe-item">
+                <div class="mdui-row">
+                    {% block body %}{% endblock %}
+                </div>
+            </div>
+        </div>
+        <script>
+            $.fn.extend({
+                sortElements: function (comparator, getSortable) {
+                    getSortable = getSortable || function () { return this; };
+
+                    var placements = this.map(function () {
+                        var sortElement = getSortable.call(this),
+                            parentNode = sortElement.parentNode,
+                            nextSibling = parentNode.insertBefore(
+                                document.createTextNode(''),
+                                sortElement.nextSibling
+                            );
+
+                        return function () {
+                            parentNode.insertBefore(this, nextSibling);
+                            parentNode.removeChild(nextSibling);
+                        };
+                    });
+
+                    return [].sort.call(this, comparator).each(function (i) {
+                        placements[i].call(getSortable.call(this));
+                    });
+                }
+            });
+
+            function downall() {
+                 let dl_link_list = Array.from(document.querySelectorAll("li a"))
+                     .map(x => x.href) // 所有list中的链接
+                     .filter(x => x.slice(-1) != "/"); // 筛选出非文件夹的文件下载链接
+
+                 let blob = new Blob([dl_link_list.join("\r\n")], {
+                     type: 'text/plain'
+                 }); // 构造Blog对象
+                 let a = document.createElement('a'); // 伪造一个a对象
+                 a.href = window.URL.createObjectURL(blob); // 构造href属性为Blob对象生成的链接
+                 a.download = "folder_download_link.txt"; // 文件名称，你可以根据你的需要构造
+                 a.click() // 模拟点击
+                 a.remove();
+            }
+
+            function thumb(){
+                if($('.mdui-fab i').text() == "apps"){
+                    $('.mdui-fab i').text("format_list_bulleted");
+                    $('.nexmoe-item').removeClass('thumb');
+                    $('.nexmoe-item .mdui-icon').css('display','inline-block');
+                    // $('.nexmoe-item .mdui-icon').show();
+                    $('.nexmoe-item .mdui-list-item').css("background","");
+                }else{
+                    $('.mdui-fab i').text("apps");
+                    $('.nexmoe-item').addClass('thumb');
+                    $('.mdui-col-xs-12 i.mdui-icon').each(function(){
+                        if($(this).text() == "image" || $(this).text() == "ondemand_video"){
+                            var href = $(this).parent().parent().attr('href');
+                            var thumb =(href.indexOf('?') == -1)?'?t=220':'&t=220';
+                            $(this).hide();
+                            $(this).parent().parent().parent().css("background","url("+href+thumb+")  no-repeat center top");
+                        }
+                    });
+                }
+
+            }
+            $(function(){
+                $('.file a').each(function(){
+                    $(this).on('click', function () {
+                        var form = $('<form target=_blank method=post></form>').attr('action', $(this).attr('href')).get(0);
+                        $(document.body).append(form);
+                        form.submit();
+                        $(form).remove();
+                        return false;
+                    });
+                });
+
+                $('.icon-sort').on('click', function () {
+                    let sort_type = $(this).attr("data-sort"), sort_order = $(this).attr("data-order");
+                    let sort_order_to = (sort_order === "less") ? "more" : "less";
+
+                    $('li[data-sort]').sortElements(function (a, b) {
+                        let data_a = $(a).attr("data-sort-" + sort_type), data_b = $(b).attr("data-sort-" + sort_type);
+                        let rt = data_a.localeCompare(data_b, undefined, {numeric: true});
+                        return (sort_order === "more") ? 0-rt : rt;
+                    });
+
+                    $(this).attr("data-order", sort_order_to).text("expand_" + sort_order_to);
+                });
+
+            });
+
+
+
+            /*
+            *   循环获取图片真实地址
+            *   By: yyyvy
+            *   Time: 2019-03-18
+            * */
+            $(function () {
+                $('.lightboxurl').each(function(){
+                    var _this = $(this);
+                    $.when(geturl(_this)).done(function (data) {
+                        _this.attr("href", data["url"]);
+                    });
+                });
+                function geturl(obj){
+                    var defer = $.Deferred();
+                    $.ajax({
+                        url : $(obj).attr("href"),
+                        dataType: 'json',
+                        success: function(data){
+                            defer.resolve(data)
+                        }
+                    });
+                    return defer.promise();
+                }
+            });
+
+
+            // 弹出视频
+            layui.use(['layer'], function() {
+                var $ = layui.$; //重点处
+                $(".video_open").on("click", function () {
+                    var drive = $(this).data("drive"),
+                        disk = $(this).data("disk"),
+                        id = $(this).data("id");
+                    var url = "/pop_video/" + drive + "/" + disk + "/" + id;
+                    layer.open({
+                        type: 2,
+                        title: false,
+                        area: ['50%', '60%'],
+                        shade: 0.8,
+                        closeBtn: 0,
+                        shadeClose: true,
+                        content: url
+                    });
+                });
+            });
+        </script>
+        <a href="javascript:thumb();" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">format_list_bulleted</i></a>
+	</div>
+    <!-- 预留空间 给继承的html -->
+    {% block script %}{% endblock %}
+
+    <!-- 流量统计代码 -->
+    {{ webconfig.web_site_statistics }}
+</body>
+
+</html>

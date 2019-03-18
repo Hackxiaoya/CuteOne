@@ -1,0 +1,190 @@
+{% extends 'admin/public/layout.html' %}
+
+{% block style %}
+<style>
+    .title {
+        color: #009688;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">系统概括</div>
+                <div class="layui-card-body" style="overflow: hidden;">
+                    <div class="layui-col-md4">
+                        <table class="layui-table layui-text">
+                            <colgroup>
+                                <col width="100"><col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>系统名称</td>
+                                    <td>
+                                        <span class="title">{{ data.name }} - {{ data.versionType }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>系统版本</td>
+                                    <td>
+                                        v{{ data.versions }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="layui-col-md4">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    layui.use(['jquery', 'element', 'layer'], function(){
+        var $ = layui.$; //重点处
+
+        // 新增一个检索启动任务事件
+        clickMethod.start = function (e) {
+            var _this = $(e);
+            var type = _this.attr("layadmin-type");
+            var tips = _this.attr("layadmin-tips");
+            //console.log(tips);
+            layer.open({
+                icon: 3
+                ,btn: ['确定', '取消']
+                ,content: '是否确定要'+tips+'？'
+                ,yes: function(index){
+                    // 开启设备检索
+                    $.ajax({
+                        type: "POST"
+                        ,url: "/system/start"
+                        ,dataType: "json"
+                        ,data: {type:type}
+                        ,beforeSend: function(){
+                            //注意，layer.msg默认3秒自动关闭，如果数据加载耗时比较长，需要设置time
+                            loadingFlag = layer.msg(
+                                '正在'+tips+'，请稍候……'
+                                , {
+                                    icon: 16
+                                    ,shade: 0.3
+                                    ,shadeClose: false
+                                    ,time: 10000
+                                }
+                            );
+                        }
+                        ,success: function(data) {
+                            layer.close(loadingFlag);
+                            layer.msg(tips+'完成!', {
+                                icon: 1
+                                ,shade: 0.3
+                                ,shadeClose: false
+                                ,time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                            }, function(){
+                                location.reload();  // 刷新当前页
+                            });
+                        }
+                    });
+                }
+            });
+        };
+
+        // 新增一个检索停止任务事件
+        clickMethod.stop = function (e) {
+            var _this = $(e);
+            var type = _this.attr("layadmin-type");
+            var tips = _this.attr("layadmin-tips");
+            //console.log(tips);
+            layer.open({
+                icon: 3
+                ,btn: ['确定', '取消']
+                ,content: '是否确定要'+tips+'？'
+                ,yes: function(index){
+                    // 开启设备检索
+                    $.ajax({
+                        type: "POST"
+                        ,url: "/system/stop"
+                        ,dataType: "json"
+                        ,data: {type:type}
+                        ,beforeSend: function(){
+                            //注意，layer.msg默认3秒自动关闭，如果数据加载耗时比较长，需要设置time
+                            loadingFlag = layer.msg(
+                                '正在'+tips+'，请稍候……'
+                                , {
+                                    icon: 16
+                                    ,shade: 0.3
+                                    ,shadeClose: false
+                                    ,time: 10000
+                                }
+                            );
+                        }
+                        ,success: function(data) {
+                            layer.close(loadingFlag);
+                            layer.msg(tips+'完成!', {
+                                icon: 1
+                                ,shade: 0.3
+                                ,shadeClose: false
+                                ,time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                            }, function(){
+                                location.reload();  // 刷新当前页
+                            });
+                        }
+                    });
+                }
+            });
+        };
+
+        // 新增一个检索重启任务事件
+        clickMethod.restart = function (e) {
+            var _this = $(e);
+            var type = _this.attr("layadmin-type");
+            var tips = _this.attr("layadmin-tips");
+            //console.log(tips);
+            layer.open({
+                icon: 3
+                ,btn: ['确定', '取消']
+                ,content: '是否确定要'+tips+'？'
+                ,yes: function(index){
+                    // 开启设备检索
+                    $.ajax({
+                        type: "POST"
+                        ,url: "/system/restart"
+                        ,dataType: "json"
+                        ,data: {type:type}
+                        ,beforeSend: function(){
+                            //注意，layer.msg默认3秒自动关闭，如果数据加载耗时比较长，需要设置time
+                            loadingFlag = layer.msg(
+                                '正在'+tips+'，请稍候……'
+                                , {
+                                    icon: 16
+                                    ,shade: 0.3
+                                    ,shadeClose: false
+                                    ,time: 10000
+                                }
+                            );
+                        }
+                        ,success: function(data) {
+                            layer.close(loadingFlag);
+                            layer.msg(tips+'完成!', {
+                                icon: 1
+                                ,shade: 0.3
+                                ,shadeClose: false
+                                ,time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                            }, function(){
+                                location.reload();  // 刷新当前页
+                            });
+                        }
+                    });
+                }
+            });
+        };
+    });
+</script>
+{% endblock %}

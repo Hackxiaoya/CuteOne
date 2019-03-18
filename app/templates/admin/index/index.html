@@ -1,0 +1,35 @@
+{% extends 'admin/public/layout.html' %}
+
+{% block style %}
+<style>
+    .index {
+        background: url("{{url_for('static', filename='images/index_bg.png')}}") no-repeat;
+        background-size: cover;
+        width: 100%;
+        height: 100%;
+    }
+    .infocon {
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,.2);
+    }
+    .infocon h1 {
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    <div class="index">
+        <div class="infocon">
+            <div style="padding: 10%">
+                <h1>
+                    暂时没啥可以写的...
+                </h1>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

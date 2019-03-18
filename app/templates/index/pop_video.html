@@ -1,0 +1,81 @@
+<link rel="stylesheet" href="{{url_for('static', filename='font-awesome/css/font-awesome.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/DPlayer.min.css')}}">
+<style>
+    .infobox {
+        position: relative;
+    }
+    .infobox h3 {
+        margin: 1% 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 70%;
+
+    }
+    .infobox .info {
+        position: absolute;
+        top: 5px;
+        right: 0;
+    }
+    .infobox .info a {
+        font-size: 14px;
+        margin-left: 10px;
+        text-decoration: none;
+        color: #2b2b2b;
+        border: 1px dashed #2b2b2b;
+        padding: 2px 5px;
+    }
+    .infobox .info a:hover {
+        color: #565656;
+    }
+</style>
+
+<div id="dplayer" style="height: 90%;"></div>
+
+<div class="infobox">
+    <h3 title="{{ data.name | safe }}">{{ data.name | safe }}</h3>
+    <div class="info">
+        <a href="{{ share_url }}" target="_blank">
+            <i class="fa fa-external-link"></i>
+            新窗打开
+        </a>
+        <a href="javascript:void(0);" id="copybtn">
+            <i class="fa fa-share"></i>
+            分享
+        </a>
+        <a href="{{ data.url | safe }}">
+            <i class="fa fa-download"></i>
+            下载
+        </a>
+    </div>
+</div>
+
+
+<script type="application/javascript" src="{{url_for('static', filename='layui/layui.js')}}"></script>
+<script type="application/javascript" src="{{url_for('static', filename='js/clipboard.min.js')}}"></script>
+<script type="application/javascript" src="{{url_for('static', filename='js/DPlayer.min.js')}}"></script>
+<script type="text/javascript">
+    const dp = new DPlayer({
+        container: document.getElementById('dplayer'),
+        screenshot: true,
+        video: {
+            url: '{{ data.url | safe }}',
+            type: 'auto'
+        }
+    });
+
+    layui.use(['layer'], function() {
+        var $ = layui.$; //重点处
+        // 复制到剪切板
+        clipboard = new ClipboardJS('#copybtn', {
+            text: function(el) {
+                var domain = window.location.href;
+                return domain;
+            }
+        });
+        clipboard.on('success', function(e) {
+            layer.msg("已复制分享地址，快发给小伙伴吧！");
+            e.clearSelection();
+        })
+    });
+</script>
