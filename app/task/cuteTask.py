@@ -90,6 +90,7 @@ def task_write(id, data, type):
     else:
         if collection.find_one({"id": data["id"]}) is None:
             dic = {
+                "id": data["id"],
                 "parentReference": data["parentReference"]["id"],
                 "name": data["name"],
                 "file": data["file"]["mimeType"],
