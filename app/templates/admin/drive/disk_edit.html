@@ -81,7 +81,7 @@
         // 确认按钮
         $('#form-submit').on('click', function () {
             $.ajax({
-                url: "/admin/drive/drive_edit/{{ data['drive_id'] }}/{{ data['id'] }}"
+                url: "/admin/drive/disk_edit/{{ data['drive_id'] }}/{{ data['id'] }}"
                 ,type: "POST"
                 ,dataType: "json"
                 ,data: $('#form1').serialize()
