@@ -3,6 +3,21 @@
 **希望有小伙伴能提供安装视频或图文文档，报酬是可以享用后续可能收费的扩展功能**  
 **欢迎捐赠，QQ群：8331213**
 
+* 首页
+![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wrs8zf6j21gt0qtdnl.jpg)
+
+* 弹出层
+![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wsm3vzvj21gr0qogpi.jpg)
+
+* 后台 - 驱动列表
+![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wtafu4uj21hc0ouq5m.jpg)
+
+* 后台 - 主从网盘列表
+![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wtss2r4j21hc0ob407.jpg)
+
+* 后台 - 设置
+![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wu2zmegj21hc0qq0uz.jpg)
+
 
 # 环境需求
 * Linux
