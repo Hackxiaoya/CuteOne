@@ -41,7 +41,9 @@ def utc_to_local(utc):
     @Time: 2019-03-16
 """
 def size_cov(size):
-    if size / (1024 * 1024) >= 1:
+    if size / (1024 * 1024 *1024) >= 1:
+        size = str(round(size / (1024 * 1024 * 1024), 2)) + " G"
+    elif size / (1024 * 1024) >= 1:
         size = str(round(size / (1024 * 1024), 2)) + " MB"
     else:
         size = str(round(size / 1024, 2)) + " KB"
