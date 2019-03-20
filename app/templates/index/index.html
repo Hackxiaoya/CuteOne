@@ -18,7 +18,25 @@
                         <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
                         <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
                     </a>
-                {% elif v.file=="video/mp4" || v.file=="application/octet-stream"%}
+                {% elif v.file=="audio/mpeg" %}
+                    <a href="javascript:void(0);" class="video_open" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}">
+                        <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                            <i class="mdui-icon material-icons">music_note</i>
+                            <span>{{ v.name }}</span>
+                        </div>
+                        <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                        <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                    </a>
+                {% elif v.file=="audio/x-wav" %}
+                    <a href="javascript:void(0);" class="video_open" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}">
+                        <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                            <i class="mdui-icon material-icons">music_note</i>
+                            <span>{{ v.name }}</span>
+                        </div>
+                        <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                        <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                    </a>
+                {% elif v.file=="video/mp4" %}
                     <a href="javascript:void(0);" class="video_open" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}">
                         <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
                             <i class="mdui-icon material-icons">videocam</i>
@@ -27,10 +45,10 @@
                         <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
                         <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
                     </a>
-                {% elif v.file=="audio/mpeg" || v.file=="audio/x-wav" %}
+                {% elif v.file=="application/octet-stream" %}
                     <a href="javascript:void(0);" class="video_open" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}">
                         <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
-                            <i class="mdui-icon material-icons">music_note</i>
+                            <i class="mdui-icon material-icons">videocam</i>
                             <span>{{ v.name }}</span>
                         </div>
                         <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
