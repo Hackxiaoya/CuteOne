@@ -23,19 +23,19 @@ SystemInfo = {
 """
     Mysql 数据库连接信息
 """
-SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:root@192.168.31.125:3306/cuteone?charset=utf8"
+SQLALCHEMY_DATABASE_URI = ""
 SQLALCHEMY_POOL_SIZE = 100
 # SQLALCHEMY_POOL_TIMEOUT = 1
 SQLALCHEMY_MAX_OVERFLOW = 20
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 SQLALCHEMY_COMMIT_TEARDOWN = True
-SQLALCHEMY_ECHO = True
+SQLALCHEMY_ECHO = False  # 打印SQL语句 True or False
 
 
 """
     MongoDB 数据库链接信息
 """
-MONGO_URI = "mongodb://192.168.31.125:27017/cache"
+MONGO_URI = ""
 
 
 

@@ -61,7 +61,7 @@
                 ,data: $('#form1').serialize()
                 ,success: function (data) {
                     if(data.code==0){
-                        location.href = '/admin';
+                        location.href = '/admin/index';
                     }else{
                         layer.msg(data.msg);
                     }

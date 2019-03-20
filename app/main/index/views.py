@@ -1,10 +1,9 @@
 # -*- coding:utf-8 -*-
 import re, urllib.parse, json
-import app
-from flask import render_template, request
+from flask import render_template, request, make_response, redirect
 from app.admin.drive import models as driveModels
 from app.admin.system import models as systemModels
-from app.main.index import index
+from ..index import index
 from ..index import logic
 
 
@@ -77,8 +76,9 @@ def _index():
 @index.route('/video/<int:drive_id>/<int:disk_id>/<string:id>')
 def video(drive_id, disk_id, id):
     data = logic.get_downloadUrl(drive_id, disk_id, id)
-    # print(data)
-    return render_template('index/video.html', data=data)
+    share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
+    donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
+    return render_template('index/video.html', share_url=share_url, donw_url=donw_url, data=data)
 
 
 @index.route('/get_downloadUrl/<int:drive_id>/<int:disk_id>/<string:id>')
@@ -91,5 +91,13 @@ def get_downloadUrl(drive_id, disk_id, id):
 def pop_video(drive_id, disk_id, id):
     data = logic.get_downloadUrl(drive_id, disk_id, id)
     share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
-    # print(data)
-    return render_template('index/pop_video.html', share_url=share_url, data=data)
+    donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
+    return render_template('index/pop_video.html', share_url=share_url, donw_url=donw_url, data=data)
+
+
+@index.route('/down_file/<int:drive_id>/<int:disk_id>/<string:id>')
+def down_file(drive_id, disk_id, id):
+    response = logic.down_file(drive_id, disk_id, id)
+    data = make_response(redirect(response["url"]))
+    data.headers["Content-Disposition"] = "attachment; filename={}".format(response["name"])
+    return data

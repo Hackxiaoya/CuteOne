@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
-from flask import redirect, request, render_template, json
+from flask import request, render_template, json
 import config
-import requests, time, datetime
+import requests
 from app import MysqlDB
 from app import decorators
 from app.admin import admin
@@ -69,14 +69,18 @@ def edit(id):
         return json.dumps({"code": 0, "msg": "完成！"})
 
 
-
-
-
-
-@admin.route('/drive/drive_list/<int:id>', methods=['GET'])
-@admin.route('/drive/drive_list/<int:id>/')  # 设置分页
+@admin.route('/drive/drive_del/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
 @decorators.login_require
-def drive_list(id):
+def drive_del(id):
+    models.drive.deldata(id)
+    models.drive_list.deldata_by_drive_id(id)
+    return json.dumps({"code": 0, "msg": "完成！"})
+
+
+@admin.route('/drive/disk_list/<int:id>', methods=['GET'])
+@admin.route('/drive/disk_list/<int:id>/')  # 设置分页
+@decorators.login_require
+def disk_list(id):
     if request.args.get('page'):
         data_list = models.drive_list.all(id)
         json_data = {"code": 0, "msg": "", "count": 0, "data": []}
@@ -87,17 +91,18 @@ def drive_list(id):
                     result.chief = "主盘"
                 else:
                     result.chief = "从盘"
+                cache_count = models.mongodb_count(result.id)
                 json_data["data"].append(
-                    {"id": result.id, "title": result.title, "chief":result.chief, "client_id": result.client_id, "client_secret": result.client_secret, "update_time":str(result.update_time), "create_time": str(result.create_time)})
+                    {"id": result.id, "title": result.title, "chief":result.chief, "client_id": result.client_id, "client_secret": result.client_secret, "count": cache_count, "update_time":str(result.update_time), "create_time": str(result.create_time)})
         return json.dumps(json_data)
     else:
         data = models.drive.find_by_id(id)
-        return render_template('admin/drive/drive_list.html', top_nav='drive', activity_nav='list', data=data)
+        return render_template('admin/drive/disk_list.html', top_nav='drive', activity_nav='list', data=data)
 
 
-@admin.route('/drive/drive_edit/<int:drive_id>/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
+@admin.route('/drive/disk_edit/<int:drive_id>/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
 @decorators.login_require
-def drive_edit(drive_id, id):
+def disk_edit(drive_id, id):
     if request.method == 'GET':
         if id:
             data_list = models.drive_list.find_by_id(id)
@@ -118,7 +123,7 @@ def drive_edit(drive_id, id):
                 , 'code': ''
                 , 'chief': '0'
             }
-        return render_template('admin/drive/drive_edit.html', top_nav='drive', activity_nav='edit', data=result)
+        return render_template('admin/drive/disk_edit.html', top_nav='drive', activity_nav='edit', data=result)
     else:
         drive_id = request.form['drive_id']
         id = request.form['id']
@@ -131,7 +136,7 @@ def drive_edit(drive_id, id):
             models.drive_list.update({"id": id, "title": title, "client_id": client_id, "client_secret": client_secret, "chief":chief})
         else:
             url = config.BaseAuthUrl + '/common/oauth2/v2.0/token'
-            redirect_url = common.get_web_site()
+            redirect_url = "http://127.0.0.1/"
             AuthData = 'client_id={client_id}&redirect_uri={redirect_uri}&client_secret={client_secret}&code={code}&grant_type=authorization_code'
             data = AuthData.format(client_id=client_id, redirect_uri=redirect_url, client_secret=client_secret, code=code)
             headers = {
@@ -146,6 +151,13 @@ def drive_edit(drive_id, id):
             MysqlDB.session.add(role)
             MysqlDB.session.commit()
         return json.dumps({"code": 0, "msg": "完成！"})
+
+
+@admin.route('/drive/disk_del/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
+@decorators.login_require
+def disk_del(id):
+    models.drive_list.deldata_by_id(id)
+    return json.dumps({"code": 0, "msg": "完成！"})
 
 
 @admin.route('/drive/update_cache', methods=['POST'])  # 更新MongoDB缓存

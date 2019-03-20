@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-import app
 from flask import render_template, session, request, json, redirect
 from app.admin import admin
 from app import common

@@ -1,9 +1,6 @@
 # -*- coding:utf-8 -*-
 import datetime, os
-import config
-import hashlib, json, requests
-from app import MysqlDB
-from app import MongoDB
+import hashlib
 from app.admin.system import models as systemModels
 """
     公共方法
@@ -16,6 +13,7 @@ from app.admin.system import models as systemModels
     @Author: yyyvy <76836785@qq.com>
     @Description:
     @Time: 2019-03-16
+    data: 明文密码
 """
 def hashPwd(data):
     pwd_temp = hashlib.sha1(data.encode('utf-8')).hexdigest()

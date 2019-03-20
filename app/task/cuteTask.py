@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import os, sys, json, threading
+sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
 from app import MongoDB
 from app.admin.drive import logic
 from app.admin.drive import models

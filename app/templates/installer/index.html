@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>安装CuteOne</title>
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+	<!-- CSS Files -->
+	<link rel="stylesheet" href="{{url_for('static', filename='installer/css/bootstrap.min.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='installer/css/paper-bootstrap-wizard.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='installer/css/demo.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='font-awesome/css/font-awesome.css')}}">
+
+    <style>
+        .image-container {
+            background-image: url("{{url_for('static', filename='installer/images/paper.jpeg')}}")
+        }
+		.progressBar {
+			background: white url("{{url_for('static', filename='installer/images/loding.gif')}}") no-repeat 10px 10px;
+			padding-left: 45px;
+			line-height: 50px;
+			font-style: normal;
+			display: inline-block;
+		}
+        .number {
+            position: absolute;
+            z-index: 1;
+            color: #7ac29a;
+            font-size: 40px;
+            display: block;
+            left: 20px;
+            top: 4px;
+        }
+        .active .number {
+            color: #fff;
+        }
+        a.jzbtn {
+            font-size: 16px;
+            border-radius: 20px;
+            background: #2ca8ff;
+            padding: 5px 20px;
+            color: #fff;
+            text-decoration: none;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        a.jzbtn:hover {
+            opacity: .8;
+        }
+		label.error:not(.form-control) {
+			position: absolute;
+		}
+    </style>
+</head>
+
+<body>
+	<div class="image-container set-full-height">
+	    <!--   Big container   -->
+	    <div class="container">
+	        <div class="row">
+		        <div class="col-sm-8 col-sm-offset-2">
+		            <div class="wizard-container">
+		                <div class="card wizard-card" data-color="green" id="wizard">
+		                    <form id="form1" onsubmit="return false" action="##" method="post">
+		                    	<div class="wizard-header">
+		                        	<h3 class="wizard-title">CuteOne</h3>
+		                        	<p class="category">请根据步骤进行安装，避免安装失败.</p>
+		                    	</div>
+								<div class="wizard-navigation">
+									<div class="progress-with-circle">
+									    <div class="progress-bar" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4" style="width: 15%;"></div>
+									</div>
+									<ul>
+			                            <li>
+											<a href="#mysql" data-toggle="tab">
+												<div class="icon-circle">
+													<i class="number"> 1 </i>
+												</div>
+												Mysql
+											</a>
+										</li>
+			                            <li>
+											<a href="#mongo" data-toggle="tab">
+												<div class="icon-circle">
+													<i class="number"> 2 </i>
+												</div>
+												Mongo
+											</a>
+										</li>
+			                            <li>
+											<a href="#userinfo" data-toggle="tab">
+												<div class="icon-circle">
+													<i class="number"> 3 </i>
+												</div>
+												UserInfo
+											</a>
+										</li>
+			                            <li>
+											<a href="#Install" data-toggle="tab">
+												<div class="icon-circle">
+													<i class="number"> 4 </i>
+												</div>
+												Install
+											</a>
+										</li>
+			                        </ul>
+								</div>
+		                        <div class="tab-content">
+		                            <div class="tab-pane" id="mysql">
+		                            	<div class="row">
+		                                	<div class="col-sm-12">
+		                                    	<h5 class="info-text"> 请输入Mysql信息 </h5>
+		                            		</div>
+		                                	<div class="col-sm-5 col-sm-offset-1">
+		                                    	<div class="form-group">
+		                                        	<label>主机地址</label>
+		                                        	<input type="text" class="form-control" name="mysql_ip" id="mysql_ip" placeholder="localhost" value="localhost" required>
+		                                    	</div>
+		                                	</div>
+		                                	<div class="col-sm-5">
+		                                    	<div class="form-group">
+		                                        	<label>主机端口</label>
+		                                        	<input type="text" class="form-control" name="mysql_port" id="mysql_port" placeholder="3306" value="3306" required>
+		                                    	</div>
+		                                	</div>
+		                                	<div class="col-sm-5 col-sm-offset-1">
+		                                    	<div class="form-group">
+		                                        	<label>数据库账号</label>
+		                                        	<input type="text" class="form-control" name="mysql_user" id="mysql_user" placeholder="root" required>
+		                                    	</div>
+		                                	</div>
+		                                	<div class="col-sm-5">
+		                                    	<div class="form-group">
+		                                        	<label>数据库密码</label>
+		                                        	<input type="text" class="form-control" name="mysql_psw" id="mysql_psw" placeholder="root" required>
+		                                    	</div>
+		                                	</div>
+		                                	<div class="col-sm-5 col-sm-offset-1">
+		                                    	<div class="form-group">
+		                                        	<label>数据库名</label>
+		                                        	<input type="text" class="form-control" name="mysql_name" id="mysql_name" placeholder="cuteone" value="cuteone">
+		                                    	</div>
+		                                	</div>
+		                            	</div>
+		                            </div>
+		                            <div class="tab-pane" id="mongo">
+		                                <div class="row">
+		                                	<div class="col-sm-12">
+		                                    	<h5 class="info-text"> 请输入MongoDB信息 </h5>
+		                            		</div>
+		                                	<div class="col-sm-5 col-sm-offset-1">
+		                                    	<div class="form-group">
+		                                        	<label>主机地址</label>
+		                                        	<input type="text" class="form-control" name="mongo_ip" id="mongo_ip" placeholder="localhost" value="localhost" required>
+		                                    	</div>
+		                                	</div>
+		                                	<div class="col-sm-5">
+		                                    	<div class="form-group">
+		                                        	<label>主机端口</label>
+		                                        	<input type="text" class="form-control" name="mongo_port" id="mongo_port" placeholder="27017" value="27017" required>
+		                                    	</div>
+		                                	</div>
+		                                	<div class="col-sm-5 col-sm-offset-1">
+		                                    	<div class="form-group">
+		                                        	<label>数据库账号</label>
+		                                        	<input type="text" class="form-control" name="mongo_user" id="mongo_user" placeholder="root">
+		                                    	</div>
+		                                	</div>
+		                                	<div class="col-sm-5">
+		                                    	<div class="form-group">
+		                                        	<label>数据库密码</label>
+		                                        	<input type="text" class="form-control" name="mongo_psw" id="mongo_psw" placeholder="root">
+		                                    	</div>
+		                                	</div>
+		                            	</div>
+		                            </div>
+		                            <div class="tab-pane" id="userinfo">
+		                                <div class="row">
+		                                	<div class="col-sm-12">
+		                                    	<h5 class="info-text"> 请输入管理信息 </h5>
+		                            		</div>
+		                                	<div class="col-sm-5 col-sm-offset-1">
+		                                    	<div class="form-group">
+		                                        	<label>管理员账号</label>
+		                                        	<input type="text" class="form-control" name="admin_user" id="admin_user" placeholder="admin" value="admin" required>
+		                                    	</div>
+		                                	</div>
+		                                	<div class="col-sm-5">
+		                                    	<div class="form-group">
+		                                        	<label>管理员密码</label>
+		                                        	<input type="text" class="form-control" name="admin_psw" id="admin_psw" placeholder="cuteone" value="cuteone" required>
+		                                    	</div>
+		                                	</div>
+		                            	</div>
+		                            </div>
+		                            <div class="tab-pane" id="Install">
+		                                <div class="row">
+		                                    <h5 class="info-text" id="install-info">
+												<i class="progressBar">
+													正在安装...
+												</i>
+											</h5>
+		                                    <div class="col-sm-11 col-sm-offset-1">
+		                                        <div class="form-group">
+		                                            <label>我想说</label>
+		                                            <p class="description">
+                                                        田里趾高气昂的麦穗是空的，饱满的反而谦恭下垂，努力变成优秀的网盘挂载程序。<br>
+                                                        请为你觉得好的开源程序买单，从这一刻开始。毕竟开发者也得活着。
+                                                    </p>
+                                                    <a href="#" class="jzbtn" target="_blank">立即捐赠</a>
+		                                        </div>
+		                                    </div>
+		                                    <div class="col-sm-11 col-sm-offset-1">
+		                                        <div class="form-group">
+		                                            <label>Other</label>
+		                                            <p class="description">
+                                                        官方QQ群：8331213 <br>
+                                                        Github：<a href="#" target="_blank">http://www.github.com/hackxiaoya/cuteone</a><br>
+                                                        附言：本程序会长期保持更新状态，请保持关注Github或QQ群。
+                                                    </p>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                        <div class="wizard-footer">
+	                            	<div class="pull-right">
+	                                    <input type='button' class='btn btn-next btn-fill btn-success btn-wd' name='next' value='下一步' />
+									</div>
+
+	                                <div class="pull-left">
+	                                    <input type='button' class='btn btn-previous btn-default btn-wd' name='previous' value='上一步' />
+	                                </div>
+	                                <div class="clearfix"></div>
+		                        </div>
+		                    </form>
+		                </div>
+		            </div> <!-- wizard container -->
+		        </div>
+	        </div> <!-- row -->
+	    </div> <!--  big container -->
+
+	    <div class="footer">
+	        <div class="container text-center">
+	             Copyright &copy; 2019.Company CuteOne All rights reserved.
+	        </div>
+	    </div>
+	</div>
+
+</body>
+
+	<!--   Core JS Files   -->
+    <script type="application/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='installer/js/bootstrap.min.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='installer/js/jquery.bootstrap.wizard.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='installer/js/paper-bootstrap-wizard.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='installer/js/jquery.validate.min.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='installer/js/messages_zh.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='installer/js/bootstrap.min.js')}}"></script>
+
+</html>

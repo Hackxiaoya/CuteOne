@@ -130,7 +130,7 @@
             var tr = obj.tr; //获得当前行 tr 的DOM对象
 
             if(layEvent === 'manage'){ //管理
-                self.location.href = '/admin/drive/drive_list/'+data.id
+                self.location.href = '/admin/drive/disk_list/'+data.id
             } else if(layEvent === 'update'){   //更新MongoDB缓存
                 if("{{ isRunning }}" == "1"){
                     layer.msg("已有更新任务，请稍后再更新缓存！")
@@ -155,6 +155,7 @@
                                         layer.msg('已添加到后台更新任务中，请勿重复提交！', {icon: 1});
                                         layer.close(index);
                                         tablerender();
+                                        // location.reload();
                                     }else{
                                         layer.msg(data.msg)
                                     }
@@ -167,10 +168,22 @@
                     });
                 }
             } else if(layEvent === 'del'){ //删除
-                layer.confirm('真的删除行么', function(index){
-                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                    layer.close(index);
+                layer.confirm('真的删除这个驱动吗？', function(index){
                     //向服务端发送删除指令
+                    $.ajax({
+                        url: "/admin/drive/drive_del/"+data.id
+                        ,type: "GET"
+                        ,dataType: "json"
+                        ,success: function (data) {
+                            if(data.code==0){
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                layer.msg('删除成功！', {icon: 1});
+                                tablerender();
+                            }else{
+                                layer.msg(data.msg)
+                            }
+                        }
+                    });
                 });
             } else if(layEvent === 'edit'){ //编辑
                 layer.open({

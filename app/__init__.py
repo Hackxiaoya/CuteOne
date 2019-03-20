@@ -6,6 +6,7 @@ from flask_pymongo import PyMongo
 
 #创建app应用,__name__是python预定义变量，被设置为使用本模块.
 app = Flask(__name__)
+app.debug = False    # 设置调试模式，生产模式的时候要关掉debug
 app.config.from_object('config')
 MysqlDB = SQLAlchemy(app)
 MongoDB = PyMongo(app)

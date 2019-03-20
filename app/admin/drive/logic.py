@@ -18,7 +18,7 @@ from ..drive import models
 def reacquireToken(id):
     data_list = models.drive_list.find_by_id(id)
     token = json.loads(json.loads(data_list.token))
-    redirect_url = common.get_web_site()
+    redirect_url = "http://127.0.0.1/"
     ReFreshData = 'client_id={client_id}&redirect_uri={redirect_uri}&client_secret={client_secret}&refresh_token={refresh_token}&grant_type=refresh_token'
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = ReFreshData.format(client_id = data_list.client_id, redirect_uri = redirect_url, client_secret = data_list.client_secret,
