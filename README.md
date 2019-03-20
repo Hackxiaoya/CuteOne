@@ -1,10 +1,14 @@
 # CuteOne
 **CuteOne**是一款OneDrive多网盘挂载程序，提供多盘负载，在线查看文件等功能。
 
+
 # 环境需求
 * Linux
 * Nginx
 * Python3  ——[如何安装Python3](https://www.cnblogs.com/s-seven/p/9105973.html)
+* Mysql <= 5.7
+* MongoDB
+
 
 # 安装流程
 * 前言
