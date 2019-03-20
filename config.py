@@ -35,7 +35,7 @@ SQLALCHEMY_ECHO = False  # 打印SQL语句 True or False
 """
     MongoDB 数据库链接信息
 """
-MONGO_URI = ""
+MONGO_URI = "mongodb://127.0.0.1:27017/cache"
 
 
 

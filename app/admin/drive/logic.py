@@ -119,7 +119,7 @@ def update_cache(drive_id, type):
     driveinfo = models.drive_list.find_by_drive_id(drive_id)
     threads = []
     for i in driveinfo:
-        command = "python {}/app/task/cuteTask.py {} {}".format(os.getcwd(), i.id, type)  # 后台任务文件路
+        command = "python3 {}/app/task/cuteTask.py {} {}".format(os.getcwd(), i.id, type)  # 后台任务文件路
         t = threading.Thread(target=run_command, args=(command,))
         threads.append(t)
     for t in threads:
