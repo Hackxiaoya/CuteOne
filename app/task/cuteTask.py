@@ -88,8 +88,8 @@ def task_write(id, data, type):
         }
         collection.insert_one(dic)
     else:
-        if collection.find_one({"id": data["id"]}):
-            setUpdata = {
+        if collection.find_one({"id": data["id"]}) is None:
+            dic = {
                 "parentReference": data["parentReference"]["id"],
                 "name": data["name"],
                 "file": data["file"]["mimeType"],
@@ -98,7 +98,18 @@ def task_write(id, data, type):
                 "createdDateTime": common.utc_to_local(data["fileSystemInfo"]["createdDateTime"]),
                 "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"])
             }
-            collection.update_one({"id": data["id"]}, {"$set": setUpdata})
+            collection.insert_one(dic)
+        # if collection.find_one({"id": data["id"]}) == "None":
+        #     setUpdata = {
+        #         "parentReference": data["parentReference"]["id"],
+        #         "name": data["name"],
+        #         "file": data["file"]["mimeType"],
+        #         "path": data["parentReference"]["path"].replace("/drive/root:", ""),
+        #         "size": data["size"],
+        #         "createdDateTime": common.utc_to_local(data["fileSystemInfo"]["createdDateTime"]),
+        #         "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"])
+        #     }
+        #     collection.update_one({"id": data["id"]}, {"$set": setUpdata})
 
 
 
