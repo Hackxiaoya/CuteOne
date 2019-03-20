@@ -99,5 +99,5 @@ def pop_video(drive_id, disk_id, id):
 def down_file(drive_id, disk_id, id):
     response = logic.down_file(drive_id, disk_id, id)
     data = make_response(redirect(response["url"]))
-    data.headers["Content-Disposition"] = "attachment; filename={}".format(response["name"])
+    data.headers["Content-Disposition"] = "attachment;"
     return data
