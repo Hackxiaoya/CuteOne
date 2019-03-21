@@ -44,33 +44,37 @@ def drive_list():
 
 @index.route('/')  # 默认首页
 def _index():
-    drive = request.args.get('drive')
-    disk = request.args.get('disk')
-    # 优先进行条件查询
-    if drive:
-        driveurl = '/?drive={}'.format(drive)
-        if disk:
-            disk_id = disk
-            driveurl = '{}&disk={}'.format(driveurl, disk)
-        else:
-            disk_id = driveModels.drive_list.find_by_chief(drive).id
-            driveurl = '{}&disk={}'.format(driveurl, disk_id)
-
-        if request.args.get('path'):
-            path = request.args.get('path')
-            data = logic.get_disk(disk_id, path)
-            current_url = '{}&path={}'.format(driveurl, path)
-        else:
-            data = logic.get_disk(disk_id)
-            current_url = '{}&path='.format(driveurl)
+    toggle_web_site = systemModels.config.toggle_web_site()
+    if toggle_web_site == "0":
+        return render_template('toggle/index_1.html')
     else:
-        activate = driveModels.drive.find_activate()
-        drive = activate.id
-        disk_id = driveModels.drive_list.find_by_chief(activate.id).id
-        data = logic.get_disk(disk_id)
-        current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
+        drive = request.args.get('drive')
+        disk = request.args.get('disk')
+        # 优先进行条件查询
+        if drive:
+            driveurl = '/?drive={}'.format(drive)
+            if disk:
+                disk_id = disk
+                driveurl = '{}&disk={}'.format(driveurl, disk)
+            else:
+                disk_id = driveModels.drive_list.find_by_chief(drive).id
+                driveurl = '{}&disk={}'.format(driveurl, disk_id)
 
-    return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data)
+            if request.args.get('path'):
+                path = request.args.get('path')
+                data = logic.get_disk(disk_id, path)
+                current_url = '{}&path={}'.format(driveurl, path)
+            else:
+                data = logic.get_disk(disk_id)
+                current_url = '{}&path='.format(driveurl)
+        else:
+            activate = driveModels.drive.find_activate()
+            drive = activate.id
+            disk_id = driveModels.drive_list.find_by_chief(activate.id).id
+            data = logic.get_disk(disk_id)
+            current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
+
+        return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data)
 
 
 @index.route('/video/<int:drive_id>/<int:disk_id>/<string:id>')

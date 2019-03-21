@@ -34,6 +34,15 @@ class config(MysqlDB.Model):
         else:
             return {"code": False, "msg": "账号错误！"}
 
+
+    # 获取站点开关
+    @classmethod
+    def toggle_web_site(cls):
+        data = config.query.filter(config.name == "toggle_web_site").one()
+        MysqlDB.session.close()
+        return data.value
+
+
     # 获取域名地址
     @classmethod
     def get_web_site(cls):
