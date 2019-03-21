@@ -1,22 +1,5 @@
 # CuteOne
-**CuteOne**是一款OneDrive多网盘挂载程序，提供多盘负载，在线查看文件等功能。  
-**希望有小伙伴能提供安装视频或图文文档，报酬是可以享用后续可能收费的扩展功能**  
-**欢迎捐赠，QQ群：8331213**
-
-* 首页
-![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wrs8zf6j21gt0qtdnl.jpg)
-
-* 弹出层
-![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wsm3vzvj21gr0qogpi.jpg)
-
-* 后台 - 驱动列表
-![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wtafu4uj21hc0ouq5m.jpg)
-
-* 后台 - 主从网盘列表
-![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wtss2r4j21hc0ob407.jpg)
-
-* 后台 - 设置
-![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wu2zmegj21hc0qq0uz.jpg)
+**CuteOne**是一款OneDrive多网盘挂载程序，提供多盘负载，在线查看文件等功能。
 
 
 # 环境需求
@@ -90,14 +73,3 @@ killall -9 uwsgi
 ```
 nohup uwsgi --ini uwsgi.ini &
 ```
-
-
-
-# 未来可能收费的功能列表：
-* Offie系列产品的在线修改功能；
-* 主从盘同步功能；
-* 付费查看功能；
-* 采集功能；
-* 会员等级制度功能；
-* 压缩包上传解压同步功能；
-* 文件夹上传同步功能；
