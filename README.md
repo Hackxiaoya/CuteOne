@@ -23,7 +23,7 @@
 * Linux
 * Nginx
 * Python3  ——[如何安装Python3](https://www.cnblogs.com/s-seven/p/9105973.html)
-* Mysql <= 5.7
+* Mysql >= 5.7
 * MongoDB
 
 
@@ -49,6 +49,7 @@ ln -s /usr/local/python3/bin/uwsgi /usr/bin/uwsgi
 vi uwsgi.ini
 > 里面有一个chdir，把路径改成你自己的路径
 nohup uwsgi --ini uwsgi.ini &
+> 忽略显示的错误
 ```
 * 第四步，Nginx反代一下，端口是5000
 
@@ -72,13 +73,17 @@ http://你的域名/admin/
 
 
 # 常见问题
+* 出现500
+> 大概是数据库有问题，你看看数据库是否创建了表
 * 出现502 
 > 大概是因为CuteOne没运行,输入一下启动网站的命令
 * 首次安装，访问报错
 > 首次安装之后需要在后台先添加一个网盘才行。
 * 启动了之后，访问报错
 > 你大概是首次安装启动，请查看安装流程。
-
+* 添加网盘的时候获取code的时候，code在url里，注意看浏览器的url
+* 重装网站程序
+> 执行ls -a 会看到有一个.install的文件，rm .install 删除他即可。
 
 
 # 常见命令
@@ -93,6 +98,7 @@ killall -9 uwsgi
 * 启动网站
 ```
 nohup uwsgi --ini uwsgi.ini &
+> 忽略显示的错误
 ```
 
 
