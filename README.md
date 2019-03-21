@@ -44,8 +44,10 @@ pip3 install -r requirements.txt
 
 ln -s /usr/local/python3/bin/uwsgi /usr/bin/uwsgi
 ```
-* 第三步，启动网站后台运行   
+* 第三步，修改根目录。启动网站后台运行   
 ```
+vi uwsgi.ini
+> 里面有一个chdir，把路径改成你自己的路径
 nohup uwsgi --ini uwsgi.ini &
 ```
 * 第四步，Nginx反代一下，端口是5000
