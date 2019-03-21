@@ -37,16 +37,15 @@ git clone https://github.com/Hackxiaoya/CuteOne.git
 ```
 * 第二步，安装需求的库和创建uwsgi软连
 ```
+cd CuteOne
 pip3 install -r requirements.txt
-> 如果出现pip install --upgrad pip的字样，就执行更新一下，没有就跳过
-> pip3 install --upgrad pip
+> 如果出现pip install --upgrade pip的字样，就执行更新一下，没有就跳过
+> pip3 install --upgrade pip
 
 ln -s /usr/local/python3/bin/uwsgi /usr/bin/uwsgi
 ```
 * 第三步，启动网站后台运行   
-  进入你github拉取的目录。
 ```
-cd Cuteone
 nohup uwsgi --ini uwsgi.ini &
 ```
 * 第四步，Nginx反代一下，端口是5000
@@ -62,7 +61,9 @@ http://你的域名/install/
 * 第七步，添加驱动，不然你访问首页会报错
 ```
 http://你的域名/admin/
-到驱动的位置添加个驱动，然后添加个网盘，然后更新一下缓存就可以了
+> 到驱动的位置添加个驱动，然后添加个网盘，然后更新一下缓存就可以了
+> 如果后台账号密码不对，就用默认账号密码，都是admin
+> 如果报错502，就是网站没启动
 ```
 
 
@@ -70,7 +71,7 @@ http://你的域名/admin/
 
 # 常见问题
 * 出现502 
-> 大概是因为CuteOne没运行。
+> 大概是因为CuteOne没运行,输入一下启动网站的命令
 * 首次安装，访问报错
 > 首次安装之后需要在后台先添加一个网盘才行。
 * 启动了之后，访问报错
