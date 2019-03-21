@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
-import os, sys, subprocess
-sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
+import os, subprocess
 
 """
     安装任务
@@ -15,10 +14,10 @@ sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
 # 杀死进程
 def killProcess():
     try:
-        subprocess.Popen("killall -9 uwsgi", shell=True)
+        subprocess.Popen("killall -9 uwsgi", shell=False)
     except Exception as e:
         pass
-    subprocess.Popen("nohup uwsgi --ini {}/uwsgi.ini".format(os.getcwd()), shell=True)
+    subprocess.Popen("uwsgi --ini {}/uwsgi.ini &".format(os.getcwd()), shell=True)
     return
 
 

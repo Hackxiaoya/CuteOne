@@ -55,7 +55,7 @@ def edit_config(mysql, mongo):
     with open(config_path, 'r+', encoding='UTF-8') as f:
         for line in f.readlines():
             if (line.find('SQLALCHEMY_DATABASE_URI') == 0):
-                line = 'SQLALCHEMY_DATABASE_URI = %s' % ('\"'+mysql+'\"')
+                line = 'SQLALCHEMY_DATABASE_URI = %s' % ('\"'+mysql+'\"\n')
             if (line.find('MONGO_URI') == 0):
                 line = 'MONGO_URI = %s' % ('\"'+mongo+'\"')
             result += line
