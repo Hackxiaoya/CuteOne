@@ -15,7 +15,7 @@ class config(MysqlDB.Model):
     @classmethod
     def all(cls):
         data = {}
-        for i in config.query.all():
+        for i in cls.query.all():
             data[i.name] = i.value
         MysqlDB.session.close()
         return data
@@ -23,8 +23,8 @@ class config(MysqlDB.Model):
     # 校正账号密码是否正确
     @classmethod
     def checkpassword(cls, username, password):
-        userdata = config.query.filter(config.name == "username").one()
-        passdata = config.query.filter(config.name == "password").one()
+        userdata = cls.query.filter(cls.name == "username").one()
+        passdata = cls.query.filter(cls.name == "password").one()
         MysqlDB.session.close()
         if username == userdata.value:
             if password == passdata.value:
@@ -38,7 +38,7 @@ class config(MysqlDB.Model):
     # 获取站点开关
     @classmethod
     def toggle_web_site(cls):
-        data = config.query.filter(config.name == "toggle_web_site").one()
+        data = cls.query.filter(cls.name == "toggle_web_site").one()
         MysqlDB.session.close()
         return data.value
 
@@ -46,12 +46,12 @@ class config(MysqlDB.Model):
     # 获取域名地址
     @classmethod
     def get_web_site(cls):
-        data = config.query.filter(config.name == "web_site").one()
+        data = cls.query.filter(cls.name == "web_site").one()
         MysqlDB.session.close()
         return data.value
 
     @classmethod
     def update(cls, data):
-        config.query.filter(config.name == data['name']).update(data)
+        cls.query.filter(cls.name == data['name']).update(data)
         MysqlDB.session.commit()
         return
