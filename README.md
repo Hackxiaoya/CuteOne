@@ -1,6 +1,5 @@
 # CuteOne
 **CuteOne**是一款OneDrive多网盘挂载程序，提供多盘负载，在线查看文件等功能。  
-**希望有小伙伴能提供安装视频或图文文档，报酬是可以享用后续可能收费的扩展功能**  
 **欢迎捐赠，QQ群：8331213**
 
 * 首页
@@ -30,7 +29,8 @@
 # 安装流程
 * 前言
 > 初次安装真的，我自己都觉得繁琐，但是一劳永逸；  
-> 如果没有python3的，先安装python3 再执行下面的流程。
+  如果没有python3的，先安装python3 再执行下面的流程。  
+  具体安装图文教程  ——[Gitbook](https://wiki.cuteone.cn/)
 * 第一步，拉取代码  
 ```
 git clone https://github.com/Hackxiaoya/CuteOne.git  
