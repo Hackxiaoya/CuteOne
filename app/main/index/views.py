@@ -122,10 +122,11 @@ def pop_video(drive_id, disk_id, id):
 
 
 @index.route('/down_file/<int:drive_id>/<int:disk_id>/<string:id>')
+@index.route('/down_file/<int:drive_id>/<int:disk_id>/<string:id>/')
 def down_file(drive_id, disk_id, id):
     response = logic.down_file(drive_id, disk_id, id)
     data = make_response(redirect(response["url"]))
-    data.headers["Content-Disposition"] = "attachment;"
+    data.headers["Content-Disposition"] = "attachment; filename={}".format(response["name"].encode().decode('latin-1'))
     return data
 
 

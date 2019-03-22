@@ -395,8 +395,9 @@
                 $(".down_file").on("click", function () {
                     var drive = $(this).data("drive"),
                         disk = $(this).data("disk"),
-                        id = $(this).data("id");
-                    var url = "/down_file/" + drive + "/" + disk + "/" + id;
+                        id = $(this).data("id"),
+                        name = $(this).data("name");
+                    var url = "/down_file/" + drive + "/" + disk + "/" + id + "/?=filename=" + name;
                     layer.confirm('是否确认下载？', {
                         btn: ['确认','取消']
                     }, function(index){
