@@ -51,17 +51,20 @@ CREATE TABLE `cuteone_config`  (
 -- Records of cuteone_config
 -- ----------------------------
 INSERT INTO `cuteone_config` VALUES (1, 'username', '后台管理员用户名', 'admin', '0001-01-01 00:00:00', '2019-03-17 17:44:45');
-INSERT INTO `cuteone_config` VALUES (1, 'username', '后台管理员用户名', 'admin', '0001-01-01 00:00:00', '2019-03-17 17:44:45');
+INSERT INTO `cuteone_config` VALUES (1, 'username', '后台管理员用户名', 'admin', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
 INSERT INTO `cuteone_config` VALUES (2, 'password', '后台管理员密码', '60a25dd28e65a2c6df9e3b2650c926e6', '0001-01-01 00:00:00', '2019-03-15 12:05:40');
-INSERT INTO `cuteone_config` VALUES (3, 'toggle_web_site', '站点开关', '1', '0001-01-01 00:00:00', '2019-03-17 17:44:45');
-INSERT INTO `cuteone_config` VALUES (4, 'web_site', '域名地址', '', '0001-01-01 00:00:00', '2019-03-18 20:37:17');
-INSERT INTO `cuteone_config` VALUES (5, 'web_site_title', '网站标题', 'CuteOne 网盘系统', '0001-01-01 00:00:00', '2019-03-17 17:44:45');
+INSERT INTO `cuteone_config` VALUES (3, 'toggle_web_site', '站点开关', '1', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
+INSERT INTO `cuteone_config` VALUES (4, 'web_site', '域名地址', '', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
+INSERT INTO `cuteone_config` VALUES (5, 'web_site_title', '网站标题', 'CuteOne 网盘系统', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
 INSERT INTO `cuteone_config` VALUES (6, 'web_site_logo', '网站LOGO', NULL, '0001-01-01 00:00:00', '0001-01-01 00:00:00');
-INSERT INTO `cuteone_config` VALUES (7, 'web_site_description', 'SEO描述', 'SEO的描述', '0001-01-01 00:00:00', '2019-03-17 17:44:45');
-INSERT INTO `cuteone_config` VALUES (8, 'web_site_keyword', 'SEO关键字', 'SEO的关键字', '0001-01-01 00:00:00', '2019-03-17 17:44:45');
-INSERT INTO `cuteone_config` VALUES (9, 'web_site_copyright', '版权信息', 'Copyright © ******有限公司 All rights reserved.', '0001-01-01 00:00:00', '2019-03-17 17:44:45');
-INSERT INTO `cuteone_config` VALUES (10, 'web_site_icp', '网站备案号', '', '0001-01-01 00:00:00', '2019-03-17 17:44:45');
-INSERT INTO `cuteone_config` VALUES (11, 'web_site_statistics', '站点统计', '', '0001-01-01 00:00:00', '2019-03-17 17:44:45');
+INSERT INTO `cuteone_config` VALUES (7, 'web_site_description', 'SEO描述', 'SEO的描述', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
+INSERT INTO `cuteone_config` VALUES (8, 'web_site_keyword', 'SEO关键字', 'SEO的关键字', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
+INSERT INTO `cuteone_config` VALUES (9, 'web_site_copyright', '版权信息', 'Copyright © ******有限公司 All rights reserved.', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
+INSERT INTO `cuteone_config` VALUES (10, 'web_site_icp', '网站备案号', '', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
+INSERT INTO `cuteone_config` VALUES (11, 'web_site_statistics', '站点统计', '', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
+INSERT INTO `cuteone_config` VALUES (12, 'page_number', '列表条数', '30', '0001-01-01 00:00:00', '2019-03-22 15:38:48');
+INSERT INTO `cuteone_config` VALUES (13, 'search_type', '搜索类型', '1', '0001-01-01 00:00:00', '2019-03-22 15:38:48');
+INSERT INTO `cuteone_config` VALUES (14, 'web_site_background', '背景图', 'http://ww1.sinaimg.cn/large/71c534f0ly1fw9tw14zb3j21hc0u01e4.jpg', '0001-01-01 00:00:00', '2019-03-22 15:38:48');
 
 -- ----------------------------
 -- Table structure for cuteone_drive
