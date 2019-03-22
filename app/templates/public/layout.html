@@ -382,8 +382,27 @@
                         repsort = replaceParamVal(reptable, "sortType", sort_sort);
                         window.location.href = "http://" + window.location.host + "/" + repsort;
                     }else{
-                        window.location.href = window.location.href + "&sortTable="+sort_table+"&sortType="+sort_sort
+                        if(getUrlParam("drive")){
+                            window.location.href = window.location.href + "&sortTable="+sort_table+"&sortType="+sort_sort
+                        }else{
+                            window.location.href = window.location.href + "/?drive={{ drive_id }}&sortTable="+sort_table+"&sortType="+sort_sort
+                        }
+
                     }
+                });
+
+                // 弹出下载
+                $(".down_file").on("click", function () {
+                    var drive = $(this).data("drive"),
+                        disk = $(this).data("disk"),
+                        id = $(this).data("id");
+                    var url = "/down_file/" + drive + "/" + disk + "/" + id;
+                    layer.confirm('是否确认下载？', {
+                        btn: ['确认','取消']
+                    }, function(index){
+                        window.location.href = url;
+                        layer.close(index);
+                    });
                 });
 
             });
@@ -433,13 +452,6 @@
                 });
             });
 
-            $(".down_file").on("click", function () {
-                var drive = $(this).data("drive"),
-                    disk = $(this).data("disk"),
-                    id = $(this).data("id");
-                var url = "/down_file/" + drive + "/" + disk + "/" + id;
-                window.location.href = url;
-            });
 
             // 搜索按钮 - 未完成
             search = function () {
