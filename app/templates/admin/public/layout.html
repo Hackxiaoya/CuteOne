@@ -80,6 +80,18 @@
                             </dd>
                         </dl>
                     </li>
+                    <li class="layui-nav-item {% if 'author'== top_nav %}layui-nav-itemed{% endif %}">
+                        <a href="javascript:;" lay-tips="驱动">
+                            <i class="fa fa-list"></i>
+                            <cite>权限管理</cite>
+                            <span class="layui-nav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd class="{% if 'list'== activity_nav %}layui-this{% endif %}">
+                                <a href="/admin/author/list">权限列表</a>
+                            </dd>
+                        </dl>
+                    </li>
                     <li class="layui-nav-item {% if 'system'== top_nav %}layui-nav-itemed{% endif %}">
                         <a href="javascript:;" lay-tips="设置">
                             <i class="layui-icon layui-icon-set"></i>

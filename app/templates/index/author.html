@@ -1,0 +1,50 @@
+{% extends 'public/layout.html' %}
+{% block style %}
+    <style>
+        .password-box {
+            text-align: center;
+        }
+        .password-input {
+            font-size: 16px;
+            border: 2px solid #cecece;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .password-box a {
+            margin-left: 10px;
+            padding: 10px 15px;
+            color: white;
+            background: #448aff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="password-box">
+        <input id="password" class="password-input" type="text" placeholder="请输入查看密码">
+        <a href="javascript:void(0);" id="get_password">确定</a>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="application/javascript">
+        $("#get_password").on("click", function () {
+            var password = $("#password").val();
+            $.ajax({
+                url: "/approve",
+                type: "POST",
+                dataType:  'json',
+                data: {password:password, drive_id:"{{drive_id}}", path:"{{path}}"},
+                success:function(e){
+                    if(e.code){
+                        layer.msg("密码错误");
+                    }else{
+                        location.reload();
+                    }
+                }
+            })
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="{{url_for('static', filename='font-awesome/css/font-awesome.min.css')}}" media="all">
+<link rel="stylesheet" href="{{url_for('static', filename='layui/rc/css/layui.css')}}" media="all">
+<link rel="stylesheet" href="{{url_for('static', filename='dist/style/admin.css')}}" media="all">
+
+<div class="layui-form" style="padding: 20px 30px 0 0;">
+    <form id="form1" onsubmit="return false" action="##" method="post">
+        <input type="hidden" name="id" value="{{ data.id }}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" value="{{ data.title }}" placeholder="请输入标题" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">驱动</label>
+            <div class="layui-input-block">
+                 <select name="drive_id" placeholder="请选择驱动" lay-filter="drive_id">
+                    {% for i in drive_list %}
+                        <option value="{{ i.drive_id }}" {% if i.drive_id == data.drive_id|int %} selected {% endif %}>{{ i.drive_title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">文件夹</label>
+            <div class="layui-input-block">
+                <input type="text" name="folder_name" value="{{ data.folder_name }}" placeholder="请输入文件夹名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="password" value="{{ data.password }}" placeholder="请输入密码" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline">
+                <button id="form-submit" class="layui-btn">保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="application/javascript" src="{{url_for('static', filename='layui/layui.js')}}"></script>
+<script>
+    layui.use(['form', 'layer'], function(){
+        var $ = layui.$; //重点处
+        var form = layui.form;
+
+        // form.on('select(drive_id)', function(data){
+        //     var dirveId = data.elem.value;
+        //     $.ajax({
+        //         url: "/admin/author/disk_info/"+dirveId,
+        //         type: "GET",
+        //         dataType:  'json',
+        //         success:function(e){
+        //             $("select[name='disk_id']").html("");
+        //             var html = "";
+        //             $(e.data).each(function (v, k) {
+        //                 html += "<option value='" + k.disk_id + "'>" + k.disk_title + "</option>";
+        //             });
+        //             $("select[name='disk_id']").append(html);
+        //             form.render('select');      //重新渲染
+        //         }
+        //     });
+        // });
+
+
+
+        // 确认按钮
+        $('#form-submit').on('click', function () {
+            $.ajax({
+                url: "/admin/author/edit/{{ data['id'] }}"
+                ,type: "POST"
+                ,dataType: "json"
+                ,data: $('#form1').serialize()
+                ,success: function (data) {
+                    if(data.code==0){
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index);
+                    }else{
+                        layer.msg(data.msg)
+                    }
+                }
+            });
+        });
+    });
+</script>

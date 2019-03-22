@@ -1,13 +1,63 @@
 # -*- coding:utf-8 -*-
 import config, json, requests
+from flask import session
 from app import MongoDB
 from app import common
 from ...admin.drive import models
 from ...admin.drive import logic
-"""
-    前台MongoDB数据
-"""
+from ...admin.author import models as authorModels
 
+
+
+"""
+    URL 权限判断
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-22
+    drive_id: 驱动ID
+    path: 路径
+"""
+def author_judge(drive_id, path=''):
+    if path:
+        path = path[1:]
+        temp = path.split('/')
+        temp_path = ""
+        for item in temp:
+            temp_path += "/"+item
+            res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
+            if res:
+                if res.password != session.get('password'):
+                    return res
+                else:
+                    return
+    else:
+        res = authorModels.authrule.find_by_drive_id(drive_id, path)
+        return res
+
+
+"""
+    URL 密码查询
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-22
+    drive_id: 驱动ID
+    path: 路径
+    password: 密码
+"""
+def author_password(drive_id, path='', password=''):
+    if path:
+        path = path[1:]
+        temp = path.split('/')
+        temp_path = ""
+        for item in temp:
+            temp_path += "/"+item
+            res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
+            if res:
+                if res.password == password:
+                    return res
+    else:
+        res = authorModels.authrule.find_by_drive_id(drive_id, path)
+        return res
 
 
 """

@@ -1,10 +1,23 @@
 # -*- coding:utf-8 -*-
 import re, urllib.parse, json
-from flask import render_template, request, make_response, redirect
+from flask import render_template, request, make_response, redirect, session
 from app.admin.drive import models as driveModels
 from app.admin.system import models as systemModels
 from ..index import index
 from ..index import logic
+
+@index.before_request
+def toggle_web_site():
+    toggle_web_site = systemModels.config.toggle_web_site()
+    if toggle_web_site == "0":
+        return render_template('toggle/index_1.html')
+    else:
+        drive = request.args.get('drive')
+        path = '' if request.args.get('path') is None else request.args.get('path')
+        if drive:
+            author = logic.author_judge(drive, path)
+            if author:
+                return render_template('index/author.html', drive_id=drive, path=path)
 
 
 # 基本配置
@@ -44,37 +57,33 @@ def drive_list():
 
 @index.route('/')  # 默认首页
 def _index():
-    toggle_web_site = systemModels.config.toggle_web_site()
-    if toggle_web_site == "0":
-        return render_template('toggle/index_1.html')
-    else:
-        drive = request.args.get('drive')
-        disk = request.args.get('disk')
-        # 优先进行条件查询
-        if drive:
-            driveurl = '/?drive={}'.format(drive)
-            if disk:
-                disk_id = disk
-                driveurl = '{}&disk={}'.format(driveurl, disk)
-            else:
-                disk_id = driveModels.drive_list.find_by_chief(drive).id
-                driveurl = '{}&disk={}'.format(driveurl, disk_id)
-
-            if request.args.get('path'):
-                path = request.args.get('path')
-                data = logic.get_disk(disk_id, path)
-                current_url = '{}&path={}'.format(driveurl, path)
-            else:
-                data = logic.get_disk(disk_id)
-                current_url = '{}&path='.format(driveurl)
+    drive = request.args.get('drive')
+    disk = request.args.get('disk')
+    # 优先进行条件查询
+    if drive:
+        driveurl = '/?drive={}'.format(drive)
+        if disk:
+            disk_id = disk
+            driveurl = '{}&disk={}'.format(driveurl, disk)
         else:
-            activate = driveModels.drive.find_activate()
-            drive = activate.id
-            disk_id = driveModels.drive_list.find_by_chief(activate.id).id
-            data = logic.get_disk(disk_id)
-            current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
+            disk_id = driveModels.drive_list.find_by_chief(drive).id
+            driveurl = '{}&disk={}'.format(driveurl, disk_id)
 
-        return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data)
+        if request.args.get('path'):
+            path = request.args.get('path')
+            data = logic.get_disk(disk_id, path)
+            current_url = '{}&path={}'.format(driveurl, path)
+        else:
+            data = logic.get_disk(disk_id)
+            current_url = '{}&path='.format(driveurl)
+    else:
+        activate = driveModels.drive.find_activate()
+        drive = activate.id
+        disk_id = driveModels.drive_list.find_by_chief(activate.id).id
+        data = logic.get_disk(disk_id)
+        current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
+
+    return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data)
 
 
 @index.route('/video/<int:drive_id>/<int:disk_id>/<string:id>')
@@ -105,3 +114,16 @@ def down_file(drive_id, disk_id, id):
     data = make_response(redirect(response["url"]))
     data.headers["Content-Disposition"] = "attachment;"
     return data
+
+
+@index.route('/approve', methods=['POST'])    # 认证密码，写入session
+def approve():
+    drive_id = request.form['drive_id']
+    path = request.form['path']
+    password = request.form['password']
+    res = logic.author_password(drive_id, path, password)
+    if res:
+        session['password'] = password
+        return json.dumps({"code": 0, "msg": "密码正确！"})
+    else:
+        return json.dumps({"code": 1, "msg": "密码错误！"})
