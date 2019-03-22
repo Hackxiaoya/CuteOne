@@ -3,9 +3,9 @@
 {% block body %}
     <ul class="mdui-list">
         <li class="mdui-list-item th">
-            <div class="mdui-col-xs-12 mdui-col-sm-7">文件 <i class="mdui-icon material-icons icon-sort" data-sort="name" data-order="downward">expand_more</i></div>
-            <div class="mdui-col-sm-3 mdui-text-right">修改时间 <i class="mdui-icon material-icons icon-sort" data-sort="date" data-order="downward">expand_more</i></div>
-            <div class="mdui-col-sm-2 mdui-text-right">大小 <i class="mdui-icon material-icons icon-sort" data-sort="size" data-order="downward">expand_more</i></div>
+            <div class="mdui-col-xs-12 mdui-col-sm-7">文件 <i class="mdui-icon material-icons icon-sort" data-table="name" data-sort="more">expand_more</i></div>
+            <div class="mdui-col-sm-3 mdui-text-right">修改时间 <i class="mdui-icon material-icons icon-sort" data-table="lastModifiedDateTime" data-sort="more">expand_more</i></div>
+            <div class="mdui-col-sm-2 mdui-text-right">大小 <i class="mdui-icon material-icons icon-sort" data-table="size" data-sort="more">expand_more</i></div>
         </li>
         {% for v in data %}
             <li class="mdui-list-item mdui-ripple">
@@ -49,6 +49,33 @@
                     <a href="javascript:void(0);" class="video_open" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}">
                         <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
                             <i class="mdui-icon material-icons">videocam</i>
+                            <span>{{ v.name }}</span>
+                        </div>
+                        <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                        <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                    </a>
+                {% elif v.file=="application/msword" %}
+                    <a href="javascript:void(0);" class="down_file" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}">
+                        <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                            <i class="mdui-icon material-icons">description</i>
+                            <span>{{ v.name }}</span>
+                        </div>
+                        <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                        <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                    </a>
+                {% elif v.file=="application/vnd.ms-excel" %}
+                    <a href="javascript:void(0);" class="down_file" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}">
+                        <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                <i class="mdui-icon material-icons">description</i>
+                            <span>{{ v.name }}</span>
+                        </div>
+                        <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                        <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                    </a>
+                {% elif v.file=="application/pdf" %}
+                    <a href="javascript:void(0);" class="down_file" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}">
+                        <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                <i class="mdui-icon material-icons">description</i>
                             <span>{{ v.name }}</span>
                         </div>
                         <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>

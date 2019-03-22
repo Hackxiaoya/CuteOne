@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import re, urllib.parse, json
 from flask import render_template, request, make_response, redirect, session
+from flask_paginate import Pagination, get_page_parameter
 from app.admin.drive import models as driveModels
 from app.admin.system import models as systemModels
 from ..index import index
@@ -8,7 +9,7 @@ from ..index import logic
 
 @index.before_request
 def toggle_web_site():
-    toggle_web_site = systemModels.config.toggle_web_site()
+    toggle_web_site = systemModels.config.get_config("toggle_web_site")
     if toggle_web_site == "0":
         return render_template('toggle/index_1.html')
     else:
@@ -55,10 +56,22 @@ def drive_list():
     return dict(drive_list=drive_list, crumbs_url=crumbs_url, crumbs_list_data=crumbs_list_data)
 
 
+# 当前排序的key
+@index.context_processor
+def tableSort():
+    sortTable = 'lastModifiedDateTime' if request.args.get('sortTable') is None else request.args.get('sortTable')
+    sortType = 'more' if request.args.get('sortType') is None else request.args.get('sortType')
+    return dict(sortTable=sortTable, sortType=sortType)
+
+
+
 @index.route('/')  # 默认首页
 def _index():
+    # page_number = systemModels.config.get_config("page_number")   # 未完成的页码
     drive = request.args.get('drive')
     disk = request.args.get('disk')
+    sortTable = 'lastModifiedDateTime' if request.args.get('sortTable') is None else request.args.get('sortTable')
+    sortType = 'more' if request.args.get('sortType') is None else request.args.get('sortType')
     # 优先进行条件查询
     if drive:
         driveurl = '/?drive={}'.format(drive)
@@ -71,16 +84,16 @@ def _index():
 
         if request.args.get('path'):
             path = request.args.get('path')
-            data = logic.get_disk(disk_id, path)
+            data = logic.get_data(disk_id, path, sortTable, sortType)
             current_url = '{}&path={}'.format(driveurl, path)
         else:
-            data = logic.get_disk(disk_id)
+            data = logic.get_data(disk_id, '', sortTable, sortType)
             current_url = '{}&path='.format(driveurl)
     else:
         activate = driveModels.drive.find_activate()
         drive = activate.id
         disk_id = driveModels.drive_list.find_by_chief(activate.id).id
-        data = logic.get_disk(disk_id)
+        data = logic.get_data(disk_id, '', sortTable, sortType)
         current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
 
     return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data)
@@ -127,3 +140,30 @@ def approve():
         return json.dumps({"code": 0, "msg": "密码正确！"})
     else:
         return json.dumps({"code": 1, "msg": "密码错误！"})
+
+
+@index.route('/search', methods=['GET'])    # 文件搜索 - 未完成
+def search():
+    drive = request.args.get('drive')
+    # 优先进行条件查询
+    if drive:
+        driveurl = '/?drive={}'.format(drive)
+        disk_id = driveModels.drive_list.find_by_chief(drive).id
+        driveurl = '{}&disk={}'.format(driveurl, disk_id)
+
+        if request.args.get('path'):
+            path = request.args.get('path')
+            data = logic.get_disk(disk_id, path)
+            current_url = '{}&path={}'.format(driveurl, path)
+        else:
+            data = logic.get_disk(disk_id)
+            current_url = '{}&path='.format(driveurl)
+    else:
+        activate = driveModels.drive.find_activate()
+        drive = activate.id
+        disk_id = driveModels.drive_list.find_by_chief(activate.id).id
+        data = logic.get_disk(disk_id)
+        current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
+
+    return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id,
+                           current_url=current_url, data=data)

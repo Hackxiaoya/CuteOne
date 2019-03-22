@@ -26,12 +26,12 @@ def task_getlist(id, path, type):
         path = ''
     res = logic.get_one_file_list(id, path)
     try:
+        # 创建集合 - 不添加一条数据，集合是不会创建的，因为MongoDB是惰性数据库
+        drivename = "drive_" + str(id)
+        collection = MongoDB.db[drivename]
         for i in res["data"]["value"]:
-            if "folder" in i.keys():
-                # 创建集合 - 不添加一条数据，集合是不会创建的，因为MongoDB是惰性数据库
-                drivename = "drive_" + str(id)
-                collection = MongoDB.db[drivename]
-                if type == "all":
+            if type == "all":
+                if "folder" in i.keys():
                     dic = {
                         "id": i["id"],
                         "parentReference": i["parentReference"]["id"],
@@ -43,9 +43,19 @@ def task_getlist(id, path, type):
                         "lastModifiedDateTime": common.utc_to_local(i["fileSystemInfo"]["lastModifiedDateTime"])
                     }
                     collection.insert_one(dic)
+                    t = threading.Thread(target=task_getlist, args=(id, "/" + path + "/" + i["name"], type,))
+                    t.start()
                 else:
+                    t = threading.Thread(target=task_write, args=(id, i, type,))
+                    t.start()
+            else:
+                if "folder" in i.keys():
                     if collection.find_one({"id": i["id"]}):
-                        setUpdata = {
+                        t = threading.Thread(target=task_getlist, args=(id, "/" + path + "/" + i["name"], type,))
+                        t.start()
+                    else:
+                        dic = {
+                            "id": i["id"],
                             "parentReference": i["parentReference"]["id"],
                             "name": i["name"],
                             "file": "folder",
@@ -54,12 +64,12 @@ def task_getlist(id, path, type):
                             "createdDateTime": common.utc_to_local(i["fileSystemInfo"]["createdDateTime"]),
                             "lastModifiedDateTime": common.utc_to_local(i["fileSystemInfo"]["lastModifiedDateTime"])
                         }
-                        collection.update_one({"id": i["id"]}, {"$set": setUpdata})
-                t = threading.Thread(target=task_getlist, args=(id, "/"+path+"/"+i["name"], type,))
-                t.start()
-            else:
-                t = threading.Thread(target=task_write, args=(id, i, type,))
-                t.start()
+                        collection.insert_one(dic)
+                        t = threading.Thread(target=task_getlist, args=(id, "/" + path + "/" + i["name"], type,))
+                        t.start()
+                else:
+                    t = threading.Thread(target=task_write, args=(id, i, type,))
+                    t.start()
     except:
         task_getlist(id, path, type)
 
@@ -100,17 +110,6 @@ def task_write(id, data, type):
                 "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"])
             }
             collection.insert_one(dic)
-        # if collection.find_one({"id": data["id"]}) == "None":
-        #     setUpdata = {
-        #         "parentReference": data["parentReference"]["id"],
-        #         "name": data["name"],
-        #         "file": data["file"]["mimeType"],
-        #         "path": data["parentReference"]["path"].replace("/drive/root:", ""),
-        #         "size": data["size"],
-        #         "createdDateTime": common.utc_to_local(data["fileSystemInfo"]["createdDateTime"]),
-        #         "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"])
-        #     }
-        #     collection.update_one({"id": data["id"]}, {"$set": setUpdata})
 
 
 

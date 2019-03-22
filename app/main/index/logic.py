@@ -2,6 +2,7 @@
 import config, json, requests
 from flask import session
 from app import MongoDB
+import pymongo
 from app import common
 from ...admin.drive import models
 from ...admin.drive import logic
@@ -67,16 +68,26 @@ def author_password(drive_id, path='', password=''):
     @Time: 2019-03-16
     disk_id: 驱动ID
     path: 路径
+    sortTable: 排序字段
+    sortType： 排序类型  less是ASCENDING升序，more是DESCENDING降序
 """
-def get_disk(disk_id, path=''):
+def get_data(disk_id, path='', sortTable='lastModifiedDateTime', sortType='more'):
     drivename = "drive_" + str(disk_id)
     collection = MongoDB.db[drivename]
     data = []
-    for x in collection.find({"path":path}):
+    if sortType == "more":
+        sortType = pymongo.DESCENDING
+    else:
+        sortType = pymongo.ASCENDING
+    result = collection.find({"path":path}).sort([(sortTable, sortType)])
+    for x in result:
         x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
         x["createdDateTime"] = str(x["createdDateTime"])
         x["size"] = common.size_cov(x["size"])
-        data.append(x)
+        if x["file"] == "folder":
+            data.insert(0, x)
+        else:
+            data.append(x)
     return data
 
 
