@@ -44,14 +44,14 @@ def author_edit(id):
             result["id"] = data_list.id
             result["title"] = data_list.title
             result["drive_id"] = data_list.drive_id
-            result["folder_name"] = data_list.folder_name
+            result["path"] = data_list.path
             result["password"] = data_list.password
         else:
             result = {
                 'id': '0'
                 , 'title': ''
                 , 'drive_id': ''
-                , 'folder_name': ''
+                , 'path': ''
                 , 'password': 0
             }
         return render_template('admin/author/edit.html', top_nav='author', activity_nav='edit', drive_list=drive_data, data=result)
@@ -59,13 +59,13 @@ def author_edit(id):
         id = request.form['id']
         title = request.form['title']
         drive_id = request.form['drive_id']
-        folder_name = request.form['folder_name']
+        path = request.form['path']
         password = request.form['password']
         if id != '0':
-            models.authrule.update({"id": id, "title": title, "drive_id": drive_id, "folder_name": folder_name, "password": password})
+            models.authrule.update({"id": id, "title": title, "drive_id": drive_id, "path": path, "password": password})
         else:
             # 初始化role 并插入数据库
-            role = models.authrule(title=title, drive_id=drive_id, folder_name=folder_name, password=password)
+            role = models.authrule(title=title, drive_id=drive_id, path=path, password=password)
             MysqlDB.session.add(role)
             MysqlDB.session.commit()
         return json.dumps({"code": 0, "msg": "完成！"})
