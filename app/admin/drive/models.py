@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-import time
+import time, json
 from app import MysqlDB
 from app import MongoDB
 from sqlalchemy import and_,or_
@@ -53,6 +53,7 @@ class drive(MysqlDB.Model):
     @classmethod
     def update(cls, data):
         cls.query.filter(cls.id == data['id']).update(data)
+        MysqlDB.session.flush()
         MysqlDB.session.commit()
         MysqlDB.session.close()
         return
@@ -61,6 +62,7 @@ class drive(MysqlDB.Model):
     def deldata(cls, id):
         data = cls.query.filter(cls.id == id).first()
         MysqlDB.session.delete(data)
+        MysqlDB.session.flush()
         MysqlDB.session.commit()
         MysqlDB.session.close()
         return
@@ -113,6 +115,7 @@ class drive_list(MysqlDB.Model):
     @classmethod
     def update(cls, data):
         cls.query.filter(cls.id == data['id']).update(data)
+        MysqlDB.session.flush()
         MysqlDB.session.commit()
         MysqlDB.session.close()
         return
@@ -123,6 +126,7 @@ class drive_list(MysqlDB.Model):
         data = cls.query.filter(cls.id == id).first()
         mongodb_del_drive(data.id)
         MysqlDB.session.delete(data)
+        MysqlDB.session.flush()
         MysqlDB.session.commit()
         MysqlDB.session.close()
         return
@@ -134,6 +138,7 @@ class drive_list(MysqlDB.Model):
         for item in data:
             mongodb_del_drive(item.id)
             MysqlDB.session.delete(item)
+            MysqlDB.session.flush()
             MysqlDB.session.commit()
         MysqlDB.session.close()
         return
@@ -151,3 +156,9 @@ def mongodb_del_drive(id):
 def mongodb_count(id):
     drivename = "drive_" + str(id)
     return MongoDB.db[drivename].count()  # 查询总数
+
+# 查询MongoDB的指定网盘指定路径ID
+def mongodb_find_parent_id(id, path):
+    collection = "drive_" + str(id)
+    res = json.dumps(collection.find({"path": path}))
+    return res["id"]

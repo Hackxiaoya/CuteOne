@@ -20,7 +20,9 @@
                 </div>
                 <div class="layui-card-body">
                     <div style="padding-bottom: 10px;">
-                        <button class="layui-btn" layadmin-event="add">上传文件</button>
+                        <button class="layui-btn" layadmin-event="create">创建文件夹</button>
+                        <button class="layui-btn" layadmin-event="uploadssmall">上小传文件</button>
+                        <button class="layui-btn" layadmin-event="uploadsbig">上大传文件</button>
                     </div>
                     <table class="layui-hide" id="list-table" lay-filter="list-table">
                         <thead>
@@ -107,6 +109,54 @@
         var $ = layui.$;
         var form = layui.form;
         var table = layui.table;
+
+        // 新增一个创建文件夹事件
+         clickMethod.create = function () {
+             layer.prompt({title: '输入文件夹名称', formType: 0}, function(fileName, index){
+                 $.ajax({
+                      url: "/admin/drive/folder_create"
+                     ,type: "POST"
+                     ,dataType: "json"
+                     ,data: {id:'{{ id }}', path:"{{current_url}}", fileName:fileName}
+                     ,success: function (data) {
+                         if(data.code==0){
+                             layer.close(index);
+                             location.reload()
+                         }else{
+                             layer.msg(data.msg)
+                         }
+                     }
+                 });
+             });
+        };
+
+        // 新增一个上传文件事件
+        clickMethod.uploadsbig = function () {
+            layer.open({
+                type: 2
+                ,title: '上传大文件'
+                ,shadeClose: false
+                ,area: ["800px", "550px"]
+                ,content: '/admin/drive/file_uploads_big/{{ drive_id }}/?path={{uploads_path}}'
+                ,end: function () {
+                    tablerender();  // 渲染表格
+                }
+            })
+        };
+        // 新增一个上传文件事件
+        clickMethod.uploadssmall = function () {
+            layer.open({
+                type: 2
+                ,title: '上传小文件'
+                ,shadeClose: false
+                ,area: ["800px", "550px"]
+                ,content: '/admin/drive/file_uploads_small/{{ drive_id }}/?path={{uploads_path}}'
+                ,end: function () {
+                    tablerender();  // 渲染表格
+                }
+            })
+        };
+
         // 静态表格
         table.init('list-table', {
             height: 500 //设置高度

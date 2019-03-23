@@ -46,5 +46,6 @@ class config(MysqlDB.Model):
     def update(cls, data):
         print(data)
         cls.query.filter(cls.name == data['name']).update(data)
+        MysqlDB.session.flush()
         MysqlDB.session.commit()
         return

@@ -1,12 +1,13 @@
 # -*- coding:utf-8 -*-
 from flask import request, render_template, json
 import config
-import requests
+import os, requests, re
 from app import MysqlDB
 from app import decorators
 from app.admin import admin
 from ..drive import models
 from ..drive import logic
+from ..task import models as taskModels
 from app import common
 
 
@@ -65,6 +66,7 @@ def edit(id):
             # 初始化role 并插入数据库
             role = models.drive(title=title, description=description, activate=activate, sort=sort)
             MysqlDB.session.add(role)
+            MysqlDB.session.flush()
             MysqlDB.session.commit()
         return json.dumps({"code": 0, "msg": "完成！"})
 
@@ -149,8 +151,90 @@ def disk_edit(drive_id, id):
             # 初始化role 并插入数据库
             role = models.drive_list(title=title, drive_id=drive_id, client_id=client_id, client_secret=client_secret, token=token, chief=chief)
             MysqlDB.session.add(role)
+            MysqlDB.session.flush()
             MysqlDB.session.commit()
         return json.dumps({"code": 0, "msg": "完成！"})
+
+
+@admin.route('/drive/file_uploads_big/<int:drive_id>', methods=['GET']) # 大文件上传
+@admin.route('/drive/file_uploads_big/<int:drive_id>/', methods=['GET'])
+@decorators.login_require
+def file_uploads_big(drive_id):
+    path = request.args.get('path')
+    return render_template('admin/drive/file_uploads_big.html', top_nav='drive', activity_nav='file_uploads', drive_id=drive_id, path=path)
+
+@admin.route('/drive/file_uploads_small/<int:drive_id>', methods=['GET']) # 小文件上传
+@admin.route('/drive/file_uploads_small/<int:drive_id>/', methods=['GET'])
+@decorators.login_require
+def file_uploads_small(drive_id):
+    path = request.args.get('path')
+    return render_template('admin/drive/file_uploads_small.html', top_nav='drive', activity_nav='file_uploads', drive_id=drive_id, path=path)
+
+
+
+@admin.route('/drive/file_uploads', methods=['POST'])
+@decorators.login_require
+def file_uploads():
+    md5value = request.form['md5value']
+    chunk = request.form['chunk']
+    file = request.files['file']
+    file_path = os.getcwd()+"/temp_uploads/"+ md5value
+    isExists = os.path.exists(file_path)
+    if not isExists:
+        # 如果不存在则创建目录
+        os.makedirs(file_path)
+        file.save(file_path + "/" + chunk)
+    return json.dumps({})
+
+
+@admin.route('/drive/file_uploads_check', methods=['GET', 'POST'])
+@decorators.login_require
+def file_uploads_check():
+    md5 = request.form['md5']
+    # 通过MD5唯一标识找到缓存文件
+    file_path = os.getcwd()+"/temp_uploads/" + md5
+    if os.path.exists(file_path):
+        block_info = os.listdir(file_path)
+        return json.dumps({'block_info': block_info})
+    else:
+        return json.dumps({})
+
+
+@admin.route('/drive/file_uploads_success', methods=['GET', 'POST'])
+@decorators.login_require
+def file_uploads_success():
+    drive_id = request.form['drive_id']
+    path = request.form['path']
+    md5 = request.form['md5']
+    fileName = request.form['fileName']
+    target_filename = os.getcwd()+"/temp_uploads/" + md5    # 获取上传文件的文件名
+    ok_file = os.getcwd()+"/temp_uploads/" + drive_id + "/" + fileName
+    if not os.path.exists(os.getcwd()+"/temp_uploads/" + drive_id):
+        # 如果不存在则创建目录
+        os.makedirs(os.getcwd()+"/temp_uploads/" + drive_id)
+    chunk = 0
+    with open(ok_file, 'wb') as target_file:  # 创建新文件
+        while True:
+            try:
+                filename = target_filename + "/" + str(chunk)
+                source_file = open(filename, 'rb')  # 按序打开每个分片
+                target_file.write(source_file.read())  # 读取分片内容写入新文件
+                source_file.close()
+            except IOError:
+                break
+            chunk += 1
+            os.remove(filename)  # 删除该分片
+    if os.path.exists(target_filename):
+        os.rmdir(target_filename)   # 删除文件夹
+
+    # 初始化role 并插入数据库
+    role = taskModels.task(drive_id=drive_id, file_name=fileName,path=path, type='uploads', status=0)
+    MysqlDB.session.add(role)
+    MysqlDB.session.flush()
+    MysqlDB.session.commit()
+    # 推送到上传任务
+    logic.pull_uploads(role.id, drive_id, fileName, path)
+    return json.dumps({"code": 0, "msg": "完成！"})
 
 
 @admin.route('/drive/disk_del/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
@@ -173,6 +257,8 @@ def update_cache():
 @admin.route('/drive/files/<int:id>/', methods=['GET'])
 @decorators.login_require
 def files(id):
+    drive_id = models.drive_list.find_by_id(id).drive_id
+    uploads_path = request.args.get('path')
     if request.args.get('path'):
         path = request.args.get("path")
         current_url = '/admin/drive/files/' + str(id) + '/?path=' + path
@@ -185,7 +271,18 @@ def files(id):
         i["lastModifiedDateTime"] = common.utc_to_local(i["lastModifiedDateTime"])
         i["size"] = common.size_cov(i["size"])
     data = data["data"]["value"]
-    return render_template('admin/drive/files.html', top_nav='drive', activity_nav='edit', id=id, current_url=current_url, data=data)
+    return render_template('admin/drive/files.html', top_nav='drive', activity_nav='edit', id=id, current_url=current_url, drive_id=drive_id, uploads_path=uploads_path, data=data)
+
+
+@admin.route('/drive/folder_create', methods=['POST'])
+@decorators.login_require
+def folder_create():
+    id = request.form['id']
+    path = request.form['path']
+    fileName = request.form['fileName']
+    path = re.findall('\?path=(.*?)', path)[0]
+    logic.folder_create(id, path, fileName)
+    return json.dumps({"code": 0, "msg": "成功！"})
 
 
 @admin.route('/drive/rename_files', methods=['POST'])

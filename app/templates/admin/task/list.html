@@ -1,6 +1,62 @@
 {% extends 'admin/public/layout.html' %}
 
 {% block style %}
+<style>
+    .layui-btn-scan {
+        position: absolute;
+        right: 1%;
+        top: 10px;
+    }
+    .custom-style {
+
+    }
+    .radio{
+        display: inline-block;
+        position: relative;
+        line-height: 18px;
+        margin: 10px 50px;
+        cursor: pointer;
+    }
+    .radio input{
+        opacity: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+    }
+    .radio .radio-bg{
+        display: inline-block;
+        height: 18px;
+        width: 18px;
+        margin-right: 5px;
+        padding: 0;
+        background-color: #45bcb8;
+        border-radius: 100%;
+        vertical-align: top;
+        box-shadow: 0 1px 15px rgba(0, 0, 0, 0.1) inset, 0 1px 4px rgba(0, 0, 0, 0.1) inset, 1px -1px 2px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .radio .radio-on{
+        display: none;
+    }
+    .radio input:checked + span.radio-on{
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        border-radius: 100%;
+        background: #FFFFFF;
+        top: 4px;
+        left: 4px;
+        box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.3), 0 0 1px rgba(255, 255, 255, 0.4) inset;
+        background-image: linear-gradient(#ffffff 0, #e7e7e7 100%);
+        transform: scale(0, 0);
+        transition: all 0.2s ease;
+        transform: scale(1, 1);
+        display: inline-block;
+    }
+
+</style>
 {% endblock %}
 
 {% block body %}
@@ -9,15 +65,14 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    {{ data.title }} - 网盘列表
+                    任务列表
                 </div>
                 <div class="layui-card-body">
-                    <div style="padding-bottom: 10px;">
-                        <button class="layui-btn" layadmin-event="add">添加网盘</button>
-                    </div>
+                    <!--<div style="padding-bottom: 10px;">-->
+                        <!--<button class="layui-btn" layadmin-event="add">添加任务</button>-->
+                    <!--</div>-->
                     <table class="layui-hide" id="list-table" lay-filter="list-table"></table>
                     <script type="text/html" id="list-table-bar">
-                        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="files"><i class="fa fa-folder-o"></i>管理</a>
                         <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
                         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
                     </script>
@@ -33,14 +88,15 @@
     layui.use(['layer', 'table', 'form'], function(){
         var $ = layui.$;
         var form = layui.form;
+
         // 新增一个新增设备事件
         clickMethod.add = function () {
             layer.open({
                 type: 2
-                ,title: '添加网盘'
+                ,title: '添加任务'
                 ,shadeClose: true
                 ,area: ["550px", "550px"]
-                ,content: '/admin/drive/disk_edit/{{ data.id }}/0'
+                ,content: '/admin/task/edit/0'
                 ,end: function () {
                     tablerender();  // 渲染表格
                 }
@@ -55,14 +111,14 @@
                 ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
                 ,cols: [[
                     {field:'id', width:80, title: 'ID'}
-                    ,{field:'title', width:150, title: '标题'}
-                    ,{field:'client_id', width:200, title: '应用ID'}
-                    ,{field:'client_secret', width:200, title: '应用机密'}
-                    ,{field:'chief', width:200, title: '主从类型'}
-                    ,{field:'count', width:100, title: '缓存量'}
+                    ,{field:'dirve_name', width:150, title: '驱动'}
+                    ,{field:'file_name', width:200, title: '文件名'}
+                    ,{field:'path', width:200, title: '远程路径'}
+                    ,{field:'type', width:100, title: '类型'}
+                    ,{field:'status', width:100, title: '状态'}
                     ,{field:'update_time', width:180, title: '更新时间'}
                     ,{field:'create_time', width:180, title: '创建时间'}
-                    ,{title:"操作", width:250, align:"center", fixed:"right", toolbar:"#list-table-bar"}
+                    ,{title:"操作", width:310, align:"center", fixed:"right", toolbar:"#list-table-bar"}
                 ]]
             });
         };
@@ -72,13 +128,13 @@
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的DOM对象
 
-            if(layEvent === 'files'){ //查看文件
-                self.location.href = '/admin/drive/files/'+data.id
+            if(layEvent === 'manage'){ //管理
+                // self.location.href = '/admin/drive/disk_list/'+data.id
             } else if(layEvent === 'del'){ //删除
-                 layer.confirm('真的删除这个网盘吗？', function(index){
+                layer.confirm('真的删除这个任务吗？', function(index){
                     //向服务端发送删除指令
                     $.ajax({
-                        url: "/admin/drive/disk_del/"+data.id
+                        url: "/admin/task/del/"+data.id
                         ,type: "GET"
                         ,dataType: "json"
                         ,success: function (data) {
@@ -95,14 +151,14 @@
             } else if(layEvent === 'edit'){ //编辑
                 layer.open({
                     type: 2
-                    ,title: '编辑网盘'
+                    ,title: '编辑驱动'
                     ,shadeClose: true
                     ,area: ["550px", "550px"]
-                    ,content: '/admin/drive/disk_edit/{{ data.id }}/'+data.id
+                    ,content: '/admin/task/edit/'+data.id
                     ,end: function () { // 层被关闭，重新渲染
                         tablerender();
                     }
-                })
+                });
             }
         });
     });

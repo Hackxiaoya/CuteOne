@@ -61,11 +61,43 @@ def get_one_file_list(id, path=''):
 
 
 """
+    OneDrive 创建文件
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-16
+    id: 网盘ID
+    path: 远程路径
+    fileName: 文件夹名字
+"""
+def folder_create(id, path, fileName):
+    data_list = models.drive_list.find_by_id(id)
+    token = json.loads(json.loads(data_list.token))
+    if path:
+        parent_id = models.mongodb_find_parent_id(id, path)
+        url = config.app_url + '/v1.0/me/drive/items/{}/children'.format(parent_id)
+    else:
+        url = config.app_url + '/v1.0/me/drive/root/children'
+    headers = {'Authorization': 'bearer {}'.format(token["access_token"]), 'Content-Type': 'application/json'}
+    payload = {
+        "name": fileName,
+        "folder": {},
+        "@microsoft.graph.conflictBehavior": "rename"
+    }
+    get_res = requests.post(url, headers=headers, data=json.dumps(payload))
+    get_res = json.loads(get_res.text)
+    if 'error' in get_res.keys():
+        reacquireToken(id)
+        folder_create(id, parent_id, fileName)
+    else:
+        return {'code': True, 'msg': '成功', 'data':''}
+
+
+"""
     OneDrive 重命名文件
     @Author: yyyvy <76836785@qq.com>
     @Description:
     @Time: 2019-03-16
-    token: 网盘ID
+    id: 网盘ID
     fileid: 源文件id
     new_name: 新文件名字
 """
@@ -91,7 +123,7 @@ def rename_files(id, fileid, new_name):
     @Author: yyyvy <76836785@qq.com>
     @Description:
     @Time: 2019-03-16
-    token: 网盘ID
+    id: 网盘ID
     fileid: 源文件id
 """
 def delete_files(id, fileid):
@@ -119,7 +151,7 @@ def update_cache(drive_id, type):
     driveinfo = models.drive_list.find_by_drive_id(drive_id)
     threads = []
     for i in driveinfo:
-        command = "python3 {}/app/task/cuteTask.py {} {}".format(os.getcwd(), i.id, type)  # 后台任务文件路
+        command = "python {}/app/task/cuteTask.py {} {}".format(os.getcwd(), i.id, type)  # 后台任务文件路
         t = threading.Thread(target=run_command, args=(command,))
         threads.append(t)
     for t in threads:
@@ -141,10 +173,15 @@ def run_command(command):
 
 
 """
-    MongoDB 更新缓存 后台任务
+    推送上传任务
     @Author: yyyvy <76836785@qq.com>
     @Description:
-    @Time: 2019-03-16
+    @Time: 2019-03-24
+    task_id: 任务id
+    dirve_id: 驱动id
+    fileName: 文件名称
+    remotePath: 远程路径
 """
-def cache_task():
-    print(1)
+def pull_uploads(task_id, dirve_id, fileName, remotePath):
+    command = "python {}/app/task/uploads.py {} {} {} {}".format(os.getcwd(), task_id, dirve_id, fileName, remotePath)
+    run_command(command)

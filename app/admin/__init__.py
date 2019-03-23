@@ -15,3 +15,4 @@ from .index import views
 from .system import views
 from .drive import views
 from .author import views
+from .task import views

@@ -3,13 +3,13 @@ import time
 from app import MysqlDB
 from sqlalchemy import and_,or_
 
-class authrule(MysqlDB.Model):
-    __tablename__ = 'cuteone_auth_rule'
+class task(MysqlDB.Model):
+    __tablename__ = 'cuteone_task'
     id = MysqlDB.Column(MysqlDB.INT, primary_key=True)
-    title = MysqlDB.Column(MysqlDB.String(255), unique=False)
     drive_id = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    file_name = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    type = MysqlDB.Column(MysqlDB.String(255), unique=False)
     path = MysqlDB.Column(MysqlDB.String(255), unique=False)
-    password = MysqlDB.Column(MysqlDB.String(255), unique=False)
     status = MysqlDB.Column(MysqlDB.String(255), unique=False, default=1)
     update_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'), onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))
     create_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'))
@@ -32,8 +32,8 @@ class authrule(MysqlDB.Model):
     def deldata(cls, id):
         data = cls.query.filter(cls.id == id).first()
         MysqlDB.session.delete(data)
-        MysqlDB.session.flush()
         MysqlDB.session.commit()
+        MysqlDB.session.flush()
         MysqlDB.session.close()
         return
 
@@ -44,6 +44,7 @@ class authrule(MysqlDB.Model):
         data = cls.query.filter(and_(cls.drive_id == drive_id, or_(cls.path == '', cls.path == path))).first()
         MysqlDB.session.close()
         return data
+
 
     @classmethod
     def update(cls, data):

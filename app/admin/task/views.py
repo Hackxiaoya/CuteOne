@@ -3,34 +3,40 @@ from flask import request, render_template, json
 from app import MysqlDB
 import config
 from .. import admin
-from ..author import models
+from . import models
 from ..drive import models as driveModels
 from app import common
 from app import decorators
 
 
 
-@admin.route('/author/list', methods=['GET'])
-@admin.route('/author/list/')
+@admin.route('/task/list', methods=['GET'])
+@admin.route('/task/list/')
 @decorators.login_require
-def author_list():
+def task_list():
     if request.args.get('page'):
-        data_list = models.authrule.all()
+        data_list = models.task.all()
         json_data = {"code": 0, "msg": "", "count": 0, "data": []}
         if data_list:
             for result in data_list:
                 json_data["count"] = json_data["count"]+1
                 dirve_name = driveModels.drive.find_by_id(result.drive_id).title
+                if result.status == "0":
+                    result.status = "暂停"
+                elif result.status == "1":
+                    result.status = "完成"
+                else:
+                    result.status = "进行中"
                 json_data["data"].append(
-                    {"id": result.id, "title": result.title, "dirve_name": dirve_name, "path": result.path, "password": result.password, "update_time":str(result.update_time), "create_time": str(result.create_time)})
+                    {"id": result.id, "dirve_name": dirve_name, "path": result.path, "file_name":result.file_name, "type": result.type, "status":result.status, "update_time":str(result.update_time), "create_time": str(result.create_time)})
         return json.dumps(json_data)
     else:
-        return render_template('admin/author/list.html', top_nav='author', activity_nav='list')
+        return render_template('admin/task/list.html', top_nav='task', activity_nav='list')
 
 
-@admin.route('/author/edit/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
+@admin.route('/task/edit/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
 @decorators.login_require
-def author_edit(id):
+def task_edit(id):
     if request.method == 'GET':
         drive_list = driveModels.drive.all()
         drive_data = []
@@ -71,8 +77,8 @@ def author_edit(id):
         return json.dumps({"code": 0, "msg": "完成！"})
 
 
-@admin.route('/author/del/<int:id>', methods=['GET', 'POST'])  # 删除
+@admin.route('/task/del/<int:id>', methods=['GET', 'POST'])  # 删除
 @decorators.login_require
-def author_del(id):
-    models.authrule.deldata(id)
+def task_del(id):
+    models.task.deldata(id)
     return json.dumps({"code": 0, "msg": "完成！"})

@@ -81,7 +81,7 @@
                         </dl>
                     </li>
                     <li class="layui-nav-item {% if 'author'== top_nav %}layui-nav-itemed{% endif %}">
-                        <a href="javascript:;" lay-tips="驱动">
+                        <a href="javascript:;" lay-tips="权限">
                             <i class="fa fa-list"></i>
                             <cite>权限管理</cite>
                             <span class="layui-nav-more"></span>
@@ -89,6 +89,18 @@
                         <dl class="layui-nav-child">
                             <dd class="{% if 'list'== activity_nav %}layui-this{% endif %}">
                                 <a href="/admin/author/list">权限列表</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item {% if 'task'== top_nav %}layui-nav-itemed{% endif %}">
+                        <a href="javascript:;" lay-tips="任务">
+                            <i class="fa fa-list"></i>
+                            <cite>任务管理</cite>
+                            <span class="layui-nav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd class="{% if 'list'== activity_nav %}layui-this{% endif %}">
+                                <a href="/admin/task/list">任务列表</a>
                             </dd>
                         </dl>
                     </li>
