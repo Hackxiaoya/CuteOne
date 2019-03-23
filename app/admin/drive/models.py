@@ -29,7 +29,7 @@ class drive(MysqlDB.Model):
                 order_by = drive.sort.asc()
         else:
             order_by = drive.create_time.desc()
-        data = cls.query.order_by(order_by).all()
+        data = MysqlDB.session.query(cls).order_by(order_by).all()
         MysqlDB.session.close()
         return data
 
@@ -37,7 +37,7 @@ class drive(MysqlDB.Model):
     # 根据ID查询出结果
     @classmethod
     def find_by_id(cls, id):
-        data =  cls.query.filter(cls.id == id).first()
+        data =  MysqlDB.session.query(cls).filter(cls.id == id).first()
         MysqlDB.session.close()
         return data
 
@@ -45,14 +45,14 @@ class drive(MysqlDB.Model):
     # 获取设定主页的驱动
     @classmethod
     def find_activate(cls):
-        data = cls.query.filter(cls.activate == "1").first()
+        data = MysqlDB.session.query(cls).filter(cls.activate == "1").first()
         MysqlDB.session.close()
         return data
 
 
     @classmethod
     def update(cls, data):
-        cls.query.filter(cls.id == data['id']).update(data)
+        MysqlDB.session.query(cls).filter(cls.id == data['id']).update(data)
         MysqlDB.session.flush()
         MysqlDB.session.commit()
         MysqlDB.session.close()
@@ -60,7 +60,7 @@ class drive(MysqlDB.Model):
 
     @classmethod
     def deldata(cls, id):
-        data = cls.query.filter(cls.id == id).first()
+        data = MysqlDB.session.query(cls).filter(cls.id == id).first()
         MysqlDB.session.delete(data)
         MysqlDB.session.flush()
         MysqlDB.session.commit()
@@ -84,14 +84,14 @@ class drive_list(MysqlDB.Model):
 
     @classmethod
     def all(cls, drive_id):
-        data = cls.query.filter(cls.drive_id == drive_id).order_by(cls.create_time.desc()).all()
+        data = MysqlDB.session.query(cls).filter(cls.drive_id == drive_id).order_by(cls.create_time.desc()).all()
         MysqlDB.session.close()
         return data
 
     # 根据ID查询出结果
     @classmethod
     def find_by_id(cls, id):
-        data = cls.query.filter(cls.id == id).first()
+        data = MysqlDB.session.query(cls).filter(cls.id == id).first()
         MysqlDB.session.close()
         return data
 
@@ -99,7 +99,7 @@ class drive_list(MysqlDB.Model):
     # 根据drive_id查询出结果
     @classmethod
     def find_by_drive_id(cls, drive_id):
-        data =  cls.query.filter(cls.drive_id == drive_id).all()
+        data =  MysqlDB.session.query(cls).filter(cls.drive_id == drive_id).all()
         MysqlDB.session.close()
         return data
 
@@ -107,14 +107,14 @@ class drive_list(MysqlDB.Model):
     # 根据drive_id查询主盘
     @classmethod
     def find_by_chief(cls, drive_id):
-        data = cls.query.filter(and_(cls.drive_id == drive_id, cls.chief == 1)).first()
+        data = MysqlDB.session.query(cls).filter(and_(cls.drive_id == drive_id, cls.chief == 1)).first()
         MysqlDB.session.close()
         return data
 
 
     @classmethod
     def update(cls, data):
-        cls.query.filter(cls.id == data['id']).update(data)
+        MysqlDB.session.query(cls).filter(cls.id == data['id']).update(data)
         MysqlDB.session.flush()
         MysqlDB.session.commit()
         MysqlDB.session.close()
@@ -123,7 +123,7 @@ class drive_list(MysqlDB.Model):
 
     @classmethod
     def deldata_by_id(cls, id):
-        data = cls.query.filter(cls.id == id).first()
+        data = MysqlDB.session.query(cls).filter(cls.id == id).first()
         mongodb_del_drive(data.id)
         MysqlDB.session.delete(data)
         MysqlDB.session.flush()
@@ -134,7 +134,7 @@ class drive_list(MysqlDB.Model):
 
     @classmethod
     def deldata_by_drive_id(cls, drive_id):
-        data = cls.query.filter(cls.drive_id == drive_id).all()
+        data = MysqlDB.session.query(cls).filter(cls.drive_id == drive_id).all()
         for item in data:
             mongodb_del_drive(item.id)
             MysqlDB.session.delete(item)

@@ -30,7 +30,7 @@ class task(MysqlDB.Model):
 
     @classmethod
     def deldata(cls, id):
-        data = cls.query.filter(cls.id == id).first()
+        data = MysqlDB.session.query(cls).filter(cls.id == id).first()
         MysqlDB.session.delete(data)
         MysqlDB.session.commit()
         MysqlDB.session.flush()
@@ -41,14 +41,14 @@ class task(MysqlDB.Model):
     # 根据驱动ID获取规则列表
     @classmethod
     def find_by_drive_id(cls, drive_id, path):
-        data = cls.query.filter(and_(cls.drive_id == drive_id, or_(cls.path == '', cls.path == path))).first()
+        data = MysqlDB.session.query(cls).filter(and_(cls.drive_id == drive_id, or_(cls.path == '', cls.path == path))).first()
         MysqlDB.session.close()
         return data
 
 
     @classmethod
     def update(cls, data):
-        cls.query.filter(cls.id == data['id']).update(data)
+        MysqlDB.session.query(cls).filter(cls.id == data['id']).update(data)
         MysqlDB.session.flush()
         MysqlDB.session.commit()
         return

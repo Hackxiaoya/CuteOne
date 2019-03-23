@@ -23,8 +23,8 @@ class config(MysqlDB.Model):
     # 校正账号密码是否正确
     @classmethod
     def checkpassword(cls, username, password):
-        userdata = cls.query.filter(cls.name == "username").one()
-        passdata = cls.query.filter(cls.name == "password").one()
+        userdata = MysqlDB.session.query(cls).filter(cls.name == "username").one()
+        passdata = MysqlDB.session.query(cls).filter(cls.name == "password").one()
         MysqlDB.session.close()
         if username == userdata.value:
             if password == passdata.value:
@@ -37,15 +37,14 @@ class config(MysqlDB.Model):
 
     @classmethod
     def get_config(cls, table):
-        data = cls.query.filter(cls.name == table).one()
+        data = MysqlDB.session.query(cls).filter(cls.name == table).one()
         MysqlDB.session.close()
         return data.value
 
 
     @classmethod
     def update(cls, data):
-        print(data)
-        cls.query.filter(cls.name == data['name']).update(data)
+        MysqlDB.session.query(cls).filter(cls.name == data['name']).update(data)
         MysqlDB.session.flush()
         MysqlDB.session.commit()
         return
