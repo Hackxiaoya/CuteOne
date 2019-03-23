@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 import re, urllib.parse, json
 from flask import render_template, request, make_response, redirect, session
-from flask_paginate import Pagination, get_page_parameter
 from app.admin.drive import models as driveModels
 from app.admin.system import models as systemModels
 from ..index import index
@@ -35,11 +34,11 @@ def webconfig():
 def drive_list():
     drive_list = driveModels.drive.all("sort", 2)
     url_path = request.full_path
-    testpath = url_path.find("path=")
-    if testpath > 0:
+    path = request.args.get('path')
+    if path:
         reres = re.findall('(.+?.+)path=(.+?.+)', url_path)[0]
         crumbs_url = reres[0]
-        crumbs_list = re.split('[/]', reres[1])
+        crumbs_list = re.split('[/]', path)
         crumbs_list.pop(0)
         crumbs_list_data = []
         for i in range(len(crumbs_list)):
@@ -50,8 +49,7 @@ def drive_list():
 
             crumbs_list_data.append({"path": crumbs_list[i], "name": name})
     else:
-        crumbs_list = []
-        crumbs_url = url_path
+        crumbs_url = path
         crumbs_list_data = []
     return dict(drive_list=drive_list, crumbs_url=crumbs_url, crumbs_list_data=crumbs_list_data)
 
@@ -64,12 +62,11 @@ def tableSort():
     return dict(sortTable=sortTable, sortType=sortType)
 
 
-
 @index.route('/')  # 默认首页
 def _index():
-    # page_number = systemModels.config.get_config("page_number")   # 未完成的页码
     drive = request.args.get('drive')
     disk = request.args.get('disk')
+    page_number = '1' if request.args.get('page') is None else request.args.get('page')
     sortTable = 'lastModifiedDateTime' if request.args.get('sortTable') is None else request.args.get('sortTable')
     sortType = 'more' if request.args.get('sortType') is None else request.args.get('sortType')
     # 优先进行条件查询
@@ -84,19 +81,19 @@ def _index():
 
         if request.args.get('path'):
             path = request.args.get('path')
-            data = logic.get_data(disk_id, path, sortTable, sortType)
+            data = logic.get_data(disk_id, path, sortTable, sortType, page_number)
             current_url = '{}&path={}'.format(driveurl, path)
         else:
-            data = logic.get_data(disk_id, '', sortTable, sortType)
+            data = logic.get_data(disk_id, '', sortTable, sortType, page_number)
             current_url = '{}&path='.format(driveurl)
     else:
         activate = driveModels.drive.find_activate()
         drive = activate.id
         disk_id = driveModels.drive_list.find_by_chief(activate.id).id
-        data = logic.get_data(disk_id, '', sortTable, sortType)
+        data = logic.get_data(disk_id, '', sortTable, sortType, page_number)
         current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
 
-    return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data)
+    return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data["data"], pagination=data["pagination"])
 
 
 @index.route('/video/<int:drive_id>/<int:disk_id>/<string:id>')

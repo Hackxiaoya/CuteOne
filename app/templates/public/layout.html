@@ -204,6 +204,46 @@
             display: inline-block;
             position: relative;
         }
+        .page-box {
+            text-align: center;
+        }
+        .page-box .allpage {
+            display: block;
+            line-height: 37px;
+            font-style:normal
+        }
+        .page-box ul {
+            overflow: hidden;
+            display: inline-block;
+        }
+        .page-box li {
+            list-style: none;
+            float: left;
+        }
+        .page-box span {
+            text-decoration: none;
+            color: #272727;
+            background: none;
+            padding: 5px 10px;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            margin: 0 5px;
+            border: 1px solid #272727;
+            cursor: default;
+        }
+        .page-box li.current span {
+            color: #ffffff;
+            background: #272727;
+            border: 1px solid #272727;
+        }
+        .page-box li:hover span {
+            opacity: .5;
+        }
+
+        .page-box li.current:hover span {
+            opacity: 1;
+        }
 	</style>
     <!-- 预留空间 给继承的CSS -->
     {% block style %} {% endblock %}
@@ -387,7 +427,22 @@
                         }else{
                             window.location.href = window.location.href + "/?drive={{ drive_id }}&sortTable="+sort_table+"&sortType="+sort_sort
                         }
+                    }
+                });
 
+                // 翻页
+                $(".page-box .page-click").on('click', function () {
+                    let page = $(this).attr("data-page");
+                    let urlpage = getUrlParam("page");
+                    if(urlpage){
+                        rep= replaceParamVal(window.location.search, "page", page);
+                        window.location.href = "http://" + window.location.host + "/" + rep;
+                    }else{
+                        if(getUrlParam("drive")){
+                            window.location.href = window.location.href + "&page="+page
+                        }else{
+                            window.location.href = window.location.href + "/?drive={{ drive_id }}&page="+page
+                        }
                     }
                 });
 

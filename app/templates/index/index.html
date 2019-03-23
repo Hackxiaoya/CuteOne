@@ -95,6 +95,33 @@
         {% endfor %}
     </ul>
 
+    <div class="page-box">
+        <ul>
+            <li>
+                <span data-page="1" class="page-click">
+                    首页
+                </span>
+            </li>
+            {% for i in pagination.page %}
+            <li class="{% if i == pagination.now_page %}current{% endif %}">
+                <span data-page="{{i}}" class="{% if i != pagination.now_page %}page-click{% endif %}">
+                    {{i}}
+                </span>
+            </li>
+            {% endfor %}
+            <li>
+                <i class="allpage">
+                    共 {{ pagination.count }} 页
+                </i>
+            </li>
+            <li>
+                <span data-page="{{ pagination.count }}" class="page-click">
+                    尾页
+                </span>
+            </li>
+        </ul>
+    </div>
+
 {% endblock %}
 
 {% block script %}

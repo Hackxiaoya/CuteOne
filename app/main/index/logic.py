@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import config, json, requests
+import numpy
 from flask import session
 from app import MongoDB
 import pymongo
@@ -7,7 +8,7 @@ from app import common
 from ...admin.drive import models
 from ...admin.drive import logic
 from ...admin.author import models as authorModels
-
+from app.admin.system import models as systemModels
 
 
 """
@@ -71,7 +72,7 @@ def author_password(drive_id, path='', password=''):
     sortTable: 排序字段
     sortType： 排序类型  less是ASCENDING升序，more是DESCENDING降序
 """
-def get_data(disk_id, path='', sortTable='lastModifiedDateTime', sortType='more'):
+def get_data(disk_id, path='', sortTable='lastModifiedDateTime', sortType='more', page=1):
     drivename = "drive_" + str(disk_id)
     collection = MongoDB.db[drivename]
     data = []
@@ -88,7 +89,38 @@ def get_data(disk_id, path='', sortTable='lastModifiedDateTime', sortType='more'
             data.insert(0, x)
         else:
             data.append(x)
+    data = Pagination_data(data, page)
     return data
+
+
+"""
+    MongoDB分页内容
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-23
+    data: 数据
+    page: 页码
+"""
+def Pagination_data(data, page):
+    page = int(page)
+    page_number = int(systemModels.config.get_config("page_number"))
+    result = []
+    count = 0
+    if page == 1:
+        start = 0  # 第几条开始
+        for item in data:
+            if count >= start:
+                if count < start + page_number:
+                    result.append(item)
+            count += 1
+    else:
+        start = (page-1) * page_number - 1 # 第几条开始
+        for item in data:
+            if count > start:
+                if count <= start + page_number:
+                    result.append(item)
+            count += 1
+    return {"data":result, "pagination":{"count": int(len(data)/page_number)+1, "page": numpy.arange(1, int(len(data)/page_number)+2), "now_page": page}}
 
 
 """
