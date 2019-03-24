@@ -1,12 +1,9 @@
 # -*- coding:utf-8 -*-
-import os, sys, json, requests, threading, subprocess
-from flask_pymongo import PyMongo
-from app import MysqlDB
+import os, sys, json, requests, threading
 from app import MongoDB
 from ... import common
 import config
 from ..drive import models
-
 
 """
     OneDrive 重新获取token
@@ -152,24 +149,11 @@ def update_cache(drive_id, type):
     threads = []
     for i in driveinfo:
         command = "python {}/app/task/cuteTask.py {} {}".format(os.getcwd(), i.id, type)  # 后台任务文件路
-        t = threading.Thread(target=run_command, args=(command,))
+        t = threading.Thread(target=common.run_command, args=(command,))
         threads.append(t)
     for t in threads:
         t.setDaemon(True)
         t.start()
-
-
-"""
-    执行shell指令
-    @Author: yyyvy <76836785@qq.com>
-    @Description:
-    @Time: 2019-03-16
-    command: shell指令
-"""
-def run_command(command):
-    subprocess.Popen(command, shell=True)
-
-
 
 
 """
@@ -178,10 +162,68 @@ def run_command(command):
     @Description:
     @Time: 2019-03-24
     task_id: 任务id
-    dirve_id: 驱动id
+    drive_id: 驱动id
     fileName: 文件名称
     remotePath: 远程路径
 """
-def pull_uploads(task_id, dirve_id, fileName, remotePath):
-    command = "python {}/app/task/uploads.py {} {} {} {}".format(os.getcwd(), task_id, dirve_id, fileName, remotePath)
-    run_command(command)
+def pull_uploads(task_id, drive_id, fileName, remotePath):
+    command = "python {}/app/task/uploads.py {} {} {} {}".format(os.getcwd(), task_id, drive_id, fileName, remotePath)
+    common.run_command(command)
+
+
+"""
+    推送主从同步任务
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-24
+    drive_id: 驱动id
+"""
+def startSynTask(drive_id):
+    command = "python {}/app/task/syn/syn.py {}".format(os.getcwd(), drive_id)
+    common.run_command(command)
+
+
+"""
+    判断是否有同步任务未完成
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-24
+    drive_id: 驱动id
+"""
+def ifSynTask(drive_id):
+    drivename = "syn_drive_" + str(drive_id)
+    collectionList = MongoDB.db.list_collection_names()
+    if drivename in collectionList:  # 如果存在集合
+        return True
+    else:
+        return False
+
+
+"""
+    检查是否有指定ID的主从同步进程
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-24
+    id: 驱动ID
+"""
+def isSynTask(id):
+    try:
+        process = os.popen("ps -ef | grep 'python app/task/syn/syn.py " % id % "' | grep -v grep | wc -l").read()
+        return process
+    except:
+        return
+
+"""
+    强制结束指定ID的主从同步进程
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-24
+    id: 驱动ID
+"""
+def stopSynTask(id):
+    try:
+        pid = os.popen("ps -ef | grep 'python app/task/syn/syn.py " + str(id) + "' | grep -v grep |awk '{print $2}'").read()
+        os.popen("kill -9 " + str(pid))
+        return
+    except:
+        return

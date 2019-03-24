@@ -23,8 +23,13 @@ def list():
             for result in data_list:
                 json_data["count"] = json_data["count"]+1
                 drive_number = len(models.drive_list.all(result.id))
+                syn_task_status = logic.isSynTask(result.id)
+                if syn_task_status:
+                    syn_task_status = "正在运行同步"
+                else:
+                    syn_task_status = "暂无同步进程"
                 json_data["data"].append(
-                    {"id": result.id, "title": result.title, "description": result.description, "drive_number":drive_number, "update_time":str(result.update_time), "create_time": str(result.create_time)})
+                    {"id": result.id, "title": result.title, "description": result.description, "drive_number":drive_number, "syn_task_status":syn_task_status, "update_time":str(result.update_time), "create_time": str(result.create_time)})
         return json.dumps(json_data)
     else:
         return render_template('admin/drive/list.html', top_nav='drive', activity_nav='list', isRunning=isRunning)
@@ -99,7 +104,9 @@ def disk_list(id):
         return json.dumps(json_data)
     else:
         data = models.drive.find_by_id(id)
-        return render_template('admin/drive/disk_list.html', top_nav='drive', activity_nav='list', data=data)
+        ifSynTask = logic.ifSynTask(id)
+        isSynTask = logic.isSynTask(id)
+        return render_template('admin/drive/disk_list.html', top_nav='drive', activity_nav='list', data=data, isSynTask=isSynTask, ifSynTask=ifSynTask)
 
 
 @admin.route('/drive/disk_edit/<int:drive_id>/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
@@ -266,7 +273,7 @@ def files(id):
         path = ''
         current_url = '/admin/drive/files/' + str(id) + '/?path='
     data = logic.get_one_file_list(id, path)
-    print(data["data"]["value"])
+    # print(data["data"]["value"])
     for i in data["data"]["value"]:
         i["lastModifiedDateTime"] = common.utc_to_local(i["lastModifiedDateTime"])
         i["size"] = common.size_cov(i["size"])
@@ -301,4 +308,20 @@ def delete_files():
     id = request.form['id']
     fileid = request.form['fileid']
     logic.delete_files(id, fileid)
+    return json.dumps({"code": 0, "msg": "成功！"})
+
+
+@admin.route('/drive/synStart/<int:id>', methods=['GTE'])
+@decorators.login_require
+def synStart(id):
+    drive_id = id
+    logic.startSynTask(drive_id)
+    return json.dumps({"code": 0, "msg": "成功！"})
+
+
+@admin.route('/drive/synStop/<int:id>')
+@decorators.login_require
+def synStop(id):
+    drive_id = id
+    logic.stopSynTask(drive_id)
     return json.dumps({"code": 0, "msg": "成功！"})

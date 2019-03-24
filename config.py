@@ -7,18 +7,6 @@ STATICFILES_DIR = os.path.join(BASE_DIR, 'static')  # 静态文件的路径
 
 SECRET_KEY =  os.urandom(24) # 随机产生24位的字符串作为SECRET_KEY,web重启就会变化
 
-"""
-    版本信息
-"""
-SystemInfo = {
-    "name": "CuteOne",
-    "versionType": "Free",
-    "versions": "1.0.0",
-    "server": ""
-}
-
-
-
 
 """
     Mysql 数据库连接信息

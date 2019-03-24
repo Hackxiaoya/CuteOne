@@ -1,7 +1,22 @@
 # -*- coding:utf-8 -*-
-import datetime, os
-import hashlib
+import datetime, os, re
+import hashlib, subprocess
 from app.admin.system import models as systemModels
+
+
+"""
+    版本信息
+"""
+SystemInfo = {
+    "name": "CuteOne",
+    "versionType": "Free",
+    "versions": "1.1.0",
+    "server": ""
+}
+
+
+
+
 """
     公共方法
     
@@ -50,6 +65,19 @@ def size_cov(size):
     return size
 
 
+
+
+"""
+    执行shell指令
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-16
+    command: shell指令
+"""
+def run_command(command):
+    subprocess.Popen(command, shell=True)
+
+
 """
     判断进程是否存在
     @Author: yyyvy <76836785@qq.com>
@@ -65,7 +93,6 @@ def isRunning(process_name):
             return
     except:
         return
-
 
 
 """

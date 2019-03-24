@@ -12,7 +12,7 @@ from app import decorators
 @admin.route('/system/manage')  # 管理
 @decorators.login_require
 def manage():  # 执行的方法
-    info = config.SystemInfo
+    info = common.SystemInfo
     result = {
         "name": info["name"],
         "versionType": info["versionType"],

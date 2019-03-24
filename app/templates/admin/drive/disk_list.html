@@ -14,6 +14,8 @@
                 <div class="layui-card-body">
                     <div style="padding-bottom: 10px;">
                         <button class="layui-btn" layadmin-event="add">添加网盘</button>
+                        <button class="layui-btn {% if isSynTask %}layui-btn-disabled{% else %}layui-btn-normal{% endif %}" layadmin-event="synStart" >{% if ifSynTask %}继续同步{% else %}开始同步{% endif %}</button>
+                        <button class="layui-btn layui-btn-danger" layadmin-event="synStop">停止同步</button>
                     </div>
                     <table class="layui-hide" id="list-table" lay-filter="list-table"></table>
                     <script type="text/html" id="list-table-bar">
@@ -46,6 +48,47 @@
                 }
             })
         };
+
+        clickMethod.synStart = function () {
+            layer.confirm('请确保你只有一个主盘，其他都是从盘？', {
+                btn: ['开始同步','取消'] //按钮
+            }, function(){
+                $.ajax({
+                    url: "/admin/drive/synStart/{{ data.id }}"
+                    ,type: "GET"
+                    ,dataType: "json"
+                    ,success: function (data) {
+                        if(data.code==0){
+                            layer.msg('开始同步中...', {icon: 1});
+                            tablerender();
+                        }else{
+                            layer.msg(data.msg)
+                        }
+                    }
+                });
+            });
+        };
+
+        clickMethod.synStop = function () {
+            layer.confirm('确定要停止主从同步任务吗？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                $.ajax({
+                    url: "/admin/drive/synStop/{{ data.id }}"
+                    ,type: "GET"
+                    ,dataType: "json"
+                    ,success: function (data) {
+                        if(data.code==0){
+                            layer.msg('主从同步已暂停...', {icon: 1});
+                            tablerender();
+                        }else{
+                            layer.msg(data.msg)
+                        }
+                    }
+                });
+            });
+        };
+
 
         var table = layui.table;
         function tablerender(){

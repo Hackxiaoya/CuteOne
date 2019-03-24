@@ -96,13 +96,12 @@ class drive_list(MysqlDB.Model):
         return data
 
 
-    # 根据drive_id查询出结果
+    # 根据drive_id查询列表
     @classmethod
     def find_by_drive_id(cls, drive_id):
         data =  MysqlDB.session.query(cls).filter(cls.drive_id == drive_id).all()
         MysqlDB.session.close()
         return data
-
 
     # 根据drive_id查询主盘
     @classmethod
