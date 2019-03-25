@@ -208,8 +208,12 @@ def ifSynTask(drive_id):
 """
 def isSynTask(id):
     try:
-        process = os.popen("ps -ef | grep 'python3 app/task/syn/syn.py " % id % "' | grep -v grep | wc -l").read()
-        return process
+        command = "ps -ef | grep 'python3 {}/app/task/syn/syn.py {}' | grep -v grep | wc -l".format(os.getcwd(), id)
+        process = os.popen(command).read()
+        if process[0:1] == "0":
+            return False
+        else:
+            return Ture
     except:
         return
 
@@ -222,7 +226,7 @@ def isSynTask(id):
 """
 def stopSynTask(id):
     try:
-        pid = os.popen("ps -ef | grep 'python3 app/task/syn/syn.py " + str(id) + "' | grep -v grep |awk '{print $2}'").read()
+        pid = os.popen("ps -ef | grep 'python3 " + os.getcwd() + "/app/task/syn/syn.py " + str(id) + "' | grep -v grep |awk '{print $2}'").read()
         os.popen("kill -9 " + str(pid))
         return
     except:
