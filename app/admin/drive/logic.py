@@ -148,7 +148,7 @@ def update_cache(drive_id, type):
     driveinfo = models.drive_list.find_by_drive_id(drive_id)
     threads = []
     for i in driveinfo:
-        command = "python {}/app/task/cuteTask.py {} {}".format(os.getcwd(), i.id, type)  # 后台任务文件路
+        command = "python3 {}/app/task/cuteTask.py {} {}".format(os.getcwd(), i.id, type)  # 后台任务文件路
         t = threading.Thread(target=common.run_command, args=(command,))
         threads.append(t)
     for t in threads:
@@ -167,7 +167,7 @@ def update_cache(drive_id, type):
     remotePath: 远程路径
 """
 def pull_uploads(task_id, drive_id, fileName, remotePath):
-    command = "python {}/app/task/uploads.py {} {} {} {}".format(os.getcwd(), task_id, drive_id, fileName, remotePath)
+    command = "python3 {}/app/task/uploads.py {} {} {} {}".format(os.getcwd(), task_id, drive_id, fileName, remotePath)
     common.run_command(command)
 
 
@@ -179,7 +179,7 @@ def pull_uploads(task_id, drive_id, fileName, remotePath):
     drive_id: 驱动id
 """
 def startSynTask(drive_id):
-    command = "python {}/app/task/syn/syn.py {}".format(os.getcwd(), drive_id)
+    command = "python3 {}/app/task/syn/syn.py {}".format(os.getcwd(), drive_id)
     common.run_command(command)
 
 
@@ -208,7 +208,7 @@ def ifSynTask(drive_id):
 """
 def isSynTask(id):
     try:
-        process = os.popen("ps -ef | grep 'python app/task/syn/syn.py " % id % "' | grep -v grep | wc -l").read()
+        process = os.popen("ps -ef | grep 'python3 app/task/syn/syn.py " % id % "' | grep -v grep | wc -l").read()
         return process
     except:
         return
@@ -222,7 +222,7 @@ def isSynTask(id):
 """
 def stopSynTask(id):
     try:
-        pid = os.popen("ps -ef | grep 'python app/task/syn/syn.py " + str(id) + "' | grep -v grep |awk '{print $2}'").read()
+        pid = os.popen("ps -ef | grep 'python3 app/task/syn/syn.py " + str(id) + "' | grep -v grep |awk '{print $2}'").read()
         os.popen("kill -9 " + str(pid))
         return
     except:
