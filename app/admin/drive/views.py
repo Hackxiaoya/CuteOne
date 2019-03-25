@@ -311,7 +311,7 @@ def delete_files():
     return json.dumps({"code": 0, "msg": "成功！"})
 
 
-@admin.route('/drive/synStart/<int:id>', methods=['GTE'])
+@admin.route('/drive/synStart/<int:id>')
 @decorators.login_require
 def synStart(id):
     drive_id = id
