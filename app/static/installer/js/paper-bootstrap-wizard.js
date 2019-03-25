@@ -97,7 +97,7 @@ $(document).ready(function(){
                     dataType: "json",
                     data: $('#form1').serialize(),
                     success: function(data) {
-                        if(data){
+                        if(data.code == "0"){
                             var count = 10;
                             timer = null
                             timer = setInterval(function () {
@@ -109,6 +109,8 @@ $(document).ready(function(){
                                     clearInterval(timer);
                                 }
                             }, 1000);
+                        }else{
+                            infoText.html(data.msg);
                         }
                     }
                 })

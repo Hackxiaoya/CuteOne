@@ -19,16 +19,24 @@ def index():
             from_data = request.form.to_dict()
             admin_user = from_data["admin_user"]
             admin_psw = common.hashPwd(from_data["admin_psw"])
-            create_db(from_data["mysql_ip"], from_data["mysql_user"], from_data["mysql_psw"], from_data["mysql_port"], from_data["mysql_name"], admin_user, admin_psw)
-            mysql_res = "mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8".format(from_data["mysql_user"], from_data["mysql_psw"], from_data["mysql_ip"], from_data["mysql_port"], from_data["mysql_name"])
-            mongo_res = "mongodb://{}:{}/cache".format(from_data["mongo_ip"], from_data["mongo_port"])
-            edit_config(mysql_res, mongo_res)
-            subprocess.Popen("killall -9 uwsgi", shell=True)
-            subprocess.Popen("pgrep -f uwsgi", shell=True)
-            time.sleep(3)
-            subprocess.Popen("python3 {}/app/task/uwsgi.py".format(os.getcwd()), shell=True)
-            time.sleep(3)
-            return json.dumps({"code": 0, "msg": "完成！"})
+            create_db_res = create_db(from_data["mysql_ip"], from_data["mysql_user"], from_data["mysql_psw"], from_data["mysql_port"], from_data["mysql_name"], admin_user, admin_psw)
+            if create_db_res:
+                mysql_res = "mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8".format(from_data["mysql_user"],
+                                                                                 from_data["mysql_psw"],
+                                                                                 from_data["mysql_ip"],
+                                                                                 from_data["mysql_port"],
+                                                                                 from_data["mysql_name"])
+                mongo_res = "mongodb://{}:{}/cache".format(from_data["mongo_ip"], from_data["mongo_port"])
+                edit_config(mysql_res, mongo_res)
+                subprocess.Popen("killall -9 uwsgi", shell=True)
+                subprocess.Popen("pgrep -f uwsgi", shell=True)
+                time.sleep(3)
+                subprocess.Popen("python3 {}/app/task/uwsgi.py".format(os.getcwd()), shell=True)
+                time.sleep(3)
+                return json.dumps({"code": 0, "msg": "完成！"})
+            else:
+                return json.dumps({"code": 1, "msg": "Mysql数据库无法连接,或者未建立,请检查后重新安装！"})
+
 
 
 # 创建Mysql数据库
@@ -45,10 +53,9 @@ def create_db(host, user, password, port, dbname, admin_user, admin_psw):
             cursor.execute(sql_item)
         cursor.execute('update cuteone_config set value = "%s" where name="username"' % (admin_user))
         cursor.execute('update cuteone_config set value = "%s" where name="password"' % (admin_psw))
+        return True
     except Exception as e:
-        pass
-    finally:
-        db.close()
+        return False
 
 
 # 修改数据库链接文件
