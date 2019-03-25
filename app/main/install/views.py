@@ -23,6 +23,8 @@ def index():
             mysql_res = "mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8".format(from_data["mysql_user"], from_data["mysql_psw"], from_data["mysql_ip"], from_data["mysql_port"], from_data["mysql_name"])
             mongo_res = "mongodb://{}:{}/cache".format(from_data["mongo_ip"], from_data["mongo_port"])
             edit_config(mysql_res, mongo_res)
+            subprocess.Popen("killall -9 uwsgi", shell=True)
+            subprocess.Popen("pgrep -f uwsgi", shell=True)
             time.sleep(3)
             subprocess.Popen("python3 {}/app/task/uwsgi.py".format(os.getcwd()), shell=True)
             time.sleep(3)
