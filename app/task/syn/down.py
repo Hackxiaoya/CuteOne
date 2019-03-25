@@ -38,6 +38,9 @@ class MulThreadDownload(threading.Thread):
 def down_file(url, fileName, drive_id):
     # 获取文件的大小和文件名
     filename = "{}/temp_uploads/syn_temp/{}/{}".format(os.getcwd(), drive_id, fileName)
+    if not os.path.exists("{}/temp_uploads/syn_temp/{}".format(os.getcwd(), drive_id)):
+        # 如果不存在则创建目录
+        os.makedirs("{}/temp_uploads/syn_temp/{}".format(os.getcwd(), drive_id))
     try:
         filesize = int(requests.head(url).headers['Content-Length'])
     except:
