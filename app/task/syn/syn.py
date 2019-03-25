@@ -151,8 +151,5 @@ def getMongoDB(disk_id):
 
 
 if __name__ =='__main__':
-    # drive_id = sys.argv[1]  # 驱动ID
-    # pull_chief_dirve_info(drive_id)
-    while True:
-        print("111")
-        time.sleep(5)
+    drive_id = sys.argv[1]  # 驱动ID
+    pull_chief_dirve_info(drive_id)
