@@ -247,6 +247,10 @@
             text-align: center;
             margin: 30px 0;
         }
+        .web_site_copyright span a {
+            text-decoration: none;
+            color: #448aff;
+        }
         .logo {
 
         }
@@ -340,9 +344,9 @@
         </div>
 
         <div class="web_site_copyright">
-            {{ webconfig.web_site_copyright }}
+            {{ webconfig.web_site_copyright | safe }}
             <span>
-                {{ webconfig.web_site_icp }}
+                {{ webconfig.web_site_icp | safe }}
             </span>
         </div>
 
