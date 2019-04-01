@@ -66,6 +66,8 @@ def tableSort():
 def _index():
     drive = request.args.get('drive')
     disk = request.args.get('disk')
+    path = request.args.get('path')
+    search = request.args.get('search')
     page_number = '1' if request.args.get('page') is None else request.args.get('page')
     sortTable = 'lastModifiedDateTime' if request.args.get('sortTable') is None else request.args.get('sortTable')
     sortType = 'more' if request.args.get('sortType') is None else request.args.get('sortType')
@@ -79,18 +81,18 @@ def _index():
             disk_id = driveModels.drive_list.find_by_chief(drive).id
             driveurl = '{}&disk={}'.format(driveurl, disk_id)
 
-        if request.args.get('path'):
-            path = request.args.get('path')
-            data = logic.get_data(disk_id, path, sortTable, sortType, page_number)
+        if path:
+            data = logic.get_data(disk_id, path, search, sortTable, sortType, page_number)
             current_url = '{}&path={}'.format(driveurl, path)
         else:
-            data = logic.get_data(disk_id, '', sortTable, sortType, page_number)
+            data = logic.get_data(disk_id, '', search, sortTable, sortType, page_number)
             current_url = '{}&path='.format(driveurl)
+
     else:
         activate = driveModels.drive.find_activate()
         drive = activate.id
         disk_id = driveModels.drive_list.find_by_chief(activate.id).id
-        data = logic.get_data(disk_id, '', sortTable, sortType, page_number)
+        data = logic.get_data(disk_id, '', search, sortTable, sortType, page_number)
         current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
 
     return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data["data"], pagination=data["pagination"])
@@ -138,30 +140,3 @@ def approve():
         return json.dumps({"code": 0, "msg": "密码正确！"})
     else:
         return json.dumps({"code": 1, "msg": "密码错误！"})
-
-
-@index.route('/search', methods=['GET'])    # 文件搜索 - 未完成
-def search():
-    drive = request.args.get('drive')
-    # 优先进行条件查询
-    if drive:
-        driveurl = '/?drive={}'.format(drive)
-        disk_id = driveModels.drive_list.find_by_chief(drive).id
-        driveurl = '{}&disk={}'.format(driveurl, disk_id)
-
-        if request.args.get('path'):
-            path = request.args.get('path')
-            data = logic.get_disk(disk_id, path)
-            current_url = '{}&path={}'.format(driveurl, path)
-        else:
-            data = logic.get_disk(disk_id)
-            current_url = '{}&path='.format(driveurl)
-    else:
-        activate = driveModels.drive.find_activate()
-        drive = activate.id
-        disk_id = driveModels.drive_list.find_by_chief(activate.id).id
-        data = logic.get_disk(disk_id)
-        current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
-
-    return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id,
-                           current_url=current_url, data=data)
