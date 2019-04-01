@@ -240,9 +240,18 @@
         .page-box li:hover span {
             opacity: .5;
         }
-
         .page-box li.current:hover span {
             opacity: 1;
+        }
+        .web_site_copyright {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .logo {
+
+        }
+        .logo img {
+            width: 240px;
         }
 	</style>
     <!-- 预留空间 给继承的CSS -->
@@ -256,6 +265,11 @@
 
 <body class="mdui-theme-primary-blue-grey mdui-theme-accent-blue">
 	<div class="mdui-container">
+        <div class="mdui-container-fluid">
+            <a href="/" class="logo">
+                <img src="{{ webconfig.web_site_logo }}" alt="{{ webconfig.web_site_title }}">
+            </a>
+        </div>
         <div class="mdui-container-fluid">
 			<div class="mdui-drive nexmoe-item">
                 <ul>
@@ -285,44 +299,51 @@
 
         <div class="mdui-container-fluid">
             <style>
-            .thumb .th{
-                display: none;
-            }
-            .thumb .mdui-text-right{
-                display: none;
-            }
-            .thumb .mdui-list-item a ,.thumb .mdui-list-item {
-                width:217px;
-                height: 230px;
-                float: left;
-                margin: 10px 10px !important;
-            }
+                .thumb .th{
+                    display: none;
+                }
+                .thumb .mdui-text-right{
+                    display: none;
+                }
+                .thumb .mdui-list-item a ,.thumb .mdui-list-item {
+                    width:217px;
+                    height: 230px;
+                    float: left;
+                    margin: 10px 10px !important;
+                }
 
-            .thumb .mdui-col-xs-12,.thumb .mdui-col-sm-7{
-                width:100% !important;
-                height:230px;
-            }
+                .thumb .mdui-col-xs-12,.thumb .mdui-col-sm-7{
+                    width:100% !important;
+                    height:230px;
+                }
 
-            .thumb .mdui-list-item .mdui-icon{
-                font-size:100px;
-                display: block;
-                margin-top: 40px;
-                color: #7ab5ef;
-            }
-            .thumb .mdui-list-item span{
-                float: left;
-                display: block;
-                text-align: center;
-                width:100%;
-                position: absolute;
-                top: 180px;
-            }
+                .thumb .mdui-list-item .mdui-icon{
+                    font-size:100px;
+                    display: block;
+                    margin-top: 40px;
+                    color: #7ab5ef;
+                }
+                .thumb .mdui-list-item span{
+                    float: left;
+                    display: block;
+                    text-align: center;
+                    width:100%;
+                    position: absolute;
+                    top: 180px;
+                }
             </style>
             <div class="nexmoe-item">
                 <div class="mdui-row">
                     {% block body %}{% endblock %}
                 </div>
             </div>
+        </div>
+
+        <div class="web_site_copyright">
+            {{ webconfig.web_site_copyright }}
+            <span>
+                {{ webconfig.web_site_icp }}
+            </span>
         </div>
 
         <a href="javascript:thumb();" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">format_list_bulleted</i></a>

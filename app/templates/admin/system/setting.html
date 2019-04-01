@@ -30,6 +30,17 @@
                             <div class="layui-form-mid layui-word-aux">关闭/开启站点</div>
                         </div>
                         <div class="layui-form-item">
+                            <label class="layui-form-label">LOGO</label>
+                            <div class="layui-input-inline" style="width: 330px;">
+                                <input type="text" name="web_site_logo" value="{{data.web_site_logo}}" id="web_site_logo" class="layui-input">
+                                <img class="layui-upload-img" id="upload-normal-img" style="width: 200px;height: 160px;" src="{{ data.web_site_logo }}">
+                                <button type="button" class="layui-btn" id="upload_logo">
+                                    <i class="layui-icon">&#xe67c;</i>上传图片
+                                </button>
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">LOGO</div>
+                        </div>
+                        <div class="layui-form-item">
                             <label class="layui-form-label">网站地址</label>
                             <div class="layui-input-inline" style="width: 500px;">
                                 <input type="text" name="web_site" value="{{data.web_site or ''}}" class="layui-input">
@@ -95,9 +106,24 @@
 
 {% block script %}
 <script>
-    layui.use(['form', 'layer'], function(){
+    layui.use(['form', 'layer', 'upload'], function(){
         var $ = layui.$; //重点处
         var form = layui.form;
+        var upload = layui.upload;
+        upload.render({
+            elem: '#upload_logo'
+            ,url: '/admin/system/upload_logo'
+            ,done: function(res, index, upload){
+                console.log(res)
+                if(res.code == "0"){
+                    $("#web_site_logo").val(res.data.src);
+                    $("#upload-normal-img").attr("src", res.data.src);
+                }
+            }
+            ,accept: 'images'
+            ,acceptMime: 'image/*'
+        });
+
         // 确认按钮
         $('#form-submit').on('click', function () {
             $.ajax({

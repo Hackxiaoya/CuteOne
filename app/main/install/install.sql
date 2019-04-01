@@ -42,8 +42,8 @@ CREATE TABLE `cuteone_config`  (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '配置名称',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '配置说明',
   `value` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '配置值',
-  `create_time` datetime(0) NOT NULL DEFAULT '0001-01-01 00:00:00' COMMENT '创建时间',
   `update_time` datetime(0) NOT NULL DEFAULT '0001-01-01 00:00:00' COMMENT '更新时间',
+  `create_time` datetime(0) NOT NULL DEFAULT '0001-01-01 00:00:00' COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '配置表' ROW_FORMAT = Dynamic;
 
@@ -56,11 +56,11 @@ INSERT INTO `cuteone_config` VALUES (2, 'password', '后台管理员密码', '60
 INSERT INTO `cuteone_config` VALUES (3, 'toggle_web_site', '站点开关', '1', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
 INSERT INTO `cuteone_config` VALUES (4, 'web_site', '域名地址', '', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
 INSERT INTO `cuteone_config` VALUES (5, 'web_site_title', '网站标题', 'CuteOne 网盘系统', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
-INSERT INTO `cuteone_config` VALUES (6, 'web_site_logo', '网站LOGO', NULL, '0001-01-01 00:00:00', '0001-01-01 00:00:00');
+INSERT INTO `cuteone_config` VALUES (6, 'web_site_logo', '网站LOGO', '/static/uploads/logo.png', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
 INSERT INTO `cuteone_config` VALUES (7, 'web_site_description', 'SEO描述', 'SEO的描述', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
 INSERT INTO `cuteone_config` VALUES (8, 'web_site_keyword', 'SEO关键字', 'SEO的关键字', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
-INSERT INTO `cuteone_config` VALUES (9, 'web_site_copyright', '版权信息', 'Copyright © ******有限公司 All rights reserved.', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
-INSERT INTO `cuteone_config` VALUES (10, 'web_site_icp', '网站备案号', '', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
+INSERT INTO `cuteone_config` VALUES (9, 'web_site_copyright', '版权信息', 'Copyright © CuteOne All rights reserved.', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
+INSERT INTO `cuteone_config` VALUES (10, 'web_site_icp', '网站备案号', '自豪的使用<a href="https://github.com/Hackxiaoya/CuteOne">CuteOne</a>', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
 INSERT INTO `cuteone_config` VALUES (11, 'web_site_statistics', '站点统计', '', '0001-01-01 00:00:00', '2019-03-22 15:33:13');
 INSERT INTO `cuteone_config` VALUES (12, 'page_number', '列表条数', '30', '0001-01-01 00:00:00', '2019-03-22 15:38:48');
 INSERT INTO `cuteone_config` VALUES (13, 'search_type', '搜索类型', '1', '0001-01-01 00:00:00', '2019-03-22 15:38:48');

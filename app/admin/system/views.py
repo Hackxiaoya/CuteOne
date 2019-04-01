@@ -68,6 +68,16 @@ def front():
         return json.dumps({"code": 0, "msg": "保存成功！"})
 
 
+@admin.route('/system/upload_logo', methods=['POST'])
+@decorators.login_require
+def upload_logo():
+    img = request.files.get('file')
+    file_path = os.getcwd()+"/app/static/uploads/logo.png"
+    img.save(file_path)
+    url = "/static/uploads/logo.png"
+    return json.dumps({"code": 0, "msg": "", "data": {"src": url}})
+
+
 @admin.route('/system/upload', methods=['POST'])
 @decorators.login_require
 def upload_bg():
