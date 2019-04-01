@@ -213,7 +213,7 @@ def isSynTask(id):
         if process[0:1] == "0":
             return False
         else:
-            return Ture
+            return True
     except:
         return
 

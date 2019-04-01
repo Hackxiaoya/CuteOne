@@ -25,11 +25,11 @@ def list():
                 drive_number = len(models.drive_list.all(result.id))
                 syn_task_status = logic.isSynTask(result.id)
                 if syn_task_status:
-                    syn_task_status = "正在运行同步"
+                    syn_task_status = "<span style='color: #5FB878;'>正在运行同步</span>"
                 else:
                     syn_task_status = "暂无同步进程"
                 json_data["data"].append(
-                    {"id": result.id, "title": result.title, "description": result.description, "drive_number":drive_number, "syn_task_status":syn_task_status, "update_time":str(result.update_time), "create_time": str(result.create_time)})
+                    {"id": result.id, "title": result.title, "description": result.description, "drive_number":drive_number, "sort":result.sort, "syn_task_status":syn_task_status, "update_time":str(result.update_time), "create_time": str(result.create_time)})
         return json.dumps(json_data)
     else:
         return render_template('admin/drive/list.html', top_nav='drive', activity_nav='list', isRunning=isRunning)

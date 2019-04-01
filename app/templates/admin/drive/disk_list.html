@@ -44,7 +44,7 @@
                 ,area: ["550px", "550px"]
                 ,content: '/admin/drive/disk_edit/{{ data.id }}/0'
                 ,end: function () {
-                    tablerender();  // 渲染表格
+                   location.reload(); // 渲染表格
                 }
             })
         };
@@ -60,7 +60,7 @@
                     ,success: function (data) {
                         if(data.code==0){
                             layer.msg('开始同步中...', {icon: 1});
-                            tablerender();
+                            location.reload();
                         }else{
                             layer.msg(data.msg)
                         }
@@ -80,7 +80,7 @@
                     ,success: function (data) {
                         if(data.code==0){
                             layer.msg('主从同步已暂停...', {icon: 1});
-                            tablerender();
+                            location.reload();
                         }else{
                             layer.msg(data.msg)
                         }

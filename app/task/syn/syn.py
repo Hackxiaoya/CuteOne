@@ -27,14 +27,17 @@ def pull_chief_dirve_info(drive_id):
     if drivename not in collectionList: # 如果不存在集合，就进行主盘信息拉取
         task_getlist(chief_id, '', drive_id)
     collection = MongoDB.db[drivename]
+    time.sleep(3)
     dirveData = getMongoDB(drive_id)
     for item in dirveData:
         # 拉取下载地址
         down_info = pull_dirve_file(chief_id, item["id"])
+        print("Start Down File: " + item["name"])
         # 下载文件
         down_result = down.down_file(down_info["url"], down_info["name"], drive_id)
         # 下载文件完成
         if down_result:
+            print("Start Syn File: " + item["name"])
             # 同步到各个盘
             uploads.upProcess(drive_id, down_info["name"], item["path"])
             # 删除缓存数据库数据
@@ -153,3 +156,6 @@ def getMongoDB(disk_id):
 if __name__ =='__main__':
     drive_id = sys.argv[1]  # 驱动ID
     pull_chief_dirve_info(drive_id)
+    # while True:
+    #     print("1")
+    #     time.sleep(5)
