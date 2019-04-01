@@ -45,6 +45,13 @@ class authrule(MysqlDB.Model):
         MysqlDB.session.close()
         return data
 
+    # 根据驱动ID获取规则列表
+    @classmethod
+    def find_by_drive_id_all(cls, drive_id):
+        data = MysqlDB.session.query(cls).filter(cls.drive_id == drive_id).all()
+        MysqlDB.session.close()
+        return data
+
     @classmethod
     def update(cls, data):
         MysqlDB.session.query(cls).filter(cls.id == data['id']).update(data)

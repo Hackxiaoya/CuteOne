@@ -469,16 +469,21 @@
             search = function () {
                 var searchInput = $("#searchInput").val();
                 let urlsearch = getUrlParam("search");
-                if(urlsearch){
-                    searchurl = replaceParamVal(window.location.search, "search", searchInput);
-                    window.location.href = "http://" + window.location.host + "/"+searchurl;
-                }else{
-                    if(getUrlParam("drive")){
-                        window.location.href = window.location.href + "&search="+searchInput
+                if(searchInput) {
+                    if(urlsearch){
+                        searchurl = replaceParamVal(window.location.search, "search", searchInput);
+                        window.location.href = "http://" + window.location.host + "/"+searchurl;
                     }else{
-                        window.location.href = window.location.href + "/?drive={{ drive_id }}&search="+searchInput
+                        if(getUrlParam("drive")){
+                            window.location.href = window.location.href + "&search="+searchInput
+                        }else{
+                            window.location.href = window.location.href + "/?drive={{ drive_id }}&search="+searchInput
+                        }
                     }
+                }else{
+                    layer.msg("No Search!")
                 }
+
             };
 
 

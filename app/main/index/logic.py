@@ -1,12 +1,12 @@
 # -*- coding:utf-8 -*-
-import config, json, requests
+import config, json, requests, re
 import numpy
 from flask import session
 from app import MongoDB
 import pymongo
 from app import common
-from ...admin.drive import models
-from ...admin.drive import logic
+from ...admin.drive import models as driveModels
+from ...admin.drive import logic as driveLogic
 from ...admin.author import models as authorModels
 from app.admin.system import models as systemModels
 
@@ -67,12 +67,14 @@ def author_password(drive_id, path='', password=''):
     @Author: yyyvy <76836785@qq.com>
     @Description:
     @Time: 2019-03-16
-    disk_id: 驱动ID
+    disk_id: disk id
     path: 路径
+    search: keywords
     sortTable: 排序字段
     sortType： 排序类型  less是ASCENDING升序，more是DESCENDING降序
 """
-def get_data(disk_id, path='', sortTable='lastModifiedDateTime', sortType='more', page=1):
+def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sortType='more', page=1):
+    search_type = systemModels.config.get_config('search_type')
     drivename = "drive_" + str(disk_id)
     collection = MongoDB.db[drivename]
     data = []
@@ -80,15 +82,33 @@ def get_data(disk_id, path='', sortTable='lastModifiedDateTime', sortType='more'
         sortType = pymongo.DESCENDING
     else:
         sortType = pymongo.ASCENDING
-    result = collection.find({"path":path}).sort([(sortTable, sortType)])
+    if search is not None:
+        result = collection.find({"name":re.compile(search)}).sort([(sortTable, sortType)])
+    else:
+        result = collection.find({"path": path}).sort([(sortTable, sortType)])
     for x in result:
-        x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
-        x["createdDateTime"] = str(x["createdDateTime"])
-        x["size"] = common.size_cov(x["size"])
-        if x["file"] == "folder":
-            data.insert(0, x)
+        if search_type == "1":
+            x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
+            x["createdDateTime"] = str(x["createdDateTime"])
+            x["size"] = common.size_cov(x["size"])
+            if x["file"] == "folder":
+                data.insert(0, x)
+            else:
+                data.append(x)
         else:
-            data.append(x)
+            dirve_id = driveModels.drive_list.find_by_drive_id(disk_id)[0].id
+            authorres = authorModels.authrule.find_by_drive_id_all(dirve_id)
+            authorpath = []
+            for i in authorres:
+                authorpath.append(i.path)
+            if x["path"] not in authorpath:
+                x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
+                x["createdDateTime"] = str(x["createdDateTime"])
+                x["size"] = common.size_cov(x["size"])
+                if x["file"] == "folder":
+                    data.insert(0, x)
+                else:
+                    data.append(x)
     data = Pagination_data(data, page)
     return data
 
@@ -133,7 +153,7 @@ def Pagination_data(data, page):
     res_id: 资源id
 """
 def get_downloadUrl(drive_id, disk_id, id):
-    data_list = models.drive_list.find_by_id(disk_id)
+    data_list = driveModels.drive_list.find_by_id(disk_id)
     token = json.loads(json.loads(data_list.token))
     BaseUrl = config.app_url + 'v1.0/me/drive/items/' + id
     headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
@@ -142,7 +162,7 @@ def get_downloadUrl(drive_id, disk_id, id):
         get_res = json.loads(get_res.text)
         # print(get_res)
         if 'error' in get_res.keys():
-            logic.reacquireToken(disk_id)
+            driveLogic.reacquireToken(disk_id)
             get_downloadUrl(disk_id, id)
         else:
             if '@microsoft.graph.downloadUrl' in get_res.keys():
@@ -163,7 +183,7 @@ def get_downloadUrl(drive_id, disk_id, id):
     res_id: 资源id
 """
 def down_file(drive_id, disk_id, id):
-    data_list = models.drive_list.find_by_id(disk_id)
+    data_list = driveModels.drive_list.find_by_id(disk_id)
     token = json.loads(json.loads(data_list.token))
     BaseUrl = config.app_url + 'v1.0/me/drive/items/' + id
     headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
@@ -172,7 +192,7 @@ def down_file(drive_id, disk_id, id):
         get_res = json.loads(get_res.text)
         # print(get_res)
         if 'error' in get_res.keys():
-            logic.reacquireToken(disk_id)
+            driveLogic.reacquireToken(disk_id)
             get_downloadUrl(disk_id, id)
         else:
             if '@microsoft.graph.downloadUrl' in get_res.keys():
