@@ -20,7 +20,7 @@
         delMusic = function (index) {
             var musicList = JSON.parse(localStorage.getItem('musicList'));
             index+=1
-            var name = $(".aplayer-list li:nth-child("+index+")").find("span:nth-child(3)").html();
+            var name = $(".aplayer-list li:nth-child("+index+")").find("span:nth-child(3)").text();
             for( var i=0 ; i<musicList.length ; i++ ){
                 if(musicList[i]["name"] == name){
                     musicList.pop(i)
@@ -47,7 +47,7 @@
                             }
                         }
                         $(".aplayer-list li").each(function (obj) {
-                            var name = $(this).find("span:nth-child(3)").html();
+                            var name = $(this).find("span:nth-child(3)").text();
                             if(name == data[0]["name"]){
                                 var index = $(this).find("span:nth-child(2)").html();
                                 index-=1;
@@ -58,7 +58,7 @@
                         musicList.push(data[0]);
                         ap.list.add(data);
                         $(".aplayer-list li").each(function (obj) {
-                            var name = $(this).find("span:nth-child(3)").html();
+                            var name = $(this).find("span:nth-child(3)").text();
                             if(name == data[0]["name"]){
                                 var index = $(this).find("span:nth-child(2)").html();
                                 index-=1;
@@ -70,7 +70,7 @@
                     musicList = [];
                     musicList.push(data[0]);
                     ap.list.add(data);
-                    ap.list.switch(1);
+                    ap.list.switch(0);
                 }
 
                 $(".aplayer-list li").each(function (obj) {
