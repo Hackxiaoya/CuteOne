@@ -10,7 +10,7 @@ from app.admin.system import models as systemModels
 SystemInfo = {
     "name": "CuteOne",
     "versionType": "Free",
-    "versions": "1.2.0",
+    "versions": "1.2.3",
     "server": ""
 }
 
