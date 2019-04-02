@@ -1,0 +1,126 @@
+{% extends 'admin/public/layout.html' %}
+
+{% block style %}
+    <style>
+        .layui-carousel {
+            background: #f3f3f3;
+        }
+        img {
+            width: 100%;
+            height: 200px;
+        }
+        h2 {
+            margin: 10px;
+        }
+        .theme-info {
+            margin: 10px;
+            height: 45px;
+            overflow: hidden;
+        }
+        .theme-excerpt {
+            text-align: right;
+            padding: 0 10px 10px 0;
+        }
+        .version {
+            float: left;
+            padding: 10px;
+        }
+        .author {
+            float: left;
+            padding: 10px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">Themes Setting</div>
+                <div class="layui-row layui-form">
+                    {% for item in data %}
+                    <div class="layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-body">
+                                <div class="layui-carousel">
+                                    <img src="{{ item.img | safe }}" alt="">
+                                    <h2 class="title">
+                                        {{ item.title }}
+                                    </h2>
+                                    <div class="theme-info">
+                                        <p>
+                                            {{ item.description }}
+                                        </p>
+                                    </div>
+                                    <div class="theme-excerpt">
+                                        <div class="version">
+                                            Version: {{ item.version }}
+                                        </div>
+                                        <div class="author">
+                                            By: {{ item.author }}
+                                        </div>
+                                        <div class="layui-input-inline">
+                                            <input type="checkbox" value="{{ item.name }}" lay-text="开启|关闭" lay-skin="switch" lay-filter="themes" {% if item.status=="1" %}checked{% endif %}>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    layui.use(['form', 'layer'], function(){
+        var $ = layui.$; //重点处
+        var form = layui.form;
+        //监听提交
+        form.on('switch(themes)', function (data) {
+            var x=data.elem.checked;
+            layer.open({
+                content: 'Are you sure you want to open this topic?'
+                ,btn: ['确定', '取消']
+                ,yes: function(index, layero){
+                    $.ajax({
+                        url: "/admin/system/themes"
+                        ,type: "POST"
+                        ,dataType: "json"
+                        ,data: {name:data.value}
+                        ,success: function (data) {
+                            if(data.code==0){
+                                layer.msg('成功！', {icon: 1});
+                                location.reload();
+                                layer.close(index);
+                            }else{
+                                data.elem.checked=!x;
+                                layer.msg(data.msg);
+                                return false;
+                            }
+                        }
+                    });
+                }
+                ,btn2: function(index){
+                    data.elem.checked=!x;
+                    form.render();
+                    layer.close(index);
+                    return false;
+                }
+                ,cancel: function(){
+                    data.elem.checked=!x;
+                    form.render();
+                    return false;
+                }
+            });
+            return false;
+        });
+    });
+</script>
+{% endblock %}

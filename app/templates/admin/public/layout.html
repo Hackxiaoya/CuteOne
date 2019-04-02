@@ -30,7 +30,7 @@
                     </a>
                 </li>
                 <li class="layui-nav-item">
-                    <a href="javascript:;" layadmin-event="refresh" title="刷新">
+                    <a href="javascript:;" layadmin-event="restart" title="重启WEB">
                         <i class="layui-icon layui-icon-refresh-3"></i>
                     </a>
                 </li>
@@ -82,7 +82,7 @@
                     </li>
                     <li class="layui-nav-item {% if 'author'== top_nav %}layui-nav-itemed{% endif %}">
                         <a href="javascript:;" lay-tips="权限">
-                            <i class="fa fa-list"></i>
+                            <i class="fa fa-unlock-alt"></i>
                             <cite>权限管理</cite>
                             <span class="layui-nav-more"></span>
                         </a>
@@ -94,7 +94,7 @@
                     </li>
                     <li class="layui-nav-item {% if 'task'== top_nav %}layui-nav-itemed{% endif %}">
                         <a href="javascript:;" lay-tips="任务">
-                            <i class="fa fa-list"></i>
+                            <i class="fa fa-tasks"></i>
                             <cite>任务管理</cite>
                             <span class="layui-nav-more"></span>
                         </a>
@@ -119,6 +119,9 @@
                             </dd>
                             <dd class="{% if 'front'== activity_nav %}layui-this{% endif %}">
                                 <a href="/admin/system/front">前端设置</a>
+                            </dd>
+                            <dd class="{% if 'themes'== activity_nav %}layui-this{% endif %}">
+                                <a href="/admin/system/themes">主题设置</a>
                             </dd>
                         </dl>
                     </li>
@@ -148,8 +151,20 @@
         // 点击事件列表
         clickMethod = {
             // 刷新
-            refresh: function() {
-                location.reload();
+            restart: function() {
+                $.ajax({
+                    url: "/admin/system/restart"
+                    ,type: "POST"
+                    ,dataType: "json"
+                    ,success: function (data) {
+                        if(data.code==0){
+                            layer.msg('成功！', {icon: 1});
+                            setTimeout(function () {
+                                location.reload();
+                            },2000)
+                        }
+                    }
+                });
             },
             // 收展左侧菜单
             flexible: function () {
