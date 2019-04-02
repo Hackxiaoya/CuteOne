@@ -4,14 +4,22 @@ from flask import request, render_template, json
 import config
 from .. import admin
 from ..system import models
+from ..system import logic
 from app import common
 from app import decorators
 
 
 
+@admin.route('/system/restart', methods=['GET', 'POST'])  # restart
+@decorators.login_require
+def restart():
+    common.restart()
+    return json.dumps({"code": 0, "msg": "成功！"})
+
+
 @admin.route('/system/manage')  # 管理
 @decorators.login_require
-def manage():  # 执行的方法
+def manage():
     info = common.SystemInfo
     result = {
         "name": info["name"],
@@ -86,3 +94,15 @@ def upload_bg():
     img.save(file_path)
     url = "/static/uploads/site_background.jpg"
     return json.dumps({"code": 0, "msg": "", "data": {"src": url}})
+
+
+@admin.route('/system/themes', methods=['GET', 'POST'])
+@decorators.login_require
+def themes():
+    if request.method == 'GET':
+        themes_list = logic.get_themes_list()
+        return render_template('admin/system/themes.html', top_nav='system', activity_nav='themes', data=themes_list)
+    else:
+        name = request.form['name']
+        logic.modify_themes_config(name)
+        return json.dumps({"code": 0, "msg": "保存成功！"})

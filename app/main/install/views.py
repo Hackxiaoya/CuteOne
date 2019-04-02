@@ -28,11 +28,7 @@ def index():
                                                                                  from_data["mysql_name"])
                 mongo_res = "mongodb://{}:{}/cache".format(from_data["mongo_ip"], from_data["mongo_port"])
                 edit_config(mysql_res, mongo_res)
-                subprocess.Popen("killall -9 uwsgi", shell=True)
-                subprocess.Popen("pgrep -f uwsgi", shell=True)
-                time.sleep(3)
-                subprocess.Popen("python3 {}/app/task/uwsgi.py".format(os.getcwd()), shell=True)
-                time.sleep(3)
+                subprocess.Popen("python3 {}/app/task/restart.py".format(os.getcwd()), shell=True)
                 return json.dumps({"code": 0, "msg": "完成！"})
             else:
                 return json.dumps({"code": 1, "msg": "Mysql数据库无法连接,或者未建立,请检查后重新安装！"})
@@ -63,14 +59,14 @@ def edit_config(mysql, mongo):
     config_path = root_path + '/config.py'
     install_path = root_path + '/.install'
     result = ''
-    with open(config_path, 'r+', encoding='UTF-8') as f:
+    with open(config_path, 'r', encoding='UTF-8') as f:
         for line in f.readlines():
             if (line.find('SQLALCHEMY_DATABASE_URI') == 0):
                 line = 'SQLALCHEMY_DATABASE_URI = %s' % ('\"'+mysql+'\"\n')
             if (line.find('MONGO_URI') == 0):
                 line = 'MONGO_URI = %s' % ('\"'+mongo+'\"')
             result += line
-    with open(config_path, 'r+', encoding='UTF-8') as f:
+    with open(config_path, 'w', encoding='UTF-8') as f:
         f.writelines(result)
     open(install_path, 'w+').close()
     return

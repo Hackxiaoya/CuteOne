@@ -5,6 +5,9 @@ from app.admin.drive import models as driveModels
 from app.admin.system import models as systemModels
 from ..index import index
 from ..index import logic
+import config
+THEMES = 'themes/'+ config.THEMES +'/'
+
 
 @index.before_request
 def toggle_web_site():
@@ -17,7 +20,7 @@ def toggle_web_site():
         if drive:
             author = logic.author_judge(drive, path)
             if author:
-                return render_template('index/author.html', drive_id=drive, path=path)
+                return render_template(THEMES+'index/author.html', drive_id=drive, path=path)
 
 
 # 基本配置
@@ -49,7 +52,7 @@ def drive_list():
 
             crumbs_list_data.append({"path": crumbs_list[i], "name": name})
     else:
-        crumbs_url = path
+        crumbs_url = url_path
         crumbs_list_data = []
     return dict(drive_list=drive_list, crumbs_url=crumbs_url, crumbs_list_data=crumbs_list_data)
 
@@ -95,7 +98,7 @@ def _index():
         data = logic.get_data(disk_id, '', search, sortTable, sortType, page_number)
         current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
 
-    return render_template('index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data["data"], pagination=data["pagination"])
+    return render_template(THEMES+'index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data["data"], pagination=data["pagination"])
 
 
 @index.route('/video/<int:drive_id>/<int:disk_id>/<string:id>')
@@ -103,7 +106,7 @@ def video(drive_id, disk_id, id):
     data = logic.get_downloadUrl(drive_id, disk_id, id)
     share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
     donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
-    return render_template('index/video.html', share_url=share_url, donw_url=donw_url, data=data)
+    return render_template(THEMES+'index/video.html', share_url=share_url, donw_url=donw_url, data=data)
 
 
 @index.route('/get_downloadUrl/<int:drive_id>/<int:disk_id>/<string:id>')
@@ -117,7 +120,7 @@ def pop_video(drive_id, disk_id, id):
     data = logic.get_downloadUrl(drive_id, disk_id, id)
     share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
     donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
-    return render_template('index/pop_video.html', share_url=share_url, donw_url=donw_url, data=data)
+    return render_template(THEMES+'index/pop_video.html', share_url=share_url, donw_url=donw_url, data=data)
 
 
 @index.route('/down_file/<int:drive_id>/<int:disk_id>/<string:id>')

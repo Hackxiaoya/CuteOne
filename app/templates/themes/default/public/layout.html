@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+	<title>{{ webconfig.web_site_title }} - CuteOne网盘系统ss</title>
+    <meta name="keywords" content="{{ webconfig.web_site_keyword }}">
+    <meta name="description" content="{{ webconfig.web_site_description }}">
+	<link rel="stylesheet" href="{{url_for('static', filename='themes/default/css/mdui.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='css/lightbox.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='themes/default/css/style.css')}}">
+	<style>
+		body {
+			background-image: url("{{webconfig.web_site_background}}") !important;
+		}
+	</style>
+    <!-- 预留空间 给继承的CSS -->
+    {% block style %} {% endblock %}
+    <script type="application/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='js/lightbox.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='layui/layui.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='js/clipboard.min.js')}}"></script>
+	<script src="{{url_for('static', filename='themes/default/js/mdui.min.js')}}"></script>
+</head>
+
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-blue">
+	<div class="mdui-container">
+        <div class="mdui-container-fluid">
+            <a href="/" class="logo">
+                <img src="{{ webconfig.web_site_logo }}" alt="{{ webconfig.web_site_title }}">
+            </a>
+        </div>
+        <div class="mdui-container-fluid">
+			<div class="mdui-drive nexmoe-item">
+                <ul>
+                    {% for drive in drive_list %}
+                        <li>
+                            <a href="/?drive={{ drive.id }}">
+                                {{ drive.title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+			</div>
+            <div class="zySearch">
+                <input id="searchInput" class="search-input" type="text" placeholder="搜索小二丫？">
+                <b class="search-img"></b>
+                <button class="search-btn btn" onclick="search()">搜索</button>
+            </div>
+		</div>
+		<div class="mdui-container-fluid">
+			<div class="mdui-toolbar nexmoe-item">
+				<a href="{{crumbs_url}}">CuteOne</a><i class="mdui-icon material-icons mdui-icon-dark" style="margin:0;">chevron_right</i>
+                {% for crumbs in crumbs_list_data %}
+                    <a href="{{crumbs_url}}path=/{{ crumbs.path }}">{{ crumbs.name }}</a>/
+                {% endfor %}
+			</div>
+		</div>
+
+        <div class="mdui-container-fluid">
+            <div class="nexmoe-item">
+                <div class="mdui-row">
+                    {% block body %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
+        <div class="web_site_copyright">
+            {{ webconfig.web_site_copyright | safe }}
+            <span>
+                {{ webconfig.web_site_icp | safe }}
+            </span>
+        </div>
+
+        <a href="javascript:thumb();" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">format_list_bulleted</i></a>
+	</div>
+
+    <script>
+        $.fn.extend({
+            sortElements: function (comparator, getSortable) {
+                getSortable = getSortable || function () { return this; };
+
+                var placements = this.map(function () {
+                    var sortElement = getSortable.call(this),
+                        parentNode = sortElement.parentNode,
+                        nextSibling = parentNode.insertBefore(
+                            document.createTextNode(''),
+                            sortElement.nextSibling
+                        );
+
+                    return function () {
+                        parentNode.insertBefore(this, nextSibling);
+                        parentNode.removeChild(nextSibling);
+                    };
+                });
+
+                return [].sort.call(this, comparator).each(function (i) {
+                    placements[i].call(getSortable.call(this));
+                });
+            }
+        });
+
+        function downall() {
+             let dl_link_list = Array.from(document.querySelectorAll("li a"))
+                 .map(x => x.href) // 所有list中的链接
+                 .filter(x => x.slice(-1) != "/"); // 筛选出非文件夹的文件下载链接
+
+             let blob = new Blob([dl_link_list.join("\r\n")], {
+                 type: 'text/plain'
+             }); // 构造Blog对象
+             let a = document.createElement('a'); // 伪造一个a对象
+             a.href = window.URL.createObjectURL(blob); // 构造href属性为Blob对象生成的链接
+             a.download = "folder_download_link.txt"; // 文件名称，你可以根据你的需要构造
+             a.click() // 模拟点击
+             a.remove();
+        }
+
+        function thumb(){
+            if($('.mdui-fab i').text() == "apps"){
+                $('.mdui-fab i').text("format_list_bulleted");
+                $('.nexmoe-item').removeClass('thumb');
+                $('.nexmoe-item .mdui-icon').css('display','inline-block');
+                // $('.nexmoe-item .mdui-icon').show();
+                $('.nexmoe-item .mdui-list-item').css("background","");
+            }else{
+                $('.mdui-fab i').text("apps");
+                $('.nexmoe-item').addClass('thumb');
+                $('.mdui-col-xs-12 i.mdui-icon').each(function(){
+                    if($(this).text() == "image" || $(this).text() == "ondemand_video"){
+                        var href = $(this).parent().parent().attr('href');
+                        var thumb =(href.indexOf('?') == -1)?'?t=220':'&t=220';
+                        $(this).hide();
+                        $(this).parent().parent().parent().css("background","url("+href+thumb+")  no-repeat center top");
+                    }
+                });
+            }
+
+        }
+        $(function(){
+
+            //获取url中的参数
+            function getUrlParam(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+                var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+                if (r != null) return unescape(r[2]); return null; //返回参数值
+            }
+            //修改url中的参数
+            function replaceParamVal(url, paramName,replaceWith) {
+                var oUrl = url.toString();
+                var re = eval('/('+ paramName+'=)([^&]*)/gi');
+                var nUrl = oUrl.replace(re,paramName+'='+replaceWith);
+                return nUrl;
+            }
+
+            $('.icon-sort').each(function (v,k) {
+                var sort_table = $(this).attr("data-table");
+                var sort_sort = $(this).attr("data-sort");
+                if("{{sortTable}}" == sort_table){
+                    // console.log(sort_sort)
+                    if("{{sortType}}" == sort_sort){
+                        $(this).attr("data-sort", "less").text("expand_" + "less");
+                    }
+                }
+            });
+            $('.icon-sort').on('click', function () {
+                let sort_table = $(this).attr("data-table");
+                let sort_sort = $(this).attr("data-sort");
+                let sort_sort_to = (sort_sort == "more") ? "more" : "less";
+                $(this).attr("data-sort", sort_sort_to).text("expand_" + sort_sort_to);
+                let urlsortTable = getUrlParam("sortTable");
+                if(urlsortTable){
+                    reptable = replaceParamVal(window.location.search, "sortTable", sort_table);
+                    repsort = replaceParamVal(reptable, "sortType", sort_sort);
+                    window.location.href = "http://" + window.location.host + "/" + repsort;
+                }else{
+                    if(getUrlParam("drive")){
+                        window.location.href = window.location.href + "&sortTable="+sort_table+"&sortType="+sort_sort
+                    }else{
+                        window.location.href = window.location.href + "/?drive={{ drive_id }}&sortTable="+sort_table+"&sortType="+sort_sort
+                    }
+                }
+            });
+
+            // 翻页
+            $(".page-box .page-click").on('click', function () {
+                let page = $(this).attr("data-page");
+                let urlpage = getUrlParam("page");
+                if(urlpage){
+                    rep= replaceParamVal(window.location.search, "page", page);
+                    window.location.href = "http://" + window.location.host + "/" + rep;
+                }else{
+                    if(getUrlParam("drive")){
+                        window.location.href = window.location.href + "&page="+page
+                    }else{
+                        window.location.href = window.location.href + "/?drive={{ drive_id }}&page="+page
+                    }
+                }
+            });
+
+            // 弹出下载
+            $(".down_file").on("click", function () {
+                var drive = $(this).data("drive"),
+                    disk = $(this).data("disk"),
+                    id = $(this).data("id"),
+                    name = $(this).data("name");
+                var url = "/down_file/" + drive + "/" + disk + "/" + id + "/?=filename=" + name;
+                layer.confirm('是否确认下载？', {
+                    btn: ['确认','取消']
+                }, function(index){
+                    window.location.href = url;
+                    layer.close(index);
+                });
+            });
+
+            // 搜索按钮 - 未完成
+            search = function () {
+                var searchInput = $("#searchInput").val();
+                let urlsearch = getUrlParam("search");
+                if(searchInput) {
+                    if(urlsearch){
+                        searchurl = replaceParamVal(window.location.search, "search", searchInput);
+                        window.location.href = "http://" + window.location.host + "/"+searchurl;
+                    }else{
+                        if(getUrlParam("drive")){
+                            window.location.href = window.location.href + "&search="+searchInput
+                        }else{
+                            window.location.href = window.location.href + "/?drive={{ drive_id }}&search="+searchInput
+                        }
+                    }
+                }else{
+                    layer.msg("No Search!")
+                }
+
+            };
+
+
+
+            /*
+            *   循环获取图片真实地址
+            *   By: yyyvy
+            *   Time: 2019-03-18
+            * */
+            $('.lightboxurl').each(function(){
+                var _this = $(this);
+                $.when(geturl(_this)).done(function (data) {
+                    _this.attr("href", data["url"]);
+                });
+            });
+            function geturl(obj){
+                var defer = $.Deferred();
+                $.ajax({
+                    url : $(obj).attr("href"),
+                    dataType: 'json',
+                    success: function(data){
+                        defer.resolve(data)
+                    }
+                });
+                return defer.promise();
+            }
+
+        });
+
+        // 弹出视频
+        layui.use(['layer'], function() {
+            var $ = layui.$; //重点处
+            $(".video_open").on("click", function () {
+                var drive = $(this).data("drive"),
+                    disk = $(this).data("disk"),
+                    id = $(this).data("id");
+                var url = "/pop_video/" + drive + "/" + disk + "/" + id;
+                layer.open({
+                    type: 2,
+                    title: false,
+                    area: ['50%', '60%'],
+                    shade: 0.8,
+                    // closeBtn: 0,
+                    // shadeClose: true,
+                    content: url
+                });
+            });
+        });
+
+    </script>
+    <!-- 预留空间 给继承的script -->
+    {% block script %}{% endblock %}
+
+    <!-- 流量统计代码 -->
+    {{ webconfig.web_site_statistics }}
+</body>
+
+</html>

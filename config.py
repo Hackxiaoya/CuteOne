@@ -7,6 +7,8 @@ STATICFILES_DIR = os.path.join(BASE_DIR, 'static')  # 静态文件的路径
 
 SECRET_KEY =  os.urandom(24) # 随机产生24位的字符串作为SECRET_KEY,web重启就会变化
 
+THEMES = "default"
+
 
 """
     Mysql 数据库连接信息

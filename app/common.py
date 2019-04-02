@@ -10,7 +10,7 @@ from app.admin.system import models as systemModels
 SystemInfo = {
     "name": "CuteOne",
     "versionType": "Free",
-    "versions": "1.1.0",
+    "versions": "1.2.0",
     "server": ""
 }
 
@@ -65,8 +65,6 @@ def size_cov(size):
     return size
 
 
-
-
 """
     执行shell指令
     @Author: yyyvy <76836785@qq.com>
@@ -103,3 +101,15 @@ def isRunning(process_name):
 """
 def get_web_site():
     return systemModels.config.get_web_site()
+
+
+
+"""
+    restart web
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-04-02
+"""
+def restart():
+    command = "python3 {}/app/task/restart.py".format(os.getcwd())
+    run_command(command)
