@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import re, urllib.parse, json
+import app
 from flask import render_template, request, make_response, redirect, session
 from app.admin.drive import models as driveModels
 from app.admin.system import models as systemModels
@@ -7,6 +8,17 @@ from ..index import index
 from ..index import logic
 import config
 THEMES = 'themes/'+ config.THEMES +'/'
+
+# Whether there is a string
+def thereisStr(str,arg):
+    result = str.find(arg)
+    if result > 0:
+        return True
+    else:
+        return False
+
+env = app.app.jinja_env
+env.filters['thereisStr'] = thereisStr  #注册自定义过滤器
 
 
 @index.before_request
