@@ -14,6 +14,13 @@
 		body {
 			background-image: url("{{webconfig.web_site_background}}") !important;
 		}
+        .down_file_icon {
+            margin-left: 20px;
+            display: none;
+        }
+        .mdui-list-item.mdui-ripple:hover .down_file_icon {
+            display: inline-block;
+        }
 	</style>
     <!-- 预留空间 给继承的CSS -->
     {% block style %} {% endblock %}
@@ -203,11 +210,12 @@
 
             // 弹出下载
             $(".down_file").on("click", function () {
+                event.stopPropagation();    //  阻止事件冒泡
                 var drive = $(this).data("drive"),
                     disk = $(this).data("disk"),
                     id = $(this).data("id"),
                     name = $(this).data("name");
-                var url = "/down_file/" + drive + "/" + disk + "/" + id + "/?=filename=" + name;
+                var url = "/down_file/" + drive + "/" + disk + "/" + id + "/?filename=" + name;
                 layer.confirm('是否确认下载？', {
                     btn: ['确认','取消']
                 }, function(index){
