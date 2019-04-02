@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-import config, json, requests, re
+import config, json, requests, re, time
 import numpy
 from flask import session
 from app import MongoDB
@@ -94,6 +94,7 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
             if x["file"] == "folder":
                 data.insert(0, x)
             else:
+                x["downloadUrl"] = x["downloadUrl"]
                 data.append(x)
         else:
             dirve_id = driveModels.drive_list.find_by_drive_id(disk_id)[0].id
@@ -108,6 +109,7 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
                 if x["file"] == "folder":
                     data.insert(0, x)
                 else:
+                    x["downloadUrl"] = x["downloadUrl"]
                     data.append(x)
     data = Pagination_data(data, page)
     return data
@@ -163,14 +165,17 @@ def get_downloadUrl(drive_id, disk_id, id):
         # print(get_res)
         if 'error' in get_res.keys():
             driveLogic.reacquireToken(disk_id)
-            get_downloadUrl(disk_id, id)
+            get_downloadUrl(drive_id, disk_id, id)
         else:
             if '@microsoft.graph.downloadUrl' in get_res.keys():
-                return {"name": get_res["name"], "url": get_res["@microsoft.graph.downloadUrl"]}
+                drivename = "drive_" + str(disk_id)
+                collection = MongoDB.db[drivename]
+                collection.update_one({"id":get_res["id"]}, {"$set": {"downloadUrl":get_res["@microsoft.graph.downloadUrl"],"timeout":int(time.time())+300}})
+                return {"name": get_res["name"], "downloadUrl": get_res["@microsoft.graph.downloadUrl"]}
             else:
-                get_downloadUrl(disk_id, id)
+                get_downloadUrl(drive_id, disk_id, id)
     except:
-        get_downloadUrl(disk_id, id)
+        get_downloadUrl(drive_id, disk_id, id)
 
 
 """
@@ -182,22 +187,12 @@ def get_downloadUrl(drive_id, disk_id, id):
     disk_id: 网盘id
     res_id: 资源id
 """
-def down_file(drive_id, disk_id, id):
-    data_list = driveModels.drive_list.find_by_id(disk_id)
-    token = json.loads(json.loads(data_list.token))
-    BaseUrl = config.app_url + 'v1.0/me/drive/items/' + id
-    headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
-    try:
-        get_res = requests.get(BaseUrl, headers=headers, timeout=30)
-        get_res = json.loads(get_res.text)
-        # print(get_res)
-        if 'error' in get_res.keys():
-            driveLogic.reacquireToken(disk_id)
-            get_downloadUrl(disk_id, id)
-        else:
-            if '@microsoft.graph.downloadUrl' in get_res.keys():
-                return {"name": get_res["name"], "url": get_res["@microsoft.graph.downloadUrl"]}
-            else:
-                get_downloadUrl(disk_id, id)
-    except:
-        get_downloadUrl(disk_id, id)
+def file_url(drive_id, disk_id, id):
+    drivename = "drive_" + str(disk_id)
+    collection = MongoDB.db[drivename]
+    result = collection.find_one({"id": id})
+    if result["timeout"] < int(time.time()):
+        get_res = get_downloadUrl(drive_id, disk_id, id)
+        return {"name": get_res["name"], "url": get_res["downloadUrl"]}
+    else:
+        return {"name": result["name"], "url": result["downloadUrl"]}

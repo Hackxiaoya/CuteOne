@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-import os, sys, json, threading
+import os, sys, json, threading, time
 sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
 from app import MongoDB
 from app.admin.drive import logic
@@ -94,7 +94,9 @@ def task_write(id, data, type):
             "path": data["parentReference"]["path"].replace("/drive/root:", ""),
             "size": data["size"],
             "createdDateTime": common.utc_to_local(data["fileSystemInfo"]["createdDateTime"]),
-            "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"])
+            "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"]),
+            "downloadUrl": data["@microsoft.graph.downloadUrl"],
+            "timeout": int(time.time()) + 300
         }
         collection.insert_one(dic)
     else:
@@ -107,11 +109,14 @@ def task_write(id, data, type):
                 "path": data["parentReference"]["path"].replace("/drive/root:", ""),
                 "size": data["size"],
                 "createdDateTime": common.utc_to_local(data["fileSystemInfo"]["createdDateTime"]),
-                "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"])
+                "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"]),
+                "downloadUrl": data["@microsoft.graph.downloadUrl"],
+                "timeout": int(time.time()) + 300
             }
             collection.insert_one(dic)
-
-
+        else:
+            collection.update_one({"id": data["id"]}, {
+                "$set": {"downloadUrl": data["@microsoft.graph.downloadUrl"], "timeout": int(time.time()) + 300}})
 
 
 if __name__ =='__main__':
