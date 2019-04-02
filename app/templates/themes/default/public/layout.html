@@ -8,6 +8,7 @@
     <meta name="description" content="{{ webconfig.web_site_description }}">
 	<link rel="stylesheet" href="{{url_for('static', filename='themes/default/css/mdui.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='css/lightbox.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='css/APlayer.min.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='themes/default/css/style.css')}}">
 	<style>
 		body {
@@ -20,6 +21,8 @@
     <script type="application/javascript" src="{{url_for('static', filename='js/lightbox.js')}}"></script>
     <script type="application/javascript" src="{{url_for('static', filename='layui/layui.js')}}"></script>
     <script type="application/javascript" src="{{url_for('static', filename='js/clipboard.min.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='js/APlayer.min.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='js/APEFN.js')}}"></script>
 	<script src="{{url_for('static', filename='themes/default/js/mdui.min.js')}}"></script>
 </head>
 
@@ -74,6 +77,7 @@
 
         <a href="javascript:thumb();" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i class="mdui-icon material-icons">format_list_bulleted</i></a>
 	</div>
+    <div id="aplayer"></div>
 
     <script>
         $.fn.extend({
@@ -257,6 +261,35 @@
                 });
                 return defer.promise();
             }
+
+            // Music Player
+            music = new music({
+                container: document.getElementById('aplayer'),
+                fixed: true,
+                autoplay: true,
+                theme: '#FADFA3',
+                loop: 'all',
+                order: 'list',
+                preload: 'metadata',
+                volume: 0.7,
+                mutex: true,
+                listFolded: false,
+                listMaxHeight: 90,
+           });
+           $(".addMusicList").on("click",function () {
+               var name = $(this).data("name"),
+                   drive = $(this).data("drive"),
+                   disk = $(this).data("disk"),
+                   id = $(this).data("id");
+               name = name.replace(".mp3","");
+               var url = "http://" + window.location.host + "/down_file/" + drive + "/" + disk + "/" + id;
+               music.addMusic([{
+                   name: name,
+                   artist: "未知",
+                   url: url,
+                   theme: "#ebd0c2"
+               }]);
+           });
 
         });
 
