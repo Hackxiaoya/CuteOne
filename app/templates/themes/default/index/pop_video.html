@@ -28,6 +28,51 @@
     .infobox .info a:hover {
         color: #565656;
     }
+    .lineSwitch {
+        float: left;
+        position: relative;
+        margin-top: -13px;
+        padding-top: 10px;
+    }
+    .lineSwitch:hover ul {
+        display: block;
+    }
+    .lineSwitch span {
+        font-size: 14px;
+        margin-left: 10px;
+        text-decoration: none;
+        color: #2b2b2b;
+        border: 1px dashed #2b2b2b;
+        padding: 2px 8px;
+        cursor: pointer;
+        display: block;
+    }
+    .lineSwitch ul {
+        display: none;
+        position: absolute;
+        bottom: 25px;
+        left: 10px;
+        padding: 0;
+        margin: 0;
+        background: #fff;
+        border: 1px solid #2b2b2b;
+    }
+    .lineSwitch li {
+        list-style: none;
+    }
+    .lineSwitch li a {
+        width: 89px;
+        margin: 0 2px!important;
+        padding: 7px 2px!important;
+        border: none!important;
+        border-bottom: 1px dashed #2b2b2b!important;
+        display: block;
+        text-align: center;
+    }
+    .lineSwitch li a:hover {
+        color: white!important;
+        background: #34c173!important;
+    }
 </style>
 
 <div id="dplayer" style="height: 90%;"></div>
@@ -35,6 +80,21 @@
 <div class="infobox">
     <h3 title="{{ data.name | safe }}">{{ data.name | safe }}</h3>
     <div class="info">
+        <div class="lineSwitch">
+            <span>
+                <i class="fa fa-angle-up"></i>
+                Line Switch
+            </span>
+            <ul>
+                {% for v in load_disk_list %}
+                    <li>
+                        <a href="/pop_video/{{ drive_id }}/{{ v.id }}/{{ id }}">
+                            {{ v.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
         <a href="{{ share_url }}" target="_blank">
             <i class="fa fa-external-link"></i>
             新窗打开

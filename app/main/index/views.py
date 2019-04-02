@@ -49,7 +49,21 @@ def webconfig():
 def drive_list():
     drive_list = driveModels.drive.all("sort", 2)
     url_path = request.full_path
+    drive = request.args.get('drive')
     path = request.args.get('path')
+    if drive:
+        drive_id = drive
+    else:
+        activate = driveModels.drive.find_activate()
+        drive_id = activate.id
+    disk_list = driveModels.drive_list.find_by_drive_id(drive_id)
+    load_disk_list = []
+    for item in disk_list:
+        load_disk_list.append({
+            "id": item.id,
+            "title": item.title
+        })
+
     if path:
         reres = re.findall('(.+?.+)path=(.+?.+)', url_path)[0]
         crumbs_url = reres[0]
@@ -64,9 +78,9 @@ def drive_list():
 
             crumbs_list_data.append({"path": crumbs_list[i], "name": name})
     else:
-        crumbs_url = url_path
+        crumbs_url = "/?drive={}".format(drive_id)
         crumbs_list_data = []
-    return dict(drive_list=drive_list, crumbs_url=crumbs_url, crumbs_list_data=crumbs_list_data)
+    return dict(drive_list=drive_list, crumbs_url=crumbs_url, crumbs_list_data=crumbs_list_data, load_disk_list=load_disk_list)
 
 
 # 当前排序的key
@@ -118,7 +132,7 @@ def video(drive_id, disk_id, id):
     data = logic.get_downloadUrl(drive_id, disk_id, id)
     share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
     donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
-    return render_template(THEMES+'index/video.html', share_url=share_url, donw_url=donw_url, data=data)
+    return render_template(THEMES+'index/video.html', share_url=share_url, donw_url=donw_url, drive_id=drive_id, id=id, data=data)
 
 
 @index.route('/get_downloadUrl/<int:drive_id>/<int:disk_id>/<string:id>')
@@ -132,7 +146,7 @@ def pop_video(drive_id, disk_id, id):
     data = logic.file_url(drive_id, disk_id, id)
     share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
     donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
-    return render_template(THEMES+'index/pop_video.html', share_url=share_url, donw_url=donw_url, data=data)
+    return render_template(THEMES+'index/pop_video.html', share_url=share_url, donw_url=donw_url, drive_id=drive_id, id=id, data=data)
 
 
 @index.route('/down_file/<int:drive_id>/<int:disk_id>/<string:id>')
