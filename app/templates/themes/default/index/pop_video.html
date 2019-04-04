@@ -73,9 +73,23 @@
         color: white!important;
         background: #34c173!important;
     }
+    #dplayer {
+        height: 90%;
+    }
+    @media screen and (max-width:500px) {
+        .infobox h3 {
+            width: 100%;
+        }
+        .info {
+            position: relative!important;
+        }
+        #dplayer {
+            height: 87%;
+        }
+    }
 </style>
 
-<div id="dplayer" style="height: 90%;"></div>
+<div id="dplayer"></div>
 
 <div class="infobox">
     <h3 title="{{ data.name | safe }}">{{ data.name | safe }}</h3>

@@ -334,13 +334,25 @@
                     disk = $(this).data("disk"),
                     id = $(this).data("id");
                 var url = "/pop_video/" + drive + "/" + disk + "/" + id;
+                //适配手机端
+                if($(window).width() < 500) {
+                    var d_width = "95%";
+                    var shadeClose = true;
+                    var closeBtn = 0;
+                }else{
+                    var d_width = "50%";
+                    var shadeClose = false;
+                    var closeBtn = 1;
+                }
+
+                console.log($(window).width())
                 layer.open({
                     type: 2,
                     title: false,
-                    area: ['50%', '60%'],
+                    area: [d_width, '60%'],
                     shade: 0.8,
-                    // closeBtn: 0,
-                    // shadeClose: true,
+                    closeBtn: closeBtn,
+                    shadeClose: shadeClose,
                     content: url
                 });
             });
