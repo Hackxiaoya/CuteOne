@@ -26,12 +26,12 @@ def author_judge(drive_id, path=''):
         temp_path = ""
         for item in temp:
             temp_path += "/"+item
-            res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
-            if res:
-                if res.password != session.get('password'):
-                    return res
-                else:
-                    return
+        res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
+        if res:
+            if res.password != session.get(temp_path):
+                return res
+            else:
+                return
     else:
         res = authorModels.authrule.find_by_drive_id(drive_id, path)
         return res

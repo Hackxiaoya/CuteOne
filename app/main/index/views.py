@@ -165,7 +165,7 @@ def approve():
     password = request.form['password']
     res = logic.author_password(drive_id, path, password)
     if res:
-        session['password'] = password
+        session[path] = password
         return json.dumps({"code": 0, "msg": "密码正确！"})
     else:
         return json.dumps({"code": 1, "msg": "密码错误！"})
