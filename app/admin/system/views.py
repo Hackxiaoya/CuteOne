@@ -10,7 +10,7 @@ from app import decorators
 
 
 
-@admin.route('/system/restart', methods=['GET', 'POST'])  # restart
+@admin.route('/system/restart')  # restart
 @decorators.login_require
 def restart():
     common.restart()

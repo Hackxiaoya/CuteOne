@@ -1,10 +1,12 @@
 # -*- coding:utf-8 -*-
-import os, sys, json, threading
+import os, sys, json, threading, time
 sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
+from app import MongoDB
 from app.admin.drive import models as driveModels
 from app.admin.drive import logic as driveLogic
 import requests
 import config
+from app import common
 
 """
     推送脚本
@@ -15,21 +17,27 @@ import config
     @Author: yyyvy <76836785@qq.com>
     @Description:
     @Time: 2019-03-23
-    dirve_id: 驱动id
+    drive_id: 驱动id
     fileName: 文件名称
     remotePath: 远程路径
 """
-def upProcess(dirve_id, fileName, remotePath):
-    data_list = driveModels.drive_list.find_by_drive_id(dirve_id)
-    if data_list:
-        for item in data_list:
-            if item.chief == "0":
-                filesize = os.path.getsize(os.getcwd() + "/temp_uploads/syn_temp/" + str(dirve_id) + "/" + fileName)
-                if filesize >4194304:
-                    res = putfilebig(item.id, dirve_id, fileName, remotePath)
-                else:
-                    res = putfilesmall(item.id, dirve_id, fileName, remotePath)
-    target_filename = os.getcwd()+"/temp_uploads/syn_temp/" + str(dirve_id) + "/" + fileName
+def upProcess(drive_id, fileName, remotePath):
+    data_list = driveModels.drive_list.find_by_drive_id(drive_id)
+    collection = MongoDB.db["syn_drive_" + str(drive_id)]
+    for item in data_list:
+        if item.chief == "0":
+            dbRes = collection.find_one({"name": fileName, "path": remotePath})
+            if str(item.id) in dbRes["syn_disk"]:
+                common.send_socket(drive_id, "{} | 开始同步 {} 到 [ {} ] 网盘".format(time.strftime('%Y-%m-%d %H:%M:%S'), fileName, item.title))
+                if item.chief == "0":
+                    filesize = os.path.getsize(os.getcwd() + "/temp_uploads/syn_temp/" + str(drive_id) + "/" + fileName)
+                    if filesize > 4194304:
+                        res = putfilebig(item.id, drive_id, fileName, remotePath)
+                    else:
+                        res = putfilesmall(item.id, drive_id, fileName, remotePath)
+                common.send_socket(drive_id, "{} | 同步 {} 到 [ {} ] 网盘完成".format(time.strftime('%Y-%m-%d %H:%M:%S'), fileName, item.title))
+    common.send_socket(drive_id, "{} | {} 所有网盘同步完成，删除缓存文件".format(time.strftime('%Y-%m-%d %H:%M:%S'), fileName))
+    target_filename = os.getcwd()+"/temp_uploads/syn_temp/" + str(drive_id) + "/" + fileName
     os.remove(target_filename)  # 删除文件
 
 

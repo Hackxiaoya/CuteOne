@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="{{url_for('static', filename='font-awesome/css/font-awesome.min.css')}}" media="all">
+<link rel="stylesheet" href="{{url_for('static', filename='layui/rc/css/layui.css')}}" media="all">
+
+<div class="layui-form" style="margin: 17px 20px 0;height: 90%;">
+    <div class="layui-card-body" style="background: #4c4c4c;color: white;height: 100%;overflow: auto;">
+        <ul class=" content">
+            {% for v in data %}
+                <li>{{ v.content }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+<script type="application/javascript" src="{{url_for('static', filename='layui/layui.js')}}"></script>
+<script type="application/javascript" src="{{url_for('static', filename='socket/socket.io.js')}}"></script>
+<script>
+    layui.use(['layer', 'form'], function(){
+        var $ = layui.$;
+        var form = layui.form;
+        var content = $(".content");
+        namespace = '/websocket';
+        socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+        socket.on('connect', function() {
+            socket.emit('synClientEvent', {data: 'I\'m connected!'});
+        });
+
+        socket.on('server_response_{{ dirve_id }}', function(res) {
+            content.append("<li>" + res.data + "</li>");
+            $(".layui-card-body")[0].scrollTop = $(".layui-card-body")[0].scrollHeight;
+            // console.log(res.data);
+        });
+
+
+    });
+</script>

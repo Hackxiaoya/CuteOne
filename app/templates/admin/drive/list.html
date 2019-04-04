@@ -105,6 +105,7 @@
             })
         };
 
+
         var table = layui.table;
         function tablerender(){
             table.render({
@@ -133,7 +134,15 @@
 
             if(layEvent === 'manage'){ //管理
                 self.location.href = '/admin/drive/disk_list/'+data.id
-            } else if(layEvent === 'update'){   //更新MongoDB缓存
+            } else if(layEvent === 'syn_detail'){
+                layer.open({
+                    type: 2
+                    ,title: '查看任务状态'
+                    ,shadeClose: true
+                    ,area: ["650px", "550px"]
+                    ,content: '/admin/drive/syn_detail/'+data.id
+                });
+            }else if(layEvent === 'update'){   //更新MongoDB缓存
                 if("{{ isRunning }}" == "1"){
                     layer.msg("已有更新任务，请稍后再更新缓存！")
                 }else {
@@ -154,9 +163,12 @@
                                 ,data: {id:data.id, type:$("input[type=radio]:checked").val()}
                                 ,success: function (data) {
                                     if(data.code==0){
-                                        layer.msg('已添加到后台更新任务中，请勿重复提交！', {icon: 1});
+                                        layer.msg('已添加到后台更新任务中，切勿重复提交！', {icon: 1});
                                         layer.close(index);
-                                        tablerender();
+                                        setTimeout(function () {
+                                            location.reload();
+                                        },2000);
+
                                         // location.reload();
                                     }else{
                                         layer.msg(data.msg)

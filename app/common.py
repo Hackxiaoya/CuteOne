@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*-
-import datetime, os, re
+import datetime, os, re, time
+from socketIO_client import SocketIO, BaseNamespace
 import hashlib, subprocess
 from app.admin.system import models as systemModels
+from app import MongoDB
 
 
 """
@@ -102,6 +104,39 @@ def isRunning(process_name):
 def get_web_site():
     return systemModels.config.get_web_site()
 
+
+"""
+    Socket 通知
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-04-04
+    id: ID
+    msg: 内容
+"""
+def send_socket(id, msg):
+    socket = SocketIO('127.0.0.1', 5000)
+    chat = socket.define(BaseNamespace, '/websocket')
+    chat.emit('synProcessEvent', {'data': {'id': id, 'msg': msg}})
+    data = {
+        "drive_id": id,
+        "type": "syn",
+        "content": msg
+    }
+    add_log(data)
+
+
+"""
+    日志操作
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-04-04
+    data: { "drive_id": id, "type": "syn", "content": msg}
+"""
+def add_log(data):
+    collection = MongoDB.db["log"]
+    dic = data
+    dic["create_time"] = time.strftime('%Y-%m-%d %H:%M:%S')
+    collection.insert_one(dic)
 
 
 """

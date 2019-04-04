@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from flask import Flask
+from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_pymongo import PyMongo
 
@@ -11,6 +12,8 @@ app.config.from_object('config')
 MysqlDB = SQLAlchemy(app)
 MongoDB = PyMongo(app)
 
+async_mode = None
+socketio = SocketIO(app, async_mode=async_mode)
 
 
 # 蓝图注册路由文件

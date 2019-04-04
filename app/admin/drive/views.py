@@ -2,7 +2,7 @@
 from flask import request, render_template, json
 import config
 import os, requests, re
-from app import MysqlDB
+from app import MysqlDB, MongoDB
 from app import decorators
 from app.admin import admin
 from ..drive import models
@@ -25,14 +25,22 @@ def list():
                 drive_number = len(models.drive_list.all(result.id))
                 syn_task_status = logic.isSynTask(result.id)
                 if syn_task_status:
-                    syn_task_status = "<span style='color: #5FB878;'>正在运行同步</span>"
+                    syn_task_status = "<button class='layui-btn layui-btn-normal layui-btn-xs' lay-event='syn_detail' data-id='1'>正在运行同步</button>"
                 else:
-                    syn_task_status = "暂无同步进程"
+                    syn_task_status = "<button class='layui-btn layui-btn-primary layui-btn-xs'>暂无同步进程</button>"
                 json_data["data"].append(
                     {"id": result.id, "title": result.title, "description": result.description, "drive_number":drive_number, "sort":result.sort, "syn_task_status":syn_task_status, "update_time":str(result.update_time), "create_time": str(result.create_time)})
         return json.dumps(json_data)
     else:
         return render_template('admin/drive/list.html', top_nav='drive', activity_nav='list', isRunning=isRunning)
+
+
+@admin.route('/drive/syn_detail/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
+@decorators.login_require
+def syn_detail(id):
+    collection = MongoDB.db["log"]
+    data = collection.find({"drive_id": str(id), "type":"syn"})
+    return render_template('admin/drive/syn_detail.html', top_nav='drive', activity_nav='list', dirve_id=id, data=data)
 
 
 @admin.route('/drive/edit/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
@@ -314,6 +322,16 @@ def delete_files():
 @admin.route('/drive/synStart/<int:id>')
 @decorators.login_require
 def synStart(id):
+    drive_id = id
+    collection = MongoDB.db["log"]
+    collection.delete_many({"drive_id": str(drive_id), "type":"syn"})
+    logic.startSynTask(drive_id)
+    return json.dumps({"code": 0, "msg": "成功！"})
+
+
+@admin.route('/drive/synContinue/<int:id>')
+@decorators.login_require
+def synContinue(id):
     drive_id = id
     logic.startSynTask(drive_id)
     return json.dumps({"code": 0, "msg": "成功！"})

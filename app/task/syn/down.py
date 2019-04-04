@@ -3,24 +3,28 @@ import threading,sys
 import requests
 import time
 import os
+from app import common
 
 class MulThreadDownload(threading.Thread):
-    def __init__(self,url,startpos,endpos,f):
+    def __init__(self,drive_id, url,startpos,endpos,f):
         super(MulThreadDownload,self).__init__()
+        self.drive_id = drive_id
         self.url = url
         self.startpos = startpos
         self.endpos = endpos
         self.fd = f
 
     def download(self):
-        print("start thread:%s at %s" % (self.getName(), time.time()))
+        common.send_socket(self.drive_id, "{} | 开始下载进程 {} | {}".format(time.strftime('%Y-%m-%d %H:%M:%S'), self.getName(), time.time()))
+        # print("start thread:%s at %s" % (self.getName(), time.time()))
         headers = {"Range":"bytes=%s-%s"%(self.startpos,self.endpos)}
         res = requests.get(self.url,headers=headers)
         # res.text 是将get获取的byte类型数据自动编码，是str类型， res.content是原始的byte类型数据
         # 所以下面是直接write(res.content)
         self.fd.seek(self.startpos)
         self.fd.write(res.content)
-        print("stop thread:%s at %s" % (self.getName(), time.time()))
+        common.send_socket(self.drive_id, "{} | 结束下载进程 {} | {}".format(time.strftime('%Y-%m-%d %H:%M:%S'), self.getName(), time.time()))
+        # print("stop thread:%s at %s" % (self.getName(), time.time()))
         self.fd.close()
 
     def run(self):
@@ -36,16 +40,19 @@ class MulThreadDownload(threading.Thread):
     drive_id: 驱动ID
 """
 def down_file(url, fileName, drive_id):
+
     # 获取文件的大小和文件名
     filename = "{}/temp_uploads/syn_temp/{}/{}".format(os.getcwd(), drive_id, fileName)
     if not os.path.exists("{}/temp_uploads/syn_temp/{}".format(os.getcwd(), drive_id)):
+        common.send_socket(drive_id, "{} | 创建网盘同步临时缓存目录".format(time.strftime('%Y-%m-%d %H:%M:%S')))
         # 如果不存在则创建目录
         os.makedirs("{}/temp_uploads/syn_temp/{}".format(os.getcwd(), drive_id))
     try:
         filesize = int(requests.head(url).headers['Content-Length'])
     except:
-        down_file(url, fileName)
-    print("%s filesize:%s" % (filename, filesize))
+        down_file(url, fileName, drive_id)
+    common.send_socket(drive_id, "{} | 多线程下载 {} | 文件大小: {}".format(time.strftime('%Y-%m-%d %H:%M:%S'), fileName, filesize))
+    # print("%s filesize:%s" % (filename, filesize))
 
     # 线程数
     threadnum = 5
@@ -76,12 +83,13 @@ def down_file(url, fileName, drive_id):
             # 打开文件
             fd = os.fdopen(dup, 'rb+', -1)
             # print(fd)
-            t = MulThreadDownload(url, start, end, fd)
+            t = MulThreadDownload(drive_id, url, start, end, fd)
             t.start()
             mtd_list.append(t)
 
         for i in mtd_list:
             i.join()
+    common.send_socket(drive_id, "{} | 下载 {} 完成".format(time.strftime('%Y-%m-%d %H:%M:%S'), fileName))
     return True # 完成单个文件下载
 
 

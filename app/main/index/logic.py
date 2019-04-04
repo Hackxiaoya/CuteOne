@@ -191,7 +191,7 @@ def file_url(drive_id, disk_id, id):
     drivename = "drive_" + str(disk_id)
     collection = MongoDB.db[drivename]
     result = collection.find_one({"id": id})
-    if result["timeout"] < int(time.time()):
+    if int(result["timeout"]) <= int(time.time()):
         get_res = get_downloadUrl(drive_id, disk_id, id)
         return {"name": get_res["name"], "url": get_res["downloadUrl"]}
     else:

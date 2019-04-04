@@ -14,7 +14,11 @@
                 <div class="layui-card-body">
                     <div style="padding-bottom: 10px;">
                         <button class="layui-btn" layadmin-event="add">添加网盘</button>
-                        <button class="layui-btn {% if isSynTask %}layui-btn-disabled{% else %}layui-btn-normal{% endif %}" layadmin-event="synStart" >{% if ifSynTask %}继续同步{% else %}开始同步{% endif %}</button>
+                        {% if ifSynTask %}
+                            <button class="layui-btn {% if isSynTask %}layui-btn-disabled{% else %}layui-btn-normal{% endif %}" layadmin-event="synContinue">继续同步</button>
+                        {% else %}
+                            <button class="layui-btn {% if isSynTask %}layui-btn-disabled{% else %}layui-btn-normal{% endif %}" layadmin-event="synStart">开始同步</button>
+                        {% endif %}
                         <button class="layui-btn layui-btn-danger" layadmin-event="synStop">停止同步</button>
                     </div>
                     <table class="layui-hide" id="list-table" lay-filter="list-table"></table>
@@ -68,6 +72,27 @@
                 });
             });
         };
+
+        clickMethod.synContinue = function () {
+            layer.confirm('请确保你没有修改过主从配置？', {
+                btn: ['继续同步','取消'] //按钮
+            }, function(){
+                $.ajax({
+                    url: "/admin/drive/synContinue/{{ data.id }}"
+                    ,type: "GET"
+                    ,dataType: "json"
+                    ,success: function (data) {
+                        if(data.code==0){
+                            layer.msg('继续同步中...', {icon: 1});
+                            location.reload();
+                        }else{
+                            layer.msg(data.msg)
+                        }
+                    }
+                });
+            });
+        };
+
 
         clickMethod.synStop = function () {
             layer.confirm('确定要停止主从同步任务吗？', {

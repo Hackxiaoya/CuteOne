@@ -12,7 +12,9 @@ def magConifg():
 
 
 from .index import views
+from .socket import views
 from .system import views
 from .drive import views
 from .author import views
 from .task import views
+from .syn import views
