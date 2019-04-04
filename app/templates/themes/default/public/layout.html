@@ -6,6 +6,7 @@
 	<title>{{ webconfig.web_site_title }} - CuteOne网盘系统ss</title>
     <meta name="keywords" content="{{ webconfig.web_site_keyword }}">
     <meta name="description" content="{{ webconfig.web_site_description }}">
+    <link href="{{url_for('static', filename='favicon.ico')}}" rel="shortcut icon" type="image/x-icon">
 	<link rel="stylesheet" href="{{url_for('static', filename='themes/default/css/mdui.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='css/lightbox.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='css/APlayer.min.css')}}">
@@ -14,64 +15,6 @@
 		body {
 			background-image: url("{{webconfig.web_site_background}}") !important;
 		}
-        .down_file_icon {
-            margin-left: 20px;
-            display: none;
-        }
-        .mdui-list-item.mdui-ripple:hover .down_file_icon {
-            display: inline-block;
-        }
-        .loadSet {
-            opacity: 1;
-        }
-        .loadSet > a {
-            padding: 0 16px;
-            line-height: 30px;
-            border-radius: 30px;
-            border: 1px solid #d8d8d8;
-            color: inherit;
-            display: inline-block;
-            text-decoration: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            opacity: .5;
-        }
-        .loadSet:hover a {
-            opacity: 1;
-        }
-        .loadSet ul {
-            display: none;
-            position: absolute;
-            top: 30px;
-            width: 115px;
-            border: 1px solid #d8d8d8;
-            background: #fefefe;
-            border-radius: 5px;
-            opacity: 1;
-            padding: 0;
-            text-align: center;
-            z-index: 1;
-        }
-        .loadSet:hover ul {
-            display: block;
-        }
-        .loadSet li {
-            list-style: none;
-            line-height: initial;
-            border-bottom: 1px dashed #929292;
-        }
-        .loadSet li a {
-            text-decoration: none;
-            padding: 7px;
-            display: block;
-            color: #808080;
-        }
-        .loadSet li a:hover {
-            color: #000;
-            background: #e0e0e0;
-        }
 	</style>
     <!-- 预留空间 给继承的CSS -->
     {% block style %} {% endblock %}
@@ -113,6 +56,9 @@
 			<div class="mdui-toolbar nexmoe-item">
 				<div class="loadSet">
                     <a href="{{crumbs_url}}">负载磁盘<i class="mdui-icon material-icons">keyboard_arrow_down</i></a>
+                    <div class="small_icon_home">
+                        <i class="mdui-icon material-icons">storage</i>
+                    </div>
                     <ul>
                         {% for v in load_disk_list %}
                             <li>
