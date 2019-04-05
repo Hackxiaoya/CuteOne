@@ -91,8 +91,6 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
     search_type = systemModels.config.get_config('search_type')
     drivename = "drive_" + str(disk_id)
     collection = MongoDB.db[drivename]
-    dirve_id = driveModels.drive_list.find_by_drive_id(disk_id)[0].id
-    authorres = authorModels.authrule.find_by_drive_id_all(dirve_id)
     data = []
     if sortType == "more":
         sortType = pymongo.DESCENDING
@@ -122,6 +120,8 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
                     x["downloadUrl"] = x["downloadUrl"]
                     data.append(x)
             else:
+                dirve_id = driveModels.drive_list.find_by_drive_id(disk_id)[0].id
+                authorres = authorModels.authrule.find_by_drive_id_all(dirve_id)
                 authorpath = [] # 搜索不可见的集和，加密皆不可见
                 for i in authorres:
                     authorpath.append(i.path)
