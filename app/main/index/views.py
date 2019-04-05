@@ -1,13 +1,17 @@
 # -*- coding:utf-8 -*-
 import re, urllib.parse, json
-import app
+from app import app
 from flask import render_template, request, make_response, redirect, session
+from flask_login import current_user
 from app.admin.drive import models as driveModels
 from app.admin.system import models as systemModels
 from ..index import index
 from ..index import logic
+from ..users import logic as usersLogic
 import config
 THEMES = 'themes/'+ config.THEMES +'/'
+
+
 
 # Whether there is a string
 def thereisStr(str,arg):
@@ -17,7 +21,7 @@ def thereisStr(str,arg):
     else:
         return False
 
-env = app.app.jinja_env
+env = app.jinja_env
 env.filters['thereisStr'] = thereisStr  #注册自定义过滤器
 
 
@@ -30,8 +34,13 @@ def toggle_web_site():
         drive = request.args.get('drive')
         path = '' if request.args.get('path') is None else request.args.get('path')
         if drive:
-            author = logic.author_judge(drive, path)
+            if current_user.get_id() is not None:
+                author = logic.author_judge(drive, current_user.id, path)
+                # author = logic.author_judge(drive, 1, path)
+            else:
+                author = logic.author_judge(drive, '', path)
             if author:
+                print(author)
                 return render_template(THEMES+'index/author.html', drive_id=drive, path=path)
 
 
@@ -116,14 +125,12 @@ def _index():
         else:
             data = logic.get_data(disk_id, '', search, sortTable, sortType, page_number)
             current_url = '{}&path='.format(driveurl)
-
     else:
         activate = driveModels.drive.find_activate()
         drive = activate.id
         disk_id = driveModels.drive_list.find_by_chief(activate.id).id
         data = logic.get_data(disk_id, '', search, sortTable, sortType, page_number)
         current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
-
     return render_template(THEMES+'index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data["data"], pagination=data["pagination"])
 
 

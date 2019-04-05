@@ -4,6 +4,7 @@ chardet==3.0.4
 Click==7.0
 configparser==3.7.4
 Flask==1.0.2
+Flask-Login==0.4.1
 Flask-PyMongo==2.2.0
 Flask-SocketIO==3.3.2
 Flask-SQLAlchemy==2.3.2

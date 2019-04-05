@@ -18,3 +18,4 @@ from .drive import views
 from .author import views
 from .task import views
 from .syn import views
+from .users import views

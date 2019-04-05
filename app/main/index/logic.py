@@ -5,10 +5,12 @@ from flask import session
 from app import MongoDB
 import pymongo
 from app import common
+from flask_login import current_user
 from ...admin.drive import models as driveModels
 from ...admin.drive import logic as driveLogic
 from ...admin.author import models as authorModels
-from app.admin.system import models as systemModels
+from ...admin.system import models as systemModels
+from ...admin.users import models as usersModels
 
 
 """
@@ -17,21 +19,33 @@ from app.admin.system import models as systemModels
     @Description:
     @Time: 2019-03-22
     drive_id: 驱动ID
+    users_id: 会员ID
     path: 路径
 """
-def author_judge(drive_id, path=''):
+def author_judge(drive_id, users_id='', path=''):
     if path:
         path = path[1:]
         temp = path.split('/')
         temp_path = ""
         for item in temp:
-            temp_path += "/"+item
-        res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
-        if res:
-            if res.password != session.get(temp_path):
-                return res
-            else:
-                return
+            temp_path += "/" + item
+
+        if users_id:    # 如果是会员
+            group_id = usersModels.users.find_by_id(users_id).group
+            group_data = authorModels.authGroup.find_by_id(group_id).auth_group
+            group_data = group_data.split(",")
+            for item in group_data:
+                res = authorModels.authrule.find_by_id_drive_path(item, drive_id, temp_path)
+                if res is not None:
+                    return False
+            return True
+        else:
+            res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
+            if res:
+                if res.password != session.get(temp_path):
+                    return True
+                else:
+                    return False
     else:
         res = authorModels.authrule.find_by_drive_id(drive_id, path)
         return res
@@ -77,17 +91,16 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
     search_type = systemModels.config.get_config('search_type')
     drivename = "drive_" + str(disk_id)
     collection = MongoDB.db[drivename]
+    dirve_id = driveModels.drive_list.find_by_drive_id(disk_id)[0].id
+    authorres = authorModels.authrule.find_by_drive_id_all(dirve_id)
     data = []
     if sortType == "more":
         sortType = pymongo.DESCENDING
     else:
         sortType = pymongo.ASCENDING
-    if search is not None:
-        result = collection.find({"name":re.compile(search)}).sort([(sortTable, sortType)])
-    else:
+    if search is None:
         result = collection.find({"path": path}).sort([(sortTable, sortType)])
-    for x in result:
-        if search_type == "1":
+        for x in result:
             x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
             x["createdDateTime"] = str(x["createdDateTime"])
             x["size"] = common.size_cov(x["size"])
@@ -96,13 +109,10 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
             else:
                 x["downloadUrl"] = x["downloadUrl"]
                 data.append(x)
-        else:
-            dirve_id = driveModels.drive_list.find_by_drive_id(disk_id)[0].id
-            authorres = authorModels.authrule.find_by_drive_id_all(dirve_id)
-            authorpath = []
-            for i in authorres:
-                authorpath.append(i.path)
-            if x["path"] not in authorpath:
+    else:
+        result = collection.find({"name":re.compile(search)}).sort([(sortTable, sortType)])
+        for x in result:
+            if search_type == "1":
                 x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
                 x["createdDateTime"] = str(x["createdDateTime"])
                 x["size"] = common.size_cov(x["size"])
@@ -111,8 +121,42 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
                 else:
                     x["downloadUrl"] = x["downloadUrl"]
                     data.append(x)
+            else:
+                authorpath = [] # 搜索不可见的集和，加密皆不可见
+                for i in authorres:
+                    authorpath.append(i.path)
+                if x["path"] not in authorpath:
+                    x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
+                    x["createdDateTime"] = str(x["createdDateTime"])
+                    x["size"] = common.size_cov(x["size"])
+                    if x["file"] == "folder":
+                        data.insert(0, x)
+                    else:
+                        x["downloadUrl"] = x["downloadUrl"]
+                        data.append(x)
     data = Pagination_data(data, page)
     return data
+
+
+"""
+    内容隐藏
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-04-05
+    data: 内容
+"""
+def hidedata(data):
+    if int(len(data)/2) > 12:
+        return data.replace(data[5:16], '****')
+    if int(len(data)/2) > 9:
+        return data.replace(data[5:16], '****')
+    if int(len(data)/2) > 7:
+        return data.replace(data[5:14], '****')
+    elif int(len(data)/2) > 5:
+        return data.replace(data[3:7], '****')
+    elif int(len(data)/2) > 2:
+        return data.replace(data[2:4], '****')
+
 
 
 """

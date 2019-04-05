@@ -29,10 +29,39 @@
 
 <body class="mdui-theme-primary-blue-grey mdui-theme-accent-blue">
 	<div class="mdui-container">
-        <div class="mdui-container-fluid">
+        <div class="mdui-container-fluid" style="padding: 0;">
             <a href="/" class="logo">
                 <img src="{{ webconfig.web_site_logo }}" alt="{{ webconfig.web_site_title }}">
             </a>
+            <div class="login_info">
+                {% if current_user.id %}
+                    <div class="is_login">
+                        <img src="/static/uploads/avatar/1.png" alt="" class="avatar">
+                        <div class="info">
+                            <a href="/" class="username">
+                                {{ current_user.nickname }}
+                            </a>
+                            <a href="/" class="level">
+                                {{ current_user.group }}
+                            </a>
+                        </div>
+                        <i class="line"></i>
+                        <div class="setting">
+                            <a href="/">
+                                设置
+                            </a>
+                            <a href="/users/logout" class="login_out">
+                                登出
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="not_login">
+                        不登陆一下，你都不知道世界有多大！
+                        <a href="javascript:login();">Login</a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
         <div class="mdui-container-fluid">
 			<div class="mdui-drive nexmoe-item">
@@ -345,7 +374,6 @@
                     var closeBtn = 1;
                 }
 
-                console.log($(window).width())
                 layer.open({
                     type: 2,
                     title: false,
@@ -357,6 +385,24 @@
                 });
             });
         });
+        
+        function login() {
+            if($(window).width() < 500) {
+                var d_width = "95%",
+                    d_height = "95%";
+            }else{
+                var d_width = "360px",
+                    d_height = "430px";
+            }
+            layer.open({
+                type: 2,
+                title: false,
+                area: [d_width, d_height],
+                shade: 0.8,
+                shadeClose: true,
+                content: '/users/login'
+            });
+        }
 
     </script>
     <!-- 预留空间 给继承的script -->

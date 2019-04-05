@@ -6,6 +6,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link href="{{url_for('static', filename='favicon.ico')}}" rel="shortcut icon" type="image/x-icon">
     <link rel="stylesheet" href="{{url_for('static', filename='font-awesome/css/font-awesome.min.css')}}" media="all">
     <link rel="stylesheet" href="{{url_for('static', filename='layui/rc/css/layui.css')}}" media="all">
     <link rel="stylesheet" href="{{url_for('static', filename='css/admin.css')}}" media="all">
@@ -91,6 +92,11 @@
                                 <a href="/admin/author/list">权限列表</a>
                             </dd>
                         </dl>
+                        <dl class="layui-nav-child">
+                            <dd class="{% if 'group'== activity_nav %}layui-this{% endif %}">
+                                <a href="/admin/author/group">群组列表</a>
+                            </dd>
+                        </dl>
                     </li>
                     <li class="layui-nav-item {% if 'task'== top_nav %}layui-nav-itemed{% endif %}">
                         <a href="javascript:;" lay-tips="任务">
@@ -101,6 +107,18 @@
                         <dl class="layui-nav-child">
                             <dd class="{% if 'list'== activity_nav %}layui-this{% endif %}">
                                 <a href="/admin/task/list">任务列表</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item {% if 'users'== top_nav %}layui-nav-itemed{% endif %}">
+                        <a href="javascript:;" lay-tips="用户">
+                            <i class="fa fa-users"></i>
+                            <cite>用户管理</cite>
+                            <span class="layui-nav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd class="{% if 'list'== activity_nav %}layui-this{% endif %}">
+                                <a href="/admin/users/list">用户列表</a>
                             </dd>
                         </dl>
                     </li>

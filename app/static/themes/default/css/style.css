@@ -285,6 +285,83 @@ a.active {
     color: #000;
     background: #e0e0e0;
 }
+.login_info {
+    float: right;
+    margin: 17px 0 0;
+}
+.not_login {
+    background: #f04344;
+    color: white;
+    padding: 5px 0 5px 5px;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+.not_login a {
+    background: #fcff44;
+    color: #f04243;
+    text-decoration: none;
+    padding: 5px 7px;
+    border-radius: 0 5px 5px 0;
+    margin-right: -2px;
+}
+.not_login a:hover {
+    background: #fff;
+}
+.is_login {
+    background: #fff;
+    overflow: hidden;
+    border-radius: 5px;
+    padding: 5px;
+}
+.is_login .avatar {
+    width: 50px;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    background: #fff;
+    float: left;
+}
+.is_login .info {
+    float: left;
+    margin-left: 15px;
+}
+.is_login .info a, .is_login .setting a {
+    text-decoration: none;
+    color: black;
+}
+.is_login .info a:hover, .is_login .setting a:hover {
+    opacity: .5;
+}
+.is_login .info .username {
+    font-size: 20px;
+    display: block;
+    margin-top: 3px;
+}
+.is_login .info .level {
+    display: block;
+    text-align: center;
+    color: #f04243;
+    margin-top: 5px;
+}
+.is_login i.line {
+    height: 52px;
+    width: 1px;
+    background: #c5c5c5;
+    float: left;
+    margin: 0px 10px;
+}
+.is_login .setting {
+    float: left;
+}
+.is_login .setting a {
+    display: block;
+    margin: 6px 0;
+}
+.is_login .setting {
+
+}
+.is_login .setting .login_out {
+    margin: 9px 0 0;
+}
 .thumb .th{
     display: none;
 }

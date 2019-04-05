@@ -15,9 +15,9 @@
             <label class="layui-form-label">驱动</label>
             <div class="layui-input-block">
                  <select name="drive_id" placeholder="请选择驱动" lay-filter="drive_id">
-                    {% for i in drive_list %}
+                     {% for i in drive_list %}
                         <option value="{{ i.drive_id }}" {% if i.drive_id == data.drive_id|int %} selected {% endif %}>{{ i.drive_title }}</option>
-                    {% endfor %}
+                     {% endfor %}
                 </select>
             </div>
         </div>
@@ -34,6 +34,14 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">显示方式</label>
+            <div class="layui-input-block">
+                <input type="radio" name="login_hide" value="1" title="全显示" {% if data.login_hide|int == 1 %}checked{% endif %}>
+                <input type="radio" name="login_hide" value="2" title="登陆可见" {% if data.login_hide|int == 2 %}checked{% endif %}>
+                <input type="radio" name="login_hide" value="3" title="隐藏局部文字" {% if data.login_hide|int == 3 %}checked{% endif %}>
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label"></label>
             <div class="layui-input-inline">
                 <button id="form-submit" class="layui-btn">保存</button>
@@ -47,26 +55,6 @@
     layui.use(['form', 'layer'], function(){
         var $ = layui.$; //重点处
         var form = layui.form;
-
-        // form.on('select(drive_id)', function(data){
-        //     var dirveId = data.elem.value;
-        //     $.ajax({
-        //         url: "/admin/author/disk_info/"+dirveId,
-        //         type: "GET",
-        //         dataType:  'json',
-        //         success:function(e){
-        //             $("select[name='disk_id']").html("");
-        //             var html = "";
-        //             $(e.data).each(function (v, k) {
-        //                 html += "<option value='" + k.disk_id + "'>" + k.disk_title + "</option>";
-        //             });
-        //             $("select[name='disk_id']").append(html);
-        //             form.render('select');      //重新渲染
-        //         }
-        //     });
-        // });
-
-
 
         // 确认按钮
         $('#form-submit').on('click', function () {
