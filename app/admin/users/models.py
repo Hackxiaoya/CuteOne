@@ -89,6 +89,17 @@ class users(MysqlDB.Model):
         else:
             return {"code": False, "msg": "账号错误"}
 
+
+    # 分页
+    @classmethod
+    def get_pages(cls, page_index, page_size):
+        page_index = int(page_index)
+        page_size = int(page_size)
+        data = MysqlDB.session.query(cls).limit(page_size).offset((page_index - 1) * page_size).all()
+        MysqlDB.session.close()
+        return data
+
+
     # 下面这4个方法是flask_login需要的4个验证方式
     def is_authenticated(cls):
         return True
@@ -103,6 +114,46 @@ class users(MysqlDB.Model):
         return cls.id
 
 
+class funds(MysqlDB.Model):
+    __tablename__ = 'cuteone_funds'
+    id = MysqlDB.Column(MysqlDB.INT, primary_key=True)
+    uid = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    content = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    status = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    update_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'),
+                                 onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))
+    create_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'))
+
+    @classmethod
+    def all(cls):
+        data = MysqlDB.session.query(cls).all()
+        MysqlDB.session.close()
+        return data
+
+    # 根据ID查询出结果
+    @classmethod
+    def find_by_id(cls, id):
+        data = MysqlDB.session.query(cls).filter(cls.id == id).first()
+        MysqlDB.session.close()
+        return data
+
+    @classmethod
+    def update(cls, data):
+        MysqlDB.session.query(cls).filter(cls.id == data['id']).update(data)
+        MysqlDB.session.flush()
+        MysqlDB.session.commit()
+        MysqlDB.session.close()
+        return
+
+    @classmethod
+    def deldata(cls, id):
+        data = MysqlDB.session.query(cls).filter(cls.id == id).first()
+        MysqlDB.session.delete(data)
+        MysqlDB.session.flush()
+        MysqlDB.session.commit()
+        MysqlDB.session.close()
+        return
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -113,5 +164,9 @@ def load_user(user_id):
     model.avatar = res.avatar
     model.nickname = res.nickname
     model.score = res.score
-    model.group = authorModels.authGroup.find_by_id(res.group).title
+    if res.group:
+        model.group = authorModels.authGroup.find_by_id(res.group).title
+    else:
+        model.group = "普通会员"
     return model
+

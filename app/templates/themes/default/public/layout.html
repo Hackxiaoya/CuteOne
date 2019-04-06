@@ -37,7 +37,7 @@
             <div class="login_info">
                 {% if current_user.id %}
                     <div class="is_login">
-                        <img src="/static/uploads/avatar/1.png" alt="" class="avatar">
+                        <img src="{{ current_user.avatar }}" alt="" class="avatar">
                         <div class="info">
                             <a href="/" class="username">
                                 {{ current_user.nickname }}
