@@ -5,8 +5,7 @@ from config import TEMPLATES_DIR, STATICFILES_DIR
 from flask import render_template
 from .main.install import index as install
 from .admin import admin as admin_blueprint
-from app.main.index import index as index_blueprint
-from app.main.users import users as users_blueprint
+from .main import index as index_blueprint
 
 
 @app.app.errorhandler(404)
@@ -36,9 +35,3 @@ app.app.register_blueprint(admin_blueprint, url_prefix='/admin', template_folder
     前台
 """
 app.app.register_blueprint(index_blueprint, url_prefix='/', template_folder=TEMPLATES_DIR, static_folder=STATICFILES_DIR)
-
-
-"""
-    会员
-"""
-app.app.register_blueprint(users_blueprint, url_prefix='/users', template_folder=TEMPLATES_DIR, static_folder=STATICFILES_DIR)
