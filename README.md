@@ -5,19 +5,35 @@
 **欢迎捐赠，QQ群：8331213**
 
 * 首页
-![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wrs8zf6j21gt0qtdnl.jpg)
+![](http://ww1.sinaimg.cn/large/a096a6bfgy1g1t22hd8kwj21gs0qwdo4.jpg)
 
 * 弹出层
 ![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wsm3vzvj21gr0qogpi.jpg)
 
+* 后台 - 首页
+![](http://ww1.sinaimg.cn/large/a096a6bfgy1g1t21bb8e8j21hc0qv0u9.jpg)
+
 * 后台 - 驱动列表
-![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wtafu4uj21hc0ouq5m.jpg)
+![](http://ww1.sinaimg.cn/large/a096a6bfgy1g1t23cy43oj21hc0qyq62.jpg)
 
 * 后台 - 主从网盘列表
-![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wtss2r4j21hc0ob407.jpg)
+![](http://ww1.sinaimg.cn/large/a096a6bfgy1g1t23d4lhkj21hc0qvdht.jpg)
 
-* 后台 - 设置
-![](http://ww1.sinaimg.cn/large/a096a6bfly1g19wu2zmegj21hc0qq0uz.jpg)
+* 后台 - 网盘管理
+![](http://ww1.sinaimg.cn/large/a096a6bfgy1g1t23cye5cj21hc0qwjts.jpg)
+
+* 后台 - 权限管理
+![](http://ww1.sinaimg.cn/large/a096a6bfgy1g1t23cy2i7j21hc0qwmz5.jpg)
+
+* 后台 - 群组权限
+![](http://ww1.sinaimg.cn/large/a096a6bfgy1g1t23cxhlaj21hc0qxgnl.jpg)
+
+* 后台 - 用户管理
+![](http://ww1.sinaimg.cn/large/a096a6bfgy1g1t23cyc3gj21hc0qvwhm.jpg)
+
+* 后台 - 网站设置
+![](http://ww1.sinaimg.cn/large/a096a6bfgy1g1t23d4vecj21hc0qx772.jpg)
+
 
 
 # 环境需求
@@ -62,6 +78,9 @@ http://你的域名/install/
 * 第六步，根据流程安装呗
 ```
 等出现安装完成的字样就可以了
+如果访问不行，你就执行：pgrep -f uwsgi 看看有没有运行起来
+如果没有返回ID，你就执行一下： nohup uwsgi --ini uwsgi.ini &
+就行了。
 ```
 * 第七步，添加驱动，不然你访问首页会报错
 ```
@@ -107,10 +126,8 @@ nohup uwsgi --ini uwsgi.ini &
 
 # 未来可能收费的功能列表：
 * Offie系列产品的在线修改功能；
-* 主从盘同步功能；
 * 付费查看功能；
-* 采集功能；
-* 会员等级制度功能；
+* 采集功能；；
 * 压缩包上传解压同步功能；
 * 文件夹上传同步功能；  
 
