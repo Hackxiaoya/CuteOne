@@ -10,7 +10,7 @@ from app import common
 
 
 
-@admin.route('/users/list', methods=['GET', 'POST'])  # 主从同步
+@admin.route('/users/list', methods=['GET', 'POST'])
 @admin.route('/users/list/')  # 设置分页
 @decorators.login_require
 def users_list():
@@ -67,7 +67,7 @@ def users_edit(id):
                 , 'email': ''
                 , 'description': '素面朝天浅笑吟，倾国倾城两相宜.'
                 , 'score': 0
-                , 'group': ''
+                , 'group': 0
                 , 'avatar': "/static/uploads/avatar/{}.png".format(random.randint(1, 10))
                 , 'sex': 3
                 , 'status': 1
@@ -100,6 +100,7 @@ def users_edit(id):
                     description=from_data['description'],
                     avatar=from_data['avatar'],
                     sex=from_data['sex'],
+                    login_num=0,
                     score=from_data['score'],
                     group=from_data['group'],
                     status=from_data['status'],
@@ -129,6 +130,31 @@ def upload_avatar():
     file = request.files.get('file')
     fileName = hashlib.sha1(file.read()).hexdigest()
     file.seek(0)
-    file_path = "/app/static/uploads/avatar/{}.{}".format(fileName, file.filename.rsplit('.',1)[1])
+    file_path = "/app/static/uploads/avatar/{}.{}".format(os.getcwd(), fileName, file.filename.rsplit('.',1)[1])
+    src_path = "/static/uploads/avatar/{}.{}".format(fileName, file.filename.rsplit('.',1)[1])
     file.save(os.getcwd()+file_path)
-    return json.dumps({"code": 0, "msg": "", "data": {"src": file_path}})
+    return json.dumps({"code": 0, "msg": "", "data": {"src": src_path}})
+
+
+@admin.route('/users/funds_list', methods=['GET', 'POST'])  # 主从同步
+@admin.route('/users/funds_list/')  # 设置分页
+@decorators.login_require
+def funds_list():
+    if request.args.get('page'):
+        data_list = models.funds.all()
+        json_data = {"code": 0, "msg": "", "count": 0, "data": []}
+        if data_list:
+            for result in data_list:
+                json_data["count"] = json_data["count"]+1
+                users_info = models.users.find_by_id(result.uid)
+                username = users_info.username
+                nickname = users_info.nickname
+                if result.status:
+                    status = "<button class='layui-btn layui-btn-normal layui-btn-xs'>完成</button>"
+                else:
+                    status = "<button class='layui-btn layui-btn-danger layui-btn-xs'>未完成</button>"
+                json_data["data"].append(
+                    {"id": result.id, "username": username, "nickname": nickname, "content":result.content, "status":status, "update_time": str(result.update_time), "create_time": str(result.create_time)})
+        return json.dumps(json_data)
+    else:
+        return render_template('admin/users/funds_list.html', top_nav='users', activity_nav='funds_list')

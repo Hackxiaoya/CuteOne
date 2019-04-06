@@ -62,6 +62,7 @@ def register():
             description = '',
             avatar = "/static/uploads/avatar/{}.png".format(random.randint(1, 10)),
             sex = 3,
+            login_num = 0,
             score = 0,
             group = 0,
             status = 1,
