@@ -19,11 +19,13 @@
                     文件列表
                 </div>
                 <div class="layui-card-body">
-                    <div style="padding-bottom: 10px;">
-                        <button class="layui-btn" layadmin-event="create">创建文件夹</button>
-                        <button class="layui-btn" layadmin-event="uploadssmall">上小传文件</button>
-                        <button class="layui-btn" layadmin-event="uploadsbig">上大传文件</button>
-                    </div>
+                    {% if chief %}
+                        <div style="padding-bottom: 10px;">
+                            <button class="layui-btn" layadmin-event="create">创建文件夹</button>
+                            <button class="layui-btn" layadmin-event="uploadssmall">上小传文件</button>
+                            <button class="layui-btn" layadmin-event="uploadsbig">上大传文件</button>
+                        </div>
+                    {% endif %}
                     <table class="layui-hide" id="list-table" lay-filter="list-table">
                         <thead>
                             <tr>

@@ -5,9 +5,8 @@ from flask import render_template, request, make_response, redirect, session
 from flask_login import current_user
 from app.admin.drive import models as driveModels
 from app.admin.system import models as systemModels
-from ..index import index
-from ..index import logic
-from ..users import logic as usersLogic
+from app.main import index
+from ..indexs import logic
 import config
 THEMES = 'themes/'+ config.THEMES +'/'
 
@@ -43,14 +42,6 @@ def toggle_web_site():
                 print(author)
                 return render_template(THEMES+'index/author.html', drive_id=drive, path=path)
 
-
-# 基本配置
-@index.context_processor
-def webconfig():
-    webconfig = systemModels.config.all()
-    webconfig.pop('username')
-    webconfig.pop('password')
-    return dict(webconfig=webconfig)
 
 
 # 驱动列表, 面包屑

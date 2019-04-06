@@ -1,0 +1,58 @@
+{% extends 'themes/default/public/layout.html' %}
+
+{% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='layui/css/layui.css')}}">
+<style>
+    .contact-box {
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #e7eaec;
+        overflow: hidden;
+    }
+    .contact-box a img {
+        width: 100%;
+    }
+    .users-title {
+        margin: 0 0 5px;
+    }
+    .users-address strong {
+        margin-bottom: 5px;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="mdui-container-fluid">
+    <div class="nexmoe-item">
+        <div class="mdui-row layui-row layui-col-space15">
+            {% for user in data %}
+                <div class="layui-col-md4 layui-col-sm6">
+                    <div class="contact-box">
+                        <div class="layui-col-md4 layui-col-sm6">
+                            <a href="/users/personal/{{ user.id }}">
+                                <img src="{{ user.avatar }}" alt="">
+                            </a>
+                        </div>
+                        <div class="layui-col-md8 layui-col-sm6" style="padding-left: 20px;">
+                            <a href="/users/personal/{{ user.id }}">
+                                <h3 class="users-title">
+                                    <strong>{{ user.nickname }}</strong>
+                                </h3>
+                            </a>
+                            <div class="users-address">
+                                <strong>等级： {{ user.group }}</strong>
+                                <p>签名： {{ user.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

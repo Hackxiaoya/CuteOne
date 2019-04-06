@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 05/04/2019 12:21:10
+ Date: 06/04/2019 15:21:36
 */
 
 SET NAMES utf8mb4;
@@ -26,6 +26,7 @@ CREATE TABLE `cuteone_auth_group`  (
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `auth_group` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `price` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0.00',
   `update_time` datetime(0) NULL DEFAULT NULL,
   `create_time` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
@@ -115,6 +116,20 @@ CREATE TABLE `cuteone_drive_list`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '网盘列表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for cuteone_funds
+-- ----------------------------
+DROP TABLE IF EXISTS `cuteone_funds`;
+CREATE TABLE `cuteone_funds`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) NOT NULL,
+  `content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `status` int(1) NOT NULL DEFAULT 0,
+  `update_time` datetime(0) NULL DEFAULT NULL,
+  `create_time` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '资金列表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for cuteone_task
 -- ----------------------------
 DROP TABLE IF EXISTS `cuteone_task`;
@@ -128,7 +143,7 @@ CREATE TABLE `cuteone_task`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '任务管理表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '任务管理表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cuteone_users

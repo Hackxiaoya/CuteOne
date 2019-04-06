@@ -257,7 +257,7 @@ a.active {
 .loadSet ul {
     display: none;
     position: absolute;
-    top: 30px;
+    top: 45px;
     width: 115px;
     border: 1px solid #d8d8d8;
     background: #fefefe;
@@ -397,8 +397,36 @@ a.active {
 
 
 @media screen and (max-width:980px) {
+    .header-top {
+        padding-top: 35px;
+    }
     .logo img {
         width: 140px;
+    }
+    .login_info {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0 10px 0;
+    }
+    .not_login {
+        margin-top: 0;
+    }
+    .is_login .avatar {
+        display: none;
+    }
+    .is_login .info a, .is_login .setting a {
+        float: left;
+        margin: 0 10px;
+    }
+    .is_login i.line {
+        height: 25px;
+    }
+    .is_login .setting a:first-child {
+        margin: 5px 20px 0 5px;
+    }
+    .is_login .setting .login_out {
+        margin: 5px 0 0;
     }
     .zySearch {
         top: -46px;

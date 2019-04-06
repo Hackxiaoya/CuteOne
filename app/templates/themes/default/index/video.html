@@ -30,7 +30,7 @@
     .infobox .info a:hover {
         color: #565656;
     }
-.lineSwitch {
+    .lineSwitch {
         float: left;
         position: relative;
         margin-top: -13px;
@@ -79,36 +79,42 @@
 {% endblock %}
 
 {% block body %}
-    <div id="dplayer"></div>
+<div class="mdui-container-fluid">
+    <div class="nexmoe-item">
+        <div class="mdui-row">
+            <div id="dplayer"></div>
 
-    <div class="infobox">
-        <h3 title="{{ data.name | safe }}">{{ data.name | safe }}</h3>
-        <div class="info">
-            <div class="lineSwitch">
-                <span>
-                    <i class="fa fa-angle-up"></i>
-                    Line Switch
-                </span>
-                <ul>
-                    {% for v in load_disk_list %}
-                        <li>
-                            <a href="/pop_video/{{ drive_id }}/{{ v.id }}/{{ id }}">
-                                {{ v.title }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
+            <div class="infobox">
+                <h3 title="{{ data.name | safe }}">{{ data.name | safe }}</h3>
+                <div class="info">
+                    <div class="lineSwitch">
+                        <span>
+                            <i class="fa fa-angle-up"></i>
+                            Line Switch
+                        </span>
+                        <ul>
+                            {% for v in load_disk_list %}
+                                <li>
+                                    <a href="/pop_video/{{ drive_id }}/{{ v.id }}/{{ id }}">
+                                        {{ v.title }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <a href="javascript:void(0);" id="copybtn">
+                        <i class="fa fa-share"></i>
+                        分享
+                    </a>
+                    <a href="{{ donw_url }}/?filename={{ data.name | safe }}">
+                        <i class="fa fa-download"></i>
+                        下载
+                    </a>
+                </div>
             </div>
-            <a href="javascript:void(0);" id="copybtn">
-                <i class="fa fa-share"></i>
-                分享
-            </a>
-            <a href="{{ donw_url }}/?filename={{ data.name | safe }}">
-                <i class="fa fa-download"></i>
-                下载
-            </a>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block script %}
@@ -119,7 +125,7 @@
             container: document.getElementById('dplayer'),
             screenshot: true,
             video: {
-                url: '{{ data.url | safe }}',
+                url: '{{ data.downloadUrl | safe }}',
                 type: 'auto'
             }
         });

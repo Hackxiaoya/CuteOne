@@ -178,13 +178,13 @@ def file_uploads_big(drive_id):
     path = request.args.get('path')
     return render_template('admin/drive/file_uploads_big.html', top_nav='drive', activity_nav='file_uploads', drive_id=drive_id, path=path)
 
+
 @admin.route('/drive/file_uploads_small/<int:drive_id>', methods=['GET']) # 小文件上传
 @admin.route('/drive/file_uploads_small/<int:drive_id>/', methods=['GET'])
 @decorators.login_require
 def file_uploads_small(drive_id):
     path = request.args.get('path')
     return render_template('admin/drive/file_uploads_small.html', top_nav='drive', activity_nav='file_uploads', drive_id=drive_id, path=path)
-
 
 
 @admin.route('/drive/file_uploads', methods=['POST'])
@@ -198,7 +198,8 @@ def file_uploads():
     if not isExists:
         # 如果不存在则创建目录
         os.makedirs(file_path)
-        file.save(file_path + "/" + chunk)
+    file.save(file_path + "/" + chunk)
+
     return json.dumps({})
 
 
@@ -242,7 +243,7 @@ def file_uploads_success():
     if os.path.exists(target_filename):
         os.rmdir(target_filename)   # 删除文件夹
 
-    # 初始化role 并插入数据库
+    # # 初始化role 并插入数据库
     role = taskModels.task(drive_id=drive_id, file_name=fileName,path=path, type='uploads', status=0)
     MysqlDB.session.add(role)
     MysqlDB.session.flush()
@@ -272,7 +273,9 @@ def update_cache():
 @admin.route('/drive/files/<int:id>/', methods=['GET'])
 @decorators.login_require
 def files(id):
-    drive_id = models.drive_list.find_by_id(id).drive_id
+    drive_info = models.drive_list.find_by_id(id)
+    drive_id = drive_info.drive_id
+    chief = int(drive_info.chief)
     uploads_path = request.args.get('path')
     if request.args.get('path'):
         path = request.args.get("path")
@@ -281,12 +284,11 @@ def files(id):
         path = ''
         current_url = '/admin/drive/files/' + str(id) + '/?path='
     data = logic.get_one_file_list(id, path)
-    # print(data["data"]["value"])
     for i in data["data"]["value"]:
         i["lastModifiedDateTime"] = common.utc_to_local(i["lastModifiedDateTime"])
         i["size"] = common.size_cov(i["size"])
     data = data["data"]["value"]
-    return render_template('admin/drive/files.html', top_nav='drive', activity_nav='edit', id=id, current_url=current_url, drive_id=drive_id, uploads_path=uploads_path, data=data)
+    return render_template('admin/drive/files.html', top_nav='drive', activity_nav='edit', chief=chief, id=id, current_url=current_url, drive_id=drive_id, uploads_path=uploads_path, data=data)
 
 
 @admin.route('/drive/folder_create', methods=['POST'])

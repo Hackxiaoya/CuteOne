@@ -8,6 +8,7 @@
     <meta name="description" content="{{ webconfig.web_site_description }}">
     <link href="{{url_for('static', filename='favicon.ico')}}" rel="shortcut icon" type="image/x-icon">
 	<link rel="stylesheet" href="{{url_for('static', filename='themes/default/css/mdui.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='layui/css/layui.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='css/lightbox.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='css/APlayer.min.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='themes/default/css/style.css')}}">
@@ -29,7 +30,7 @@
 
 <body class="mdui-theme-primary-blue-grey mdui-theme-accent-blue">
 	<div class="mdui-container">
-        <div class="mdui-container-fluid" style="padding: 0;">
+        <div class="mdui-container-fluid header-top">
             <a href="/" class="logo">
                 <img src="{{ webconfig.web_site_logo }}" alt="{{ webconfig.web_site_title }}">
             </a>
@@ -47,7 +48,7 @@
                         </div>
                         <i class="line"></i>
                         <div class="setting">
-                            <a href="/">
+                            <a href="/users/setting">
                                 设置
                             </a>
                             <a href="/users/logout" class="login_out">
@@ -105,13 +106,8 @@
 			</div>
 		</div>
 
-        <div class="mdui-container-fluid">
-            <div class="nexmoe-item">
-                <div class="mdui-row">
-                    {% block body %}{% endblock %}
-                </div>
-            </div>
-        </div>
+        {% block body %}{% endblock %}
+
 
         <div class="web_site_copyright">
             {{ webconfig.web_site_copyright | safe }}
