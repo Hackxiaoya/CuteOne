@@ -1,8 +1,8 @@
 # CuteOne
 
-**不是OneIndex 不是pyone，不是 不是 不是**   
-**不是OneIndex 不是pyone，不是 不是 不是**   
-**不是OneIndex 不是pyone，不是 不是 不是**   
+**不是OneIndex 不是PyOne，不是 不是 不是**   
+**不是OneIndex 不是PyOne，不是 不是 不是**   
+**不是OneIndex 不是PyOne，不是 不是 不是**   
 重要的事情说三遍，我都觉得都不够。。因为他们很多功能都木有。木有。木有  
 
 
@@ -47,7 +47,7 @@
 * Linux
 * Nginx
 * Python3  ——[如何安装Python3](https://www.cnblogs.com/s-seven/p/9105973.html)
-* Mysql >= 5.7
+* Mysql >= 5.6
 * MongoDB
 
 
