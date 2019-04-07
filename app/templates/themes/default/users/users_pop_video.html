@@ -94,21 +94,6 @@
 <div class="infobox">
     <h3 title="{{ data.name | safe }}">{{ data.name | safe }}</h3>
     <div class="info">
-        <div class="lineSwitch">
-            <span>
-                <i class="fa fa-angle-up"></i>
-                Line Switch
-            </span>
-            <ul>
-                {% for v in load_disk_list %}
-                    <li>
-                        <a href="/pop_video/{{ data.drive_id }}/{{ v.id }}/{{ data.id }}/1/{{ data.disk_id }}/{{ data.id }}">
-                            {{ v.title }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
         <a href="{{ share_url }}" target="_blank">
             <i class="fa fa-external-link"></i>
             新窗打开

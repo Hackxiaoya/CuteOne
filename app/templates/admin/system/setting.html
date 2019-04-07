@@ -23,6 +23,20 @@
                             <div class="layui-form-mid layui-word-aux">后台管理员密码(留空则不修改)</div>
                         </div>
                         <div class="layui-form-item">
+                            <label class="layui-form-label">用户模块</label>
+                            <div class="layui-input-inline">
+                                <input type="checkbox" name="is_users" lay-text="开启|关闭" {% if data.is_users=="1" %}checked{% endif %} lay-skin="switch">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">关闭/开启站点</div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户默认存储盘</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="files_disk_id" value="{{data.files_disk_id}}" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">用户默认存储盘(填写存储盘的ID)</div>
+                        </div>
+                        <div class="layui-form-item">
                             <label class="layui-form-label">站点状态</label>
                             <div class="layui-input-inline">
                                 <input type="checkbox" name="toggle_web_site" lay-text="开启|关闭" {% if data.toggle_web_site=="1" %}checked{% endif %} lay-skin="switch">

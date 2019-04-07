@@ -22,6 +22,7 @@ class users(MysqlDB.Model):
     last_login_time = MysqlDB.Column(MysqlDB.String(255), unique=False)
     score = MysqlDB.Column(MysqlDB.String(255), unique=False)
     group = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    files_disk_id = MysqlDB.Column(MysqlDB.String(255), unique=False)
     status = MysqlDB.Column(MysqlDB.String(255), unique=False)
     reg_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'))
     update_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'), onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))

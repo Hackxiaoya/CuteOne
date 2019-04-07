@@ -121,6 +121,23 @@
                                 <a href="/admin/users/list">用户列表</a>
                             </dd>
                         </dl>
+                        <dl class="layui-nav-child">
+                            <dd class="{% if 'funds_list'== activity_nav %}layui-this{% endif %}">
+                                <a href="/admin/users/funds_list">资金列表</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item {% if 'files'== top_nav %}layui-nav-itemed{% endif %}">
+                        <a href="javascript:;" lay-tips="用户">
+                            <i class="fa fa-files-o"></i>
+                            <cite>文件管理</cite>
+                            <span class="layui-nav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd class="{% if 'list'== activity_nav %}layui-this{% endif %}">
+                                <a href="/admin/files/files_disk_list">存储列表</a>
+                            </dd>
+                        </dl>
                     </li>
                     <li class="layui-nav-item {% if 'system'== top_nav %}layui-nav-itemed{% endif %}">
                         <a href="javascript:;" lay-tips="设置">

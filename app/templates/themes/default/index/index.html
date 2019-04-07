@@ -2,6 +2,29 @@
 
 {% block body %}
 <div class="mdui-container-fluid">
+    <div class="mdui-toolbar nexmoe-item">
+        <div class="loadSet">
+            <a href="{{crumbs_url}}">负载磁盘<i class="mdui-icon material-icons">keyboard_arrow_down</i></a>
+            <div class="small_icon_home">
+                <i class="mdui-icon material-icons">storage</i>
+            </div>
+            <ul>
+                {% for v in load_disk_list %}
+                    <li>
+                        <a href="javascript:void(0);" class="load_disk" data-id="{{ v.id }}">
+                            {{ v.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <i class="mdui-icon material-icons mdui-icon-dark" style="margin:0;">chevron_right</i>
+        {% for crumbs in crumbs_list_data %}
+            <a href="{{crumbs_url}}path=/{{ crumbs.path }}">{{ crumbs.name }}</a>/
+        {% endfor %}
+    </div>
+</div>
+<div class="mdui-container-fluid">
     <div class="nexmoe-item">
         <div class="mdui-row">
             <ul class="mdui-list">
@@ -37,7 +60,7 @@
                                 <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
                             </a>
                         {% elif v.file=="audio/mpeg" %}
-                            <a href="javascript:void(0);" class="addMusicList" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name|safe }}">
+                            <a href="javascript:void(0);" class="{% if webconfig.is_music == '1' %}addMusicList{% else %}video_open{% endif %}" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name|safe }}">
                                 <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
                                     <i class="mdui-icon material-icons">music_note</i>
                                     <span>{{ v.name|safe }}</span>
@@ -49,7 +72,7 @@
                                 <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
                             </a>
                         {% elif v.file=="audio/x-wav" %}
-                            <a href="javascript:void(0);" class="addMusicList" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name | safe }}">
+                            <a href="javascript:void(0);" class="{% if webconfig.is_music == '1' %}addMusicList{% else %}video_open{% endif %}" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name | safe }}">
                                 <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
                                     <i class="mdui-icon material-icons">music_note</i>
                                     <span>{{ v.name|safe }}</span>
@@ -74,7 +97,7 @@
                             </a>
                         {% elif v.file=="application/octet-stream" %}
                             {% if v.name|thereisStr(".flac") %}
-                                <a href="javascript:void(0);" class="addMusicList" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name | safe }}">
+                                <a href="javascript:void(0);" class="{% if webconfig.is_music == '1' %}addMusicList{% else %}video_open{% endif %}" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name | safe }}">
                                     <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
                                         <i class="mdui-icon material-icons">music_note</i>
                                         <span>{{ v.name|safe }}</span>

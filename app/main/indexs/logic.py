@@ -203,23 +203,19 @@ def get_downloadUrl(drive_id, disk_id, id):
     token = json.loads(json.loads(data_list.token))
     BaseUrl = config.app_url + 'v1.0/me/drive/items/' + id
     headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
-    try:
-        get_res = requests.get(BaseUrl, headers=headers, timeout=30)
-        get_res = json.loads(get_res.text)
-        # print(get_res)
-        if 'error' in get_res.keys():
-            driveLogic.reacquireToken(disk_id)
-            get_downloadUrl(drive_id, disk_id, id)
-        else:
-            if '@microsoft.graph.downloadUrl' in get_res.keys():
-                drivename = "drive_" + str(disk_id)
-                collection = MongoDB.db[drivename]
-                collection.update_one({"id":get_res["id"]}, {"$set": {"downloadUrl":get_res["@microsoft.graph.downloadUrl"],"timeout":int(time.time())+300}})
-                return {"name": get_res["name"], "downloadUrl": get_res["@microsoft.graph.downloadUrl"]}
-            else:
-                get_downloadUrl(drive_id, disk_id, id)
-    except:
+    get_res = requests.get(BaseUrl, headers=headers, timeout=30)
+    get_res = json.loads(get_res.text)
+    if 'error' in get_res.keys():
+        driveLogic.reacquireToken(disk_id)
         get_downloadUrl(drive_id, disk_id, id)
+    else:
+        if '@microsoft.graph.downloadUrl' in get_res.keys():
+            drivename = "drive_" + str(disk_id)
+            collection = MongoDB.db[drivename]
+            collection.update_one({"id":get_res["id"]}, {"$set": {"downloadUrl":get_res["@microsoft.graph.downloadUrl"],"timeout":int(time.time())+300}})
+            return {"name": get_res["name"], "downloadUrl": get_res["@microsoft.graph.downloadUrl"]}
+        else:
+            get_downloadUrl(drive_id, disk_id, id)
 
 
 """
@@ -240,3 +236,21 @@ def file_url(drive_id, disk_id, id):
         return {"name": get_res["name"], "url": get_res["downloadUrl"]}
     else:
         return {"name": result["name"], "url": result["downloadUrl"]}
+
+"""
+    获取文件负载下载地址
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-17
+    drive_id: 驱动id
+    disk_id: 网盘id
+    source_disk_id: 来源网盘id
+    source_id: 来源资源id
+"""
+def get_load(drive_id, disk_id, source_disk_id, source_id):
+    source_collection = MongoDB.db["drive_" + str(source_disk_id)]
+    source_result = source_collection.find_one({"id": source_id})
+    drivename = "drive_" + str(disk_id)
+    collection = MongoDB.db[drivename]
+    result = collection.find_one({"name": source_result["name"], "path": source_result["path"]})
+    return result["id"]

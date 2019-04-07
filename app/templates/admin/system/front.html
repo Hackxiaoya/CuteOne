@@ -23,6 +23,20 @@
                             <div class="layui-form-mid layui-word-aux">搜索文件的时候，是否显示加密的文件</div>
                         </div>
                         <div class="layui-form-item">
+                            <label class="layui-form-label">音乐播放</label>
+                            <div class="layui-input-inline">
+                                <input type="checkbox" name="is_music" lay-text="开启|关闭" {% if data.is_music=="1" %}checked{% endif %} lay-skin="switch">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">是否开启前端音乐播放模块</div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户上传</label>
+                            <div class="layui-input-inline">
+                                <input type="checkbox" name="files_uploads" lay-text="开启|关闭" {% if data.files_uploads=="1" %}checked{% endif %} lay-skin="switch">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">是否开启用户的上传模块</div>
+                        </div>
+                        <div class="layui-form-item">
                             <label class="layui-form-label">背景图</label>
                             <div class="layui-input-inline" style="width: 330px;">
                                 <input type="text" name="web_site_background" value="{{data.web_site_background}}" id="web_site_background" class="layui-input">

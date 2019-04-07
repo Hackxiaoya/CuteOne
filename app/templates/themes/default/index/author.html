@@ -38,6 +38,29 @@
 
 {% block body %}
 <div class="mdui-container-fluid">
+    <div class="mdui-toolbar nexmoe-item">
+        <div class="loadSet">
+            <a href="{{crumbs_url}}">负载磁盘<i class="mdui-icon material-icons">keyboard_arrow_down</i></a>
+            <div class="small_icon_home">
+                <i class="mdui-icon material-icons">storage</i>
+            </div>
+            <ul>
+                {% for v in load_disk_list %}
+                    <li>
+                        <a href="javascript:void(0);" class="load_disk" data-id="{{ v.id }}">
+                            {{ v.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <i class="mdui-icon material-icons mdui-icon-dark" style="margin:0;">chevron_right</i>
+        {% for crumbs in crumbs_list_data %}
+            <a href="{{crumbs_url}}path=/{{ crumbs.path }}">{{ crumbs.name }}</a>/
+        {% endfor %}
+    </div>
+</div>
+<div class="mdui-container-fluid">
     <div class="nexmoe-item">
         <div class="mdui-row">
             <div class="member_tip">

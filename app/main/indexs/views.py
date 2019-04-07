@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import re, urllib.parse, json
 from app import app
-from flask import render_template, request, make_response, redirect, session
+from flask import render_template, request, make_response, redirect, session, url_for
 from flask_login import current_user
 from app.admin.drive import models as driveModels
 from app.admin.system import models as systemModels
@@ -125,12 +125,21 @@ def _index():
     return render_template(THEMES+'index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data["data"], pagination=data["pagination"])
 
 
-@index.route('/video/<int:drive_id>/<int:disk_id>/<string:id>')
-def video(drive_id, disk_id, id):
-    data = logic.get_downloadUrl(drive_id, disk_id, id)
-    share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
-    donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
-    return render_template(THEMES+'index/video.html', share_url=share_url, donw_url=donw_url, drive_id=drive_id, id=id, data=data)
+@index.route('/video/<int:drive_id>/<int:disk_id>/<string:id>/')
+@index.route('/video/<int:drive_id>/<int:disk_id>/<string:id>/<int:load>/<int:source_disk_id>/<string:source_id>')
+def video(drive_id, disk_id, id, load=None, source_disk_id=0, source_id=0):
+    # 负载切换
+    if load:
+        data = logic.get_load(drive_id, disk_id, source_disk_id, source_id)
+        return redirect(url_for('/.video', drive_id=drive_id, disk_id=disk_id, id=data), 301)
+    else:
+        data = logic.get_downloadUrl(drive_id, disk_id, id)
+        share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
+        donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
+        data["drive_id"] = drive_id
+        data["disk_id"] = disk_id
+        data["id"] = id
+        return render_template(THEMES+'index/video.html', share_url=share_url, donw_url=donw_url, data=data)
 
 
 @index.route('/get_downloadUrl/<int:drive_id>/<int:disk_id>/<string:id>')
@@ -139,12 +148,21 @@ def get_downloadUrl(drive_id, disk_id, id):
     return json.dumps(data)
 
 
-@index.route('/pop_video/<int:drive_id>/<int:disk_id>/<string:id>')
-def pop_video(drive_id, disk_id, id):
-    data = logic.file_url(drive_id, disk_id, id)
-    share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
-    donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
-    return render_template(THEMES+'index/pop_video.html', share_url=share_url, donw_url=donw_url, drive_id=drive_id, id=id, data=data)
+@index.route('/pop_video/<int:drive_id>/<int:disk_id>/<string:id>/')
+@index.route('/pop_video/<int:drive_id>/<int:disk_id>/<string:id>/<int:load>/<int:source_disk_id>/<string:source_id>')
+def pop_video(drive_id, disk_id, id, load=None, source_disk_id=0, source_id=0):
+    # 负载切换
+    if load:
+        data = logic.get_load(drive_id, disk_id, source_disk_id, source_id)
+        return redirect(url_for('/.pop_video',drive_id=drive_id, disk_id=disk_id, id=data), 301)
+    else:
+        data = logic.file_url(drive_id, disk_id, id)
+        share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
+        donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
+        data["drive_id"] = drive_id
+        data["disk_id"] = disk_id
+        data["id"] = id
+        return render_template(THEMES+'index/pop_video.html', share_url=share_url, donw_url=donw_url, data=data)
 
 
 @index.route('/down_file/<int:drive_id>/<int:disk_id>/<string:id>')

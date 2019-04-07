@@ -351,16 +351,19 @@ a.active {
 }
 .is_login .setting {
     float: left;
+    width: 127px;
 }
-.is_login .setting a {
+.is_login .setting li {
+    float: left;
+    margin: 5px;
+}
+.is_login .setting li a {
     display: block;
-    margin: 6px 0;
+    min-width: 50px;
+    text-align: center;
 }
-.is_login .setting {
-
-}
-.is_login .setting .login_out {
-    margin: 9px 0 0;
+.is_login .setting li:last-child {
+    float: right;
 }
 .thumb .th{
     display: none;
@@ -374,12 +377,10 @@ a.active {
     float: left;
     margin: 10px 10px !important;
 }
-
 .thumb .mdui-col-xs-12,.thumb .mdui-col-sm-7{
     width:100% !important;
     height:230px;
 }
-
 .thumb .mdui-list-item .mdui-icon{
     font-size:100px;
     display: block;

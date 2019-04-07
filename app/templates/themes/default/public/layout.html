@@ -34,35 +34,50 @@
             <a href="/" class="logo">
                 <img src="{{ webconfig.web_site_logo }}" alt="{{ webconfig.web_site_title }}">
             </a>
-            <div class="login_info">
-                {% if current_user.id %}
-                    <div class="is_login">
-                        <img src="{{ current_user.avatar }}" alt="" class="avatar">
-                        <div class="info">
-                            <a href="/" class="username">
-                                {{ current_user.nickname }}
-                            </a>
-                            <a href="/" class="level">
-                                {{ current_user.group }}
-                            </a>
+            {% if webconfig.is_users == '1' %}
+                <div class="login_info">
+                    {% if current_user.id %}
+                        <div class="is_login">
+                            <img src="{{ current_user.avatar }}" alt="" class="avatar">
+                            <div class="info">
+                                <a href="/" class="username">
+                                    {{ current_user.nickname }}
+                                </a>
+                                <a href="/" class="level">
+                                    {{ current_user.group }}
+                                </a>
+                            </div>
+                            <i class="line"></i>
+                            <div class="setting">
+                                <ul>
+                                    {% if webconfig.files_uploads == '1' %}
+                                        <li>
+                                            <a href="/users/files_list">
+                                                文件管理
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    <li>
+                                        <a href="/users/setting">
+                                            设置
+                                        </a>
+                                    </li>
+                                    <li>
+                                         <a href="/users/logout">
+                                            登出
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <i class="line"></i>
-                        <div class="setting">
-                            <a href="/users/setting">
-                                设置
-                            </a>
-                            <a href="/users/logout" class="login_out">
-                                登出
-                            </a>
+                    {% else %}
+                        <div class="not_login">
+                            不登陆一下，你都不知道世界有多大！
+                            <a href="javascript:login();">Login</a>
                         </div>
-                    </div>
-                {% else %}
-                    <div class="not_login">
-                        不登陆一下，你都不知道世界有多大！
-                        <a href="javascript:login();">Login</a>
-                    </div>
-                {% endif %}
-            </div>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
         <div class="mdui-container-fluid">
 			<div class="mdui-drive nexmoe-item">
@@ -81,29 +96,6 @@
                 <b class="search-img"></b>
                 <button class="search-btn btn" onclick="search()">搜索</button>
             </div>
-		</div>
-		<div class="mdui-container-fluid">
-			<div class="mdui-toolbar nexmoe-item">
-				<div class="loadSet">
-                    <a href="{{crumbs_url}}">负载磁盘<i class="mdui-icon material-icons">keyboard_arrow_down</i></a>
-                    <div class="small_icon_home">
-                        <i class="mdui-icon material-icons">storage</i>
-                    </div>
-                    <ul>
-                        {% for v in load_disk_list %}
-                            <li>
-                                <a href="javascript:void(0);" class="load_disk" data-id="{{ v.id }}">
-                                    {{ v.title }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <i class="mdui-icon material-icons mdui-icon-dark" style="margin:0;">chevron_right</i>
-                {% for crumbs in crumbs_list_data %}
-                    <a href="{{crumbs_url}}path=/{{ crumbs.path }}">{{ crumbs.name }}</a>/
-                {% endfor %}
-			</div>
 		</div>
 
         {% block body %}{% endblock %}
@@ -319,35 +311,37 @@
                 return defer.promise();
             }
 
-            // Music Player
-            music = new music({
-                container: document.getElementById('aplayer'),
-                fixed: true,
-                autoplay: true,
-                theme: '#FADFA3',
-                loop: 'all',
-                order: 'list',
-                preload: 'metadata',
-                volume: 0.7,
-                mutex: true,
-                listFolded: false,
-                listMaxHeight: 90,
-           });
-           $(".addMusicList").on("click",function () {
-               var name = $(this).data("name"),
-                   drive = $(this).data("drive"),
-                   disk = $(this).data("disk"),
-                   id = $(this).data("id");
-               name = name.replace(".mp3","");
-               name = name.replace(".flac","");
-               var url = "http://" + window.location.host + "/down_file/" + drive + "/" + disk + "/" + id;
-               music.addMusic([{
-                   name: name,
-                   artist: "未知",
-                   url: url,
-                   theme: "#ebd0c2"
-               }]);
-           });
+            {% if webconfig.is_music == '1' %}
+                // Music Player
+                music = new music({
+                    container: document.getElementById('aplayer'),
+                    fixed: true,
+                    autoplay: true,
+                    theme: '#FADFA3',
+                    loop: 'all',
+                    order: 'list',
+                    preload: 'metadata',
+                    volume: 0.7,
+                    mutex: true,
+                    listFolded: false,
+                    listMaxHeight: 90,
+               });
+               $(".addMusicList").on("click",function () {
+                   var name = $(this).data("name"),
+                       drive = $(this).data("drive"),
+                       disk = $(this).data("disk"),
+                       id = $(this).data("id");
+                   name = name.replace(".mp3","");
+                   name = name.replace(".flac","");
+                   var url = "http://" + window.location.host + "/down_file/" + drive + "/" + disk + "/" + id;
+                   music.addMusic([{
+                       name: name,
+                       artist: "未知",
+                       url: url,
+                       theme: "#ebd0c2"
+                   }]);
+               });
+            {% endif %}
 
         });
 

@@ -50,6 +50,11 @@ def setting():
             from_data['toggle_web_site'] = 1
         else:
             from_data['toggle_web_site'] = 0
+        # 用户模块关闭/开启
+        if 'is_users' in from_data.keys():
+            from_data['is_users'] = 1
+        else:
+            from_data['is_users'] = 0
         for i in from_data:
             models.config.update({"name": i, "value": from_data[i]})
         return json.dumps({"code": 0, "msg": "保存成功！"})
@@ -66,11 +71,21 @@ def front():
     else:
         from_data = request.form
         from_data = from_data.to_dict()
-        # 站点关闭/开启
+        # 搜索类型关闭/开启
         if 'search_type' in from_data.keys():
             from_data['search_type'] = 1
         else:
             from_data['search_type'] = 0
+        # 音乐播放关闭/开启
+        if 'is_music' in from_data.keys():
+            from_data['is_music'] = 1
+        else:
+            from_data['is_music'] = 0
+        # 用户上传关闭/开启
+        if 'files_uploads' in from_data.keys():
+            from_data['files_uploads'] = 1
+        else:
+            from_data['files_uploads'] = 0
         for i in from_data:
             models.config.update({"name": i, "value": from_data[i]})
         return json.dumps({"code": 0, "msg": "保存成功！"})

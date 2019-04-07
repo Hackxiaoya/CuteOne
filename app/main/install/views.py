@@ -47,8 +47,9 @@ def create_db(host, user, password, port, dbname, admin_user, admin_psw):
             sql_list = [x.replace("\n", " ") if "\n" in x else x for x in sql_list]
         for sql_item in sql_list:
             cursor.execute(sql_item)
-        cursor.execute('update cuteone_config set value = "%s" where name="username"' % (admin_user))
-        cursor.execute('update cuteone_config set value = "%s" where name="password"' % (admin_psw))
+        cursor.execute('update cuteone_config set value = "%s" where name = "username"' % (admin_user))
+        cursor.execute('update cuteone_config set value = "%s" where name = "password"' % (admin_psw))
+        db.commit()
         return True
     except Exception as e:
         return False

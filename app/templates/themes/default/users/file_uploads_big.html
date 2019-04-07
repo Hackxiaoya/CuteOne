@@ -1,0 +1,206 @@
+<link rel="stylesheet" href="{{url_for('static', filename='webuploader/webuploader.css')}}" media="all">
+<link rel="stylesheet" href="{{url_for('static', filename='font-awesome/css/font-awesome.min.css')}}" media="all">
+<link rel="stylesheet" href="{{url_for('static', filename='layui/rc/css/layui.css')}}" media="all">
+<style>
+    #thelist {
+
+    }
+    #thelist tr {
+        height: 30px;
+    }
+    #thelist td {
+        font-size: 14px;
+    }
+</style>
+
+<div class="layui-form">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-col-xs3">
+                        <div id="picker">选择文件</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">列表</div>
+                <div class="layui-card-body" style="padding-top: 0;">
+                    <div id="thelist" class="uploader-list">
+                        <table class="table" border="1" cellpadding="0" cellspacing="0" width="100%">
+                            <tr class="filelist-head">
+                                <th class="file-name">名称</th>
+                                <th class="file-size">大小</th>
+                                <th width="20%" class="file-pro">进度</th>
+                                <th class="file-status">状态</th>
+                                <th width="12%" class="file-manage">操作</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-col-xs3">
+                        <div id="ctlBtn" class="btn-group">
+                            <input class="layui-btn layui-btn-normal" type="button" value="开始上传">
+                        </div>
+                    </div>
+                    <div class="layui-col-xs3">
+                        <div class="btn-group">
+                            <input class="layui-btn layui-btn-danger" type="button" value="暂停" id="stop">
+                        </div>
+                    </div>
+                    <div class="layui-col-xs3">
+                        <div class="btn-group">
+                            <input class="layui-btn layui-btn-success" type="button" value="继续" id="start">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">日志</div>
+                <div class="layui-card-body" style="padding-top: 0;">
+                    <div id="log" style="max-height: 200px;overflow: auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="application/javascript" src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+<script type="application/javascript" src="{{url_for('static', filename='layui/layui.js')}}"></script>
+<script type="application/javascript" src="{{url_for('static', filename='webuploader/webuploader.js')}}"></script>
+<script>
+    var $list = $('#thelist .table');
+    var file_md5   = '';   // 用于MD5校验文件
+    var block_info = [];   // 用于跳过已有上传分片
+    // 创建上传
+    var uploader = WebUploader.create({
+        swf: '/static/webuploader/Uploader.swf',
+        server: '/users/file_uploads',          // 服务端地址
+        pick: '#picker',              // 指定选择文件的按钮容器
+        resize: false,
+        chunked: true,                //开启分片上传
+        chunkSize: 1024 * 1024 * 0.5,   //每一片的大小
+        chunkRetry: 10,              // 如果遇到网络错误,重新上传次数
+        threads: 3,                   // [默认值：3] 上传并发数。允许同时最大上传进程数。
+    });
+    // 上传提交
+    $("#ctlBtn").click(function () {
+        log('准备上传...');
+        if ($(this).hasClass('disabled')) {
+            return false;
+        }
+        uploader.upload();
+    });
+    // 当有文件被添加进队列的时候-md5序列化
+    uploader.on('fileQueued', function (file) {
+        $list.append('<tr id="'+ file.id +'" class="file-item">'+'<td class="file-name">'+ file.name +'</td>'+ '<td width="15%" class="file-size">'+ (file.size/1024/1024).toFixed(1)+'M' +'</td>' +'<th width="20%" class="file-pro"><div class="layui-progress" lay-filter="pr'+file.id+'"><div class="layui-progress-bar" lay-percent="0%"></div></div></td>'+'<td class="file-status" width="15%">等待上传</td>'+'<td class="file-manage"><a class="layui-btn layui-btn-xs layui-btn-normal stop-btn" href="javascript:;">暂停</a><a class="layui-btn layui-btn-xs layui-btn-danger remove-this" href="javascript:;">取消</a></td>'+'</tr>');
+        //暂停上传的文件
+        $list.on('click','.stop-btn',function(){
+            uploader.stop(true);
+        });
+        //删除上传的文件
+        $list.on('click','.remove-this',function(){
+            if ($(this).parents(".file-item").attr('id') == file.id) {
+                uploader.removeFile(file);
+                $(this).parents(".file-item").remove();
+            }
+        });
+
+        log("正在计算MD5值...");
+        uploader.md5File(file)
+        .then(function (fileMd5) {
+            file.wholeMd5 = fileMd5;
+            file_md5 = fileMd5;
+            files_disk_id = {{files_disk_id}};
+            log("MD5计算完成。");
+            // 检查是否有已经上传成功的分片文件
+            $.post('/admin/drive/file_uploads_check', {files_disk_id:files_disk_id, md5: file_md5}, function (data) {
+                data = JSON.parse(data);
+                // 如果有对应的分片，推入数组
+                if (data.block_info) {
+                    for (var i in data.block_info) {
+                        block_info.push(data.block_info[i]);
+                    }
+                    log("有断点...");
+                    $('#'+file.id).find('.file-status').text('有断点');
+                }
+            })
+        });
+    });
+
+    // 发送前检查分块,并附加MD5数据
+    uploader.on('uploadBeforeSend', function( block, data ) {
+        var file = block.file;
+        var deferred = WebUploader.Deferred();
+        data.md5value = file.wholeMd5;
+        data.status = file.status;
+        data.files_disk_id = {{files_disk_id}};
+        if ($.inArray(block.chunk.toString(), block_info) >= 0) {
+            log("已有分片.正在跳过分片"+block.chunk.toString());
+            $('#'+file.id).find('.file-status').text('跳过分片'+block.chunk.toString());
+            deferred.reject();
+            deferred.resolve();
+            return deferred.promise();
+        }
+    });
+    // 上传完成后触发
+    uploader.on('uploadSuccess', function (file,response) {
+        log("上传分片完成。");
+        log("正在整理分片...");
+        $.post('/users/file_uploads_success', { md5: file.wholeMd5, fileName: file.name, files_disk_id: "{{files_disk_id}}"}, function (data) {
+            var object = JSON.parse(data);
+            if (object.code == 0) {
+                log("上传成功");
+                $('#'+file.id).find('.file-status').text('上传成功');
+            }
+        });
+    });
+
+    // 上传出错处理
+    uploader.on('uploadError', function (file) {
+        log("上传出错");
+        uploader.retry();
+    });
+    // 暂停处理
+    $("#stop").click(function(e){
+        log("暂停上传...");
+        uploader.stop(true);
+    });
+    // 从暂停文件继续
+    $("#start").click(function(e){
+        log("恢复上传...");
+        uploader.upload();
+    });
+    function log(html) {
+        $("#log").append("<div>"+html+"</div>");
+    }
+
+
+    layui.use(['element'], function(){
+        var $ = layui.$;
+        var element = layui.element;
+        element.render('progress');
+        // 文件上传过程中创建进度条实时显示。
+        uploader.on('uploadProgress', function (file, percentage) {
+            $('#'+file.id).find('.file-status').text('上传中...');
+            element.progress("pr"+file.id, parseInt(percentage * 100)+"%");
+        });
+    });
+
+</script>

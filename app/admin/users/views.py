@@ -7,6 +7,7 @@ from .. import admin
 from . import models
 from ..author import models as authorModels
 from app import common
+from ..system import models as systemModels
 
 
 
@@ -56,9 +57,11 @@ def users_edit(id):
             result["avatar"] = data_list.avatar
             result["sex"] = data_list.sex
             result["score"] = data_list.score
+            result["files_disk_id"] = data_list.files_disk_id
             result["status"] = data_list.status
         else:
             nickname = ["菜刀诗人", "SUONGLO", "你是哪块小饼干呐", "-夕凉_", "散漫的Taco", "奥特曼", "渡尘烟", "知意南风", "绿色橘生", "花胖胖", "侬本多情", "情欲孤独", "麦记花"]
+            files_disk_id = systemModels.config.get_config('files_disk_id').value
             result = {
                 'id': '0'
                 , 'username': ''
@@ -70,6 +73,7 @@ def users_edit(id):
                 , 'group': 0
                 , 'avatar': "/static/uploads/avatar/{}.png".format(random.randint(1, 10))
                 , 'sex': 3
+                , 'files_disk_id': files_disk_id
                 , 'status': 1
             }
         return render_template('admin/users/edit.html', top_nav='users', activity_nav='edit', data=result, group_list=group_list_data)

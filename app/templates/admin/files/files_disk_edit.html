@@ -1,0 +1,98 @@
+<link rel="stylesheet" href="{{url_for('static', filename='font-awesome/css/font-awesome.min.css')}}" media="all">
+<link rel="stylesheet" href="{{url_for('static', filename='layui/rc/css/layui.css')}}" media="all">
+<link rel="stylesheet" href="{{url_for('static', filename='dist/style/admin.css')}}" media="all">
+
+<div class="layui-form" style="padding: 20px 30px 0 0;">
+    <form id="form1" onsubmit="return false" action="##" method="post">
+        <input type="hidden" name="id" value="{{ data.id }}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" value="{{ data.title }}" placeholder="请输入标题" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+                <input type="text" name="description" value="{{ data.description }}" placeholder="请输入描述" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                应用机密
+                <button class="layui-btn layui-btn-normal layui-btn-xs" id="onSecret">获取应用机密</button>
+            </label>
+            <div class="layui-input-block">
+                <input type="text" name="client_secret" value="{{ data.client_secret }}" placeholder="请输入应用机密" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                应用ID
+            </label>
+            <div class="layui-input-block">
+                <input type="text" name="client_id" id="client_id" value="{{ data.client_id }}" placeholder="请输入应用ID" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                应用Code
+                <button class="layui-btn layui-btn-normal layui-btn-xs" id="onCode">获取Code</button>
+            </label>
+            <div class="layui-input-block">
+                <textarea name="code" placeholder="请输入应用Code" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline">
+                <button id="form-submit" class="layui-btn">保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="application/javascript" src="{{url_for('static', filename='layui/layui.js')}}"></script>
+<script>
+    layui.use(['jquery', 'form', 'layer'], function(){
+        var $ = layui.$; //重点处
+        var form = layui.form;
+
+
+        // 获取onSecret
+        $("#onSecret").on("click", function () {
+            var domain = "http://127.0.0.1/";
+            var url = 'https://apps.dev.microsoft.com/?referrer=https%3a%2f%2fdeveloper.microsoft.com%2fzh-cn%2fgraph%2fquick-start#/quickstart/graphIO?publicClientSupport=false&appName=CuteOne&redirectUrl='+domain+'&allowImplicitFlow=false&ru=https:%2F%2Fdeveloper.microsoft.com%2Fzh-cn%2Fgraph%2Fquick-start%3FappID%3D_appId_%26appName%3D_appName_%26redirectUrl%3Dhttp://127.0.0.1/%26platform%3Doption-php'
+            window.open(url);
+        });
+
+        // 获取onCode
+        $("#onCode").on("click", function () {
+            var domain = "http://127.0.0.1/";
+            var client_id = $("#client_id").val();
+            var url = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&client_id='+client_id+'&redirect_uri='+domain+'&scope=offline_access%20files.readwrite.all'
+            window.open(url);
+        });
+
+
+
+        // 确认按钮
+        $('#form-submit').on('click', function () {
+            $.ajax({
+                url: "/admin/files/files_disk_edit/{{ data['id'] }}"
+                ,type: "POST"
+                ,dataType: "json"
+                ,data: $('#form1').serialize()
+                ,success: function (data) {
+                    if(data.code==0){
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index);
+                    }else{
+                        layer.msg(data.msg)
+                    }
+                }
+            });
+
+        });
+    });
+</script>

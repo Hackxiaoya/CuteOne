@@ -74,9 +74,10 @@ def putfilesmall(disk_id, dirve_id, fileName, remotePath, times=1):
     pull_res = requests.put(url, headers=headers, data=open(os.getcwd()+"/temp_uploads/syn_temp/" + str(dirve_id) + "/" + fileName, 'rb'))
     pull_res = json.loads(pull_res.text)
     if 'error' in pull_res.keys():
+        driveLogic.reacquireToken(disk_id)
         putfilesmall(disk_id, dirve_id, fileName, remotePath, times)
     else:
-        putfilesmall(disk_id, dirve_id, fileName, remotePath, times)
+        return pull_res
 
 
 """
