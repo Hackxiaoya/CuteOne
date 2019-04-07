@@ -55,7 +55,7 @@ def register():
     if res:
         return json.dumps({"code": 1, "msg": "用户名已存在"})
     else:
-        files_disk_id = systemModels.config.get_config('files_disk_id').value
+        files_disk_id = '0' if systemModels.config.get_config('files_disk_id') is None else systemModels.config.get_config('files_disk_id').value
         # 初始化role 并插入数据库
         role = usersModels.users(
             username = username,
