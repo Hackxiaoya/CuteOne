@@ -167,7 +167,7 @@ def update_cache(drive_id, type):
     remotePath: 远程路径
 """
 def pull_uploads(task_id, drive_id, fileName, remotePath):
-    command = "python3 {}/app/task/uploads.py {} {} '{}' {}".format(os.getcwd(), task_id, drive_id, fileName, remotePath)
+    command = "python3 {}/app/task/uploads.py {} {} '{}' '{}'".format(os.getcwd(), task_id, drive_id, fileName, remotePath)
     common.run_command(command)
 
 
