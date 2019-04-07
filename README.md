@@ -47,7 +47,7 @@
 * Linux
 * Nginx
 * Python3  ——[如何安装Python3](https://www.cnblogs.com/s-seven/p/9105973.html)
-* Mysql >= 5.6
+* Mysql >= 5.5
 * MongoDB
 
 
