@@ -61,7 +61,7 @@ def users_edit(id):
             result["status"] = data_list.status
         else:
             nickname = ["菜刀诗人", "SUONGLO", "你是哪块小饼干呐", "-夕凉_", "散漫的Taco", "奥特曼", "渡尘烟", "知意南风", "绿色橘生", "花胖胖", "侬本多情", "情欲孤独", "麦记花"]
-            files_disk_id = systemModels.config.get_config('files_disk_id').value
+            files_disk_id = '0' if systemModels.config.get_config('files_disk_id') == None else systemModels.config.get_config('files_disk_id').value
             result = {
                 'id': '0'
                 , 'username': ''
