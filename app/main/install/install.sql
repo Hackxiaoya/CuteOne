@@ -67,6 +67,7 @@ CREATE TABLE `cuteone_config`  (
 -- Records of cuteone_config
 -- ----------------------------
 INSERT INTO `cuteone_config` VALUES (1, 'username', '后台管理员用户名', 'admin', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
+INSERT INTO `cuteone_config` VALUES (1, 'username', '后台管理员用户名', 'admin', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
 INSERT INTO `cuteone_config` VALUES (2, 'password', '后台管理员密码', '60a25dd28e65a2c6df9e3b2650c926e6', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
 INSERT INTO `cuteone_config` VALUES (3, 'toggle_web_site', '站点开关', '1', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
 INSERT INTO `cuteone_config` VALUES (4, 'web_site', '域名地址', '', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
