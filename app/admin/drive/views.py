@@ -94,7 +94,7 @@ def drive_del(id):
 
 @admin.route('/drive/disk_list/<int:id>', methods=['GET'])
 @admin.route('/drive/disk_list/<int:id>/')  # 设置分页
-# @decorators.login_require
+@decorators.login_require
 def disk_list(id):
     if request.args.get('page'):
         data_list = models.drive_list.all(id)
@@ -118,7 +118,7 @@ def disk_list(id):
 
 
 @admin.route('/drive/disk_edit/<int:drive_id>/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
-# @decorators.login_require
+@decorators.login_require
 def disk_edit(drive_id, id):
     if request.method == 'GET':
         if id:
