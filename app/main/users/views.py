@@ -150,7 +150,7 @@ def upload_avatar():
 def files_list():
     if current_user.get_id() is not None:
         page_number = '1' if request.args.get('page') is None else request.args.get('page')
-        result = logic.get_users_files_list(1, page_number, 12)
+        result = logic.get_users_files_list(current_user.id, page_number, 12)
         files_disk_id = usersModels.users.find_by_id(current_user.id).files_disk_id
         return render_template(THEMES + 'users/files_list.html', files_disk_id=files_disk_id, data=result)
     else:
