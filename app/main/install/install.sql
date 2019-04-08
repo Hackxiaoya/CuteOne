@@ -83,7 +83,7 @@ INSERT INTO `cuteone_config` VALUES (13, 'search_type', '搜索类型', '0', '00
 INSERT INTO `cuteone_config` VALUES (14, 'web_site_background', '背景图', 'http://ww1.sinaimg.cn/large/71c534f0ly1fw9tw14zb3j21hc0u01e4.jpg', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
 INSERT INTO `cuteone_config` VALUES (15, 'is_users', '是否开启用户模块', '0', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
 INSERT INTO `cuteone_config` VALUES (16, 'is_music', '音乐播放器', '0', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
-INSERT INTO `cuteone_config` VALUES (17, 'files_disk_id', '用户默认存储盘', NULL, '0001-01-01 00:00:00', '0001-01-01 00:00:00');
+INSERT INTO `cuteone_config` VALUES (17, 'files_disk_id', '用户默认存储盘', '0', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
 INSERT INTO `cuteone_config` VALUES (18, 'files_uploads', '是否开启用户上传', '0', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
 
 -- ----------------------------
