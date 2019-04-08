@@ -33,15 +33,24 @@ def author_judge(drive_id, users_id='', path=''):
         if users_id:    # 如果是会员
             group_id = usersModels.users.find_by_id(users_id).group
             if group_id == 0:
-                return True
-            else:
-                group_data = authorModels.authGroup.find_by_id(group_id).auth_group
-                group_data = group_data.split(",")
-                for item in group_data:
-                    res = authorModels.authrule.find_by_id_drive_path(item, drive_id, temp_path)
-                    if res is not None:
+                res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
+                if res:
+                    if res.password != session.get(temp_path):
+                        return True
+                    else:
                         return False
-                return True
+            else:
+                res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
+                if res:
+                    group_data = authorModels.authGroup.find_by_id(group_id).auth_group
+                    group_data = group_data.split(",")
+                    for item in group_data:
+                        res = authorModels.authrule.find_by_id_drive_path(item, drive_id, temp_path)
+                        if res is not None:
+                            return False
+                    return True
+                else:
+                    return False
         else:
             res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
             if res:
