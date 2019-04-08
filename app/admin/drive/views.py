@@ -94,7 +94,7 @@ def drive_del(id):
 
 @admin.route('/drive/disk_list/<int:id>', methods=['GET'])
 @admin.route('/drive/disk_list/<int:id>/')  # 设置分页
-@decorators.login_require
+# @decorators.login_require
 def disk_list(id):
     if request.args.get('page'):
         data_list = models.drive_list.all(id)
@@ -118,7 +118,7 @@ def disk_list(id):
 
 
 @admin.route('/drive/disk_edit/<int:drive_id>/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
-@decorators.login_require
+# @decorators.login_require
 def disk_edit(drive_id, id):
     if request.method == 'GET':
         if id:
@@ -150,7 +150,28 @@ def disk_edit(drive_id, id):
         code = request.form['code']
         chief = request.form['chief']
         if id != '0':
-            models.drive_list.update({"id": id, "title": title, "client_id": client_id, "client_secret": client_secret, "chief":chief})
+            if code:
+                url = config.BaseAuthUrl + '/common/oauth2/v2.0/token'
+                redirect_url = "http://127.0.0.1/"
+                AuthData = 'client_id={client_id}&redirect_uri={redirect_uri}&client_secret={client_secret}&code={code}&grant_type=authorization_code'
+                data = AuthData.format(client_id=client_id, redirect_uri=redirect_url, client_secret=client_secret,
+                                       code=code)
+                headers = {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'User-Agent': 'ISV|CuteOne|CuteOne/1.0'
+                }
+                res = requests.post(url, data=data, headers=headers)
+                get_res = json.loads(res.text)
+                if 'error' in get_res.keys():
+                    return json.dumps({"code": 1, "msg": "Error！"})
+                else:
+                    token = json.dumps(res.text)
+                    models.drive_list.update({"id": id, "title": title, "client_id": client_id, "client_secret": client_secret, "chief":chief, "token":token})
+                    return json.dumps({"code": 0, "msg": "完成！"})
+            else:
+                models.drive_list.update(
+                    {"id": id, "title": title, "client_id": client_id, "client_secret": client_secret, "chief": chief})
+                return json.dumps({"code": 0, "msg": "完成！"})
         else:
             url = config.BaseAuthUrl + '/common/oauth2/v2.0/token'
             redirect_url = "http://127.0.0.1/"
@@ -161,13 +182,16 @@ def disk_edit(drive_id, id):
                 'User-Agent': 'ISV|CuteOne|CuteOne/1.0'
             }
             res = requests.post(url,data=data,headers=headers)
-            token = json.dumps(res.text)
-
-            # 初始化role 并插入数据库
-            role = models.drive_list(title=title, drive_id=drive_id, client_id=client_id, client_secret=client_secret, token=token, chief=chief)
-            MysqlDB.session.add(role)
-            MysqlDB.session.flush()
-            MysqlDB.session.commit()
+            get_res = json.loads(res.text)
+            if 'error' in get_res.keys():
+                return json.dumps({"code": 1, "msg": "Error！"})
+            else:
+                token = json.dumps(res.text)
+                # 初始化role 并插入数据库
+                role = models.drive_list(title=title, drive_id=drive_id, client_id=client_id, client_secret=client_secret, token=token, chief=chief)
+                MysqlDB.session.add(role)
+                MysqlDB.session.flush()
+                MysqlDB.session.commit()
         return json.dumps({"code": 0, "msg": "完成！"})
 
 
