@@ -339,6 +339,14 @@ def synContinue(id):
     return json.dumps({"code": 0, "msg": "成功！"})
 
 
+@admin.route('/drive/synReStart/<int:id>')
+@decorators.login_require
+def synReStart(id):
+    drive_id = id
+    logic.reStartSynTask(drive_id)
+    return json.dumps({"code": 0, "msg": "成功！"})
+
+
 @admin.route('/drive/synStop/<int:id>')
 @decorators.login_require
 def synStop(id):

@@ -219,6 +219,25 @@ def isSynTask(id):
     except:
         return
 
+
+"""
+    重载指定ID的同步任务
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-24
+    id: 驱动ID
+"""
+def reStartSynTask(id):
+    try:
+        drivename = "syn_drive_" + str(id)
+        MongoDB.db[drivename].remove()  # 移除集合所有数据
+        MongoDB.db[drivename].drop()  # 删除集合
+        return
+    except:
+        return
+
+
+
 """
     强制结束指定ID的主从同步进程
     @Author: yyyvy <76836785@qq.com>

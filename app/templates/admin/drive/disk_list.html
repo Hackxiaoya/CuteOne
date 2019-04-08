@@ -20,6 +20,9 @@
                             <button class="layui-btn {% if isSynTask %}layui-btn-disabled{% else %}layui-btn-normal{% endif %}" layadmin-event="synStart">开始同步</button>
                         {% endif %}
                         <button class="layui-btn layui-btn-danger" layadmin-event="synStop">停止同步</button>
+                        {% if ifSynTask %}
+                            <button class="layui-btn layui-btn-danger" layadmin-event="synReStart">重载同步</button>
+                        {% endif %}
                     </div>
                     <table class="layui-hide" id="list-table" lay-filter="list-table"></table>
                     <script type="text/html" id="list-table-bar">
@@ -84,6 +87,26 @@
                     ,success: function (data) {
                         if(data.code==0){
                             layer.msg('继续同步中...', {icon: 1});
+                            location.reload();
+                        }else{
+                            layer.msg(data.msg)
+                        }
+                    }
+                });
+            });
+        };
+
+        clickMethod.synReStart = function () {
+            layer.confirm('确定要重载同步任务吗？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                $.ajax({
+                    url: "/admin/drive/synReStart/{{ data.id }}"
+                    ,type: "GET"
+                    ,dataType: "json"
+                    ,success: function (data) {
+                        if(data.code==0){
+                            layer.msg('主从任务已暂停重载!', {icon: 1});
                             location.reload();
                         }else{
                             layer.msg(data.msg)
