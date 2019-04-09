@@ -6,6 +6,7 @@
 	<title>{{ webconfig.web_site_title }} - CuteOne网盘系统</title>
     <meta name="keywords" content="{{ webconfig.web_site_keyword }}">
     <meta name="description" content="{{ webconfig.web_site_description }}">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <link href="{{url_for('static', filename='favicon.ico')}}" rel="shortcut icon" type="image/x-icon">
 	<link rel="stylesheet" href="{{url_for('static', filename='themes/default/css/mdui.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='layui/css/layui.css')}}">
