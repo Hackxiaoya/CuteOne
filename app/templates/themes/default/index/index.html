@@ -200,11 +200,29 @@
                         </span>
                     </li>
                     {% for i in pagination.page %}
-                    <li class="{% if i == pagination.now_page %}current{% endif %}">
-                        <span data-page="{{i}}" class="{% if i != pagination.now_page %}page-click{% endif %}">
-                            {{i}}
-                        </span>
-                    </li>
+                        {% if loop.index == 2 %}
+                            {% if pagination.now_page | int > 3 %}
+                                <li style="width: 20px;line-height: 30px;">
+                                    ...
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                        <li class="{% if i == pagination.now_page %}current{% endif %}">
+                            <span data-page="{{i}}" class="{% if i != pagination.now_page %}page-click{% endif %}">
+                                {{i}}
+                            </span>
+                        </li>
+                        {% if loop.index == 4 %}
+                            {% if pagination.count | int > 5 %}
+                                {% if pagination.now_page | int > 3 %}
+                                    {% if pagination.now_page | int < pagination.count | int -1 %}
+                                        <li style="width: 20px;line-height: 30px;">
+                                            ...
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
                     {% endfor %}
                     <li>
                         <i class="allpage">

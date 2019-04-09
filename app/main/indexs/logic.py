@@ -198,7 +198,21 @@ def Pagination_data(data, page):
                 if count <= start + page_number:
                     result.append(item)
             count += 1
-    return {"data":result, "pagination":{"count": int(len(data)/page_number)+1, "page": numpy.arange(1, int(len(data)/page_number)+2), "now_page": page}}
+    if len(list(range(1, int(len(data) / page_number) + 2))) > 10:
+        if int(page) > 2:
+            if int(page) < int(len(data) / page_number) + 1:
+                if int(page) < int(len(data) / page_number) -2:
+                    all_page = [1, int(page)-1, page , int(page)+1, int(len(data) / page_number) + 1]
+                else:
+                    all_page = [1, int(page) - 1, page, int(page) + 1]
+            else:
+                all_page = [1, int(page) - 2, int(page) - 1, int(len(data) / page_number) + 1]
+            print(all_page)
+        else:
+            all_page = [1, 2, 3, 4, int(len(data) / page_number) + 1]
+    else:
+        all_page = list(range(1, int(len(data) / page_number) + 1))
+    return {"data": result, "pagination": {"count": int(len(data) / page_number) + 1, "page": all_page, "now_page": page}}
 
 
 """
