@@ -69,16 +69,15 @@ def get_one_file_list(id, path=''):
     token: 网盘ID
     url: 分页url
 """
-def get_one_file_list_page(token, url):
+def get_one_file_list_page(token, url, total=[]):
     headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
     get_res = requests.get(url, headers=headers, timeout=30)
     get_res = json.loads(get_res.text)
     if 'value' in get_res.keys():
-        result = get_res['value']
+        total += get_res['value']
         if '@odata.nextLink' in get_res.keys():
-            pageres = get_one_file_list_page(token, get_res["@odata.nextLink"])
-            result += pageres['value']
-        return result
+            get_one_file_list_page(token, get_res["@odata.nextLink"], total)
+        return total
 
 
 
