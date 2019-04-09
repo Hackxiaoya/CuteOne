@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
-	<title>{{ webconfig.web_site_title }} - CuteOne网盘系统ss</title>
+	<title>{{ webconfig.web_site_title }} - CuteOne网盘系统</title>
     <meta name="keywords" content="{{ webconfig.web_site_keyword }}">
     <meta name="description" content="{{ webconfig.web_site_description }}">
     <link href="{{url_for('static', filename='favicon.ico')}}" rel="shortcut icon" type="image/x-icon">
@@ -174,7 +174,12 @@
 
         }
         $(function(){
-
+            protocolStr = document.location.protocol;
+            if(protocolStr == "http:"){
+                protocolStr = "http://";
+            }else{
+                protocolStr = "https://";
+            }
             //获取url中的参数
             function getUrlParam(name) {
                 var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
@@ -208,7 +213,7 @@
                 if(urlsortTable){
                     reptable = replaceParamVal(window.location.search, "sortTable", sort_table);
                     repsort = replaceParamVal(reptable, "sortType", sort_sort);
-                    window.location.href = "http://" + window.location.host + "/" + repsort;
+                    window.location.href = protocolStr + window.location.host + "/" + repsort;
                 }else{
                     if(getUrlParam("drive")){
                         window.location.href = window.location.href + "&sortTable="+sort_table+"&sortType="+sort_sort
@@ -224,7 +229,7 @@
                 let urlpage = getUrlParam("page");
                 if(urlpage){
                     rep= replaceParamVal(window.location.search, "page", page);
-                    window.location.href = "http://" + window.location.host + "/" + rep;
+                    window.location.href = protocolStr + window.location.host + "/" + rep;
                 }else{
                     if(getUrlParam("drive")){
                         window.location.href = window.location.href + "&page="+page
@@ -257,7 +262,7 @@
                 if(searchInput) {
                     if(urlsearch){
                         searchurl = replaceParamVal(window.location.search, "search", searchInput);
-                        window.location.href = "http://" + window.location.host + "/"+searchurl;
+                        window.location.href = protocolStr + window.location.host + "/"+searchurl;
                     }else{
                         if(getUrlParam("drive")){
                             window.location.href = window.location.href + "&search="+searchInput
@@ -276,12 +281,12 @@
                 let disk = getUrlParam("disk");
                 if(disk){
                     var url = replaceParamVal(window.location.search, "disk", disk_id);
-                    window.location.href = "http://" + window.location.host + "/"+url;
+                    window.location.href = "/"+url;
                 }else{
                     if(getUrlParam("drive")){
                         window.location.href = window.location.href + "&disk="+disk_id
                     }else{
-                        window.location.href = window.location.href + "/?drive={{ drive_id }}&disk="+disk_id
+                        window.location.href = "/?drive={{ drive_id }}&disk="+disk_id
                     }
                 }
             });
@@ -333,7 +338,7 @@
                        id = $(this).data("id");
                    name = name.replace(".mp3","");
                    name = name.replace(".flac","");
-                   var url = "http://" + window.location.host + "/down_file/" + drive + "/" + disk + "/" + id;
+                   var url = "/down_file/" + drive + "/" + disk + "/" + id;
                    music.addMusic([{
                        name: name,
                        artist: "未知",
