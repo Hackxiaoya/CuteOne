@@ -308,10 +308,10 @@ def files(id):
         path = ''
         current_url = '/admin/drive/files/' + str(id) + '/?path='
     data = logic.get_one_file_list(id, path)
-    for i in data["data"]["value"]:
+    for i in data["data"]:
         i["lastModifiedDateTime"] = common.utc_to_local(i["lastModifiedDateTime"])
         i["size"] = common.size_cov(i["size"])
-    data = data["data"]["value"]
+    data = data["data"]
     return render_template('admin/drive/files.html', top_nav='drive', activity_nav='edit', chief=chief, id=id, current_url=current_url, drive_id=drive_id, uploads_path=uploads_path, data=data)
 
 

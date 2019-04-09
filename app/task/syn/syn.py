@@ -76,7 +76,7 @@ def task_getlist(disk_id, path, drive_id):
         # 创建集合 - 不添加一条数据，集合是不会创建的，因为MongoDB是惰性数据库
         drivename = "syn_drive_" + str(drive_id)
         collection = MongoDB.db[drivename]
-        for i in res["data"]["value"]:
+        for i in res["data"]:
             if "folder" in i.keys():
                 common.send_socket(drive_id, "{} | 拉取 {} 缓存数据".format(time.strftime('%Y-%m-%d %H:%M:%S'), i["name"]))
                 dic = {

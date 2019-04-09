@@ -50,11 +50,36 @@ def get_one_file_list(id, path=''):
             get_one_file_list(id, path)
         else:
             if 'value' in get_res.keys():
-                return {'code': True, 'msg': '获取成功', 'data': get_res}
+                result = get_res['value']
+                if '@odata.nextLink' in get_res.keys():
+                    pageres = get_one_file_list_page(token, get_res["@odata.nextLink"])
+                    result+=pageres
+                return {'code': True, 'msg': '获取成功', 'data': result}
             else:
                 get_one_file_list(id, path)
     except:
         get_one_file_list(id, path)
+
+
+"""
+    获取OneDrive文件列表 - 超过200个文件，分页获取
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-03-16
+    token: 网盘ID
+    url: 分页url
+"""
+def get_one_file_list_page(token, url):
+    headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
+    get_res = requests.get(url, headers=headers, timeout=30)
+    get_res = json.loads(get_res.text)
+    if 'value' in get_res.keys():
+        result = get_res['value']
+        if '@odata.nextLink' in get_res.keys():
+            pageres = get_one_file_list_page(token, get_res["@odata.nextLink"])
+            result += pageres['value']
+        return result
+
 
 
 """
