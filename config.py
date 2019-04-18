@@ -28,7 +28,6 @@ SQLALCHEMY_ECHO = False  # 打印SQL语句 True or False
 MONGO_URI = "mongodb://127.0.0.1:27017/cache"
 
 
-
 """
     OneDrive API设置
 """

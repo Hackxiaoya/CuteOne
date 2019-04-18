@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  cuteone:
+    build:
+      context: .
+      dockerfile: cutone_dockfile
+#    image: one
+    container_name: cuteone # 容器名
+    ports:
+      - "5000:5000"
+    command: uwsgi --ini /code/uwsgi.ini
+
+  mysql:
+    image: mysql:5.7.25
+    container_name: mysql-db # 容器名
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456 # root管理员用户密码
+    ports:
+      - '3307:3306'  # host物理直接映射端口为3306
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci # 设置utf8字符集
+    volumes:
+      - ~/data/mysql/data/:/var/lib/mysql
+      - ~/data/mysql/conf.d:/etc/mysql/conf.d
+
+  mongo:
+    image: mongo:3.4.20-xenial
+    container_name: mongodb # 容器名
+    ports:
+      - 27018:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=
+      - MONGO_INITDB_ROOT_PASSWORD=
+    volumes:
+      - ~/data/mongo/cache:/data/db
