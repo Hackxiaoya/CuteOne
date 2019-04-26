@@ -10,14 +10,14 @@ from app import decorators
 
 
 
-@admin.route('/system/restart')  # restart
+@admin.route('/system/restart', methods=['GET', 'POST'])  # restart
 @decorators.login_require
 def restart():
     common.restart()
     return json.dumps({"code": 0, "msg": "成功！"})
 
 
-@admin.route('/system/manage')  # 管理
+@admin.route('/system/manage', methods=['GET', 'POST'])  # 管理
 @decorators.login_require
 def manage():
     info = common.SystemInfo
