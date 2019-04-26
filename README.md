@@ -2,8 +2,8 @@
 ## 2.X版本已发布，请切换到dev分支下载；
 > git clone -b dev https://github.com/Hackxiaoya/CuteOne.git  
 
-**master分支保持1.X版本，只修复BUG，不再新增功能，直到2.X版本稳定了，才会合并过来；**
-**dev分支保持2.X版本，持续更新修复，新功能抢先体验，请下载dev分支的代码；**
+**master分支保持1.X版本，只修复BUG，不再新增功能，直到2.X版本稳定了，才会合并过来；**  
+**dev分支保持2.X版本，持续更新修复，新功能抢先体验，请下载dev分支的代码；**  
 
 # CuteOne
 
