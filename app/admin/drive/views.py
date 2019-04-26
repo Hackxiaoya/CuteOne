@@ -72,7 +72,9 @@ def edit(id):
             # 初始化role 并插入数据库
             role = models.drive(title=title, description=description)
             MysqlDB.session.add(role)
+            MysqlDB.session.flush()
             role_id = role.id
+            MysqlDB.session.commit()
             menu_role = menuModels.menu(title=title, url='/drive/?drive='+str(role_id), pid=0, postion=0, type=1, type_name=role_id, activate=0, sort=0, status=1)
             MysqlDB.session.add(menu_role)
             MysqlDB.session.flush()

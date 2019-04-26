@@ -25,7 +25,7 @@ def drive_list():
 @index.route('/')
 def _index():
     active = menuModels.menu.find_by_index()
-    if active.type == 0:
+    if active.type == 1:
         indexModel = driveViews.drive(active.type_name)
     elif active.type == 2:
         indexModel = getattr(eval(active.type_name+'Views'), active.type_name+'_index')()
