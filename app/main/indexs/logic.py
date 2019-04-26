@@ -133,7 +133,7 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
                     x["downloadUrl"] = x["downloadUrl"]
                     data.append(x)
             else:
-                dirve_id = driveModels.drive_list.find_by_drive_id(disk_id)[0].id
+                dirve_id = driveModels.drive_list.find_by_id(disk_id).id
                 authorres = authorModels.authrule.find_by_drive_id_all(dirve_id)
                 authorpath = [] # 搜索不可见的集和，加密皆不可见
                 for i in authorres:
