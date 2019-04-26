@@ -1,0 +1,155 @@
+<link rel="stylesheet" href="{{url_for('static', filename='font-awesome/css/font-awesome.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/DPlayer.min.css')}}">
+<style>
+    .infobox {
+        position: relative;
+    }
+    .infobox h3 {
+        margin: 1% 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 60%;
+
+    }
+    .infobox .info {
+        position: absolute;
+        top: 5px;
+        right: 0;
+    }
+    .infobox .info a {
+        font-size: 14px;
+        margin-left: 10px;
+        text-decoration: none;
+        color: #2b2b2b;
+        border: 1px dashed #2b2b2b;
+        padding: 2px 5px;
+    }
+    .infobox .info a:hover {
+        color: #565656;
+    }
+    .lineSwitch {
+        float: left;
+        position: relative;
+        margin-top: -13px;
+        padding-top: 10px;
+    }
+    .lineSwitch:hover ul {
+        display: block;
+    }
+    .lineSwitch span {
+        font-size: 14px;
+        margin-left: 10px;
+        text-decoration: none;
+        color: #2b2b2b;
+        border: 1px dashed #2b2b2b;
+        padding: 2px 8px;
+        cursor: pointer;
+        display: block;
+    }
+    .lineSwitch ul {
+        display: none;
+        position: absolute;
+        bottom: 25px;
+        left: 10px;
+        padding: 0;
+        margin: 0;
+        background: #fff;
+        border: 1px solid #2b2b2b;
+    }
+    .lineSwitch li {
+        list-style: none;
+    }
+    .lineSwitch li a {
+        width: 89px;
+        margin: 0 2px!important;
+        padding: 7px 2px!important;
+        border: none!important;
+        border-bottom: 1px dashed #2b2b2b!important;
+        display: block;
+        text-align: center;
+    }
+    .lineSwitch li a:hover {
+        color: white!important;
+        background: #34c173!important;
+    }
+    #dplayer {
+        height: 90%;
+    }
+    @media screen and (max-width:500px) {
+        .infobox h3 {
+            width: 100%;
+        }
+        .info {
+            position: relative!important;
+        }
+        #dplayer {
+            height: 87%;
+        }
+    }
+</style>
+
+<div id="dplayer"></div>
+
+<div class="infobox">
+    <h3 title="{{ data.name | safe }}">{{ data.name | safe }}</h3>
+    <div class="info">
+        <div class="lineSwitch">
+            <span>
+                <i class="fa fa-angle-up"></i>
+                Line Switch
+            </span>
+            <ul>
+                {% for v in load_disk_list %}
+                    <li>
+                        <a href="/drive/pop_video/{{ data.drive_id }}/{{ v.id }}/{{ data.id }}/1/{{ data.disk_id }}/{{ data.id }}">
+                            {{ v.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <a href="{{ share_url }}" target="_blank">
+            <i class="fa fa-external-link"></i>
+            新窗打开
+        </a>
+        <a href="javascript:void(0);" id="copybtn">
+            <i class="fa fa-share"></i>
+            分享
+        </a>
+        <a href="{{ donw_url }}/?filename={{ data.name | safe }}">
+            <i class="fa fa-download"></i>
+            下载
+        </a>
+    </div>
+</div>
+
+
+<script type="application/javascript" src="{{url_for('static', filename='layui/layui.js')}}"></script>
+<script type="application/javascript" src="{{url_for('static', filename='js/clipboard.min.js')}}"></script>
+<script type="application/javascript" src="{{url_for('static', filename='js/DPlayer.min.js')}}"></script>
+<script type="text/javascript">
+    const dp = new DPlayer({
+        container: document.getElementById('dplayer'),
+        screenshot: true,
+        video: {
+            url: '{{ data.url | safe }}',
+            type: 'auto'
+        }
+    });
+
+    layui.use(['layer'], function() {
+        var $ = layui.$; //重点处
+        // 复制到剪切板
+        clipboard = new ClipboardJS('#copybtn', {
+            text: function(el) {
+                var domain = window.location.href;
+                return domain;
+            }
+        });
+        clipboard.on('success', function(e) {
+            layer.msg("已复制分享地址，快发给小伙伴吧！");
+            e.clearSelection();
+        })
+    });
+</script>

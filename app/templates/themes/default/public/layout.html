@@ -6,7 +6,7 @@
 	<title>{{ webconfig.web_site_title }} - CuteOne网盘系统</title>
     <meta name="keywords" content="{{ webconfig.web_site_keyword }}">
     <meta name="description" content="{{ webconfig.web_site_description }}">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+<!--    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />-->
     <link href="{{url_for('static', filename='favicon.ico')}}" rel="shortcut icon" type="image/x-icon">
 	<link rel="stylesheet" href="{{url_for('static', filename='themes/default/css/mdui.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='layui/css/layui.css')}}">
@@ -83,10 +83,10 @@
         <div class="mdui-container-fluid">
 			<div class="mdui-drive nexmoe-item">
                 <ul>
-                    {% for drive in drive_list %}
+                    {% for menu in menu_list %}
                         <li>
-                            <a href="/?drive={{ drive.id }}">
-                                {{ drive.title }}
+                            <a href="{{ menu.url }}">
+                                {{ menu.title }}
                             </a>
                         </li>
                     {% endfor %}
@@ -219,7 +219,7 @@
                     if(getUrlParam("drive")){
                         window.location.href = window.location.href + "&sortTable="+sort_table+"&sortType="+sort_sort
                     }else{
-                        window.location.href = window.location.href + "/?drive={{ drive_id }}&sortTable="+sort_table+"&sortType="+sort_sort
+                        window.location.href = window.location.href + "/drive/?drive={{ drive_id }}&sortTable="+sort_table+"&sortType="+sort_sort
                     }
                 }
             });
@@ -247,7 +247,7 @@
                     disk = $(this).data("disk"),
                     id = $(this).data("id"),
                     name = $(this).data("name");
-                var url = "/down_file/" + drive + "/" + disk + "/" + id + "/?filename=" + name;
+                var url = "/drive/down_file/" + drive + "/" + disk + "/" + id + "/?filename=" + name;
                 layer.confirm('是否确认下载？', {
                     btn: ['确认','取消']
                 }, function(index){
@@ -263,12 +263,12 @@
                 if(searchInput) {
                     if(urlsearch){
                         searchurl = replaceParamVal(window.location.search, "search", searchInput);
-                        window.location.href = protocolStr + window.location.host + "/"+searchurl;
+                        window.location.href = protocolStr + window.location.host + "/drive/"+searchurl;
                     }else{
                         if(getUrlParam("drive")){
                             window.location.href = window.location.href + "&search="+searchInput
                         }else{
-                            window.location.href = window.location.href + "/?drive={{ drive_id }}&search="+searchInput
+                            window.location.href = window.location.href + "/drive/?drive={{ drive_id }}&search="+searchInput
                         }
                     }
                 }else{
@@ -287,7 +287,7 @@
                     if(getUrlParam("drive")){
                         window.location.href = window.location.href + "&disk="+disk_id
                     }else{
-                        window.location.href = "/?drive={{ drive_id }}&disk="+disk_id
+                        window.location.href = "/drive/?drive={{ drive_id }}&disk="+disk_id
                     }
                 }
             });
@@ -339,7 +339,7 @@
                        id = $(this).data("id");
                    name = name.replace(".mp3","");
                    name = name.replace(".flac","");
-                   var url = "/down_file/" + drive + "/" + disk + "/" + id;
+                   var url = "/drive/down_file/" + drive + "/" + disk + "/" + id;
                    music.addMusic([{
                        name: name,
                        artist: "未知",
@@ -358,7 +358,7 @@
                 var drive = $(this).data("drive"),
                     disk = $(this).data("disk"),
                     id = $(this).data("id");
-                var url = "/pop_video/" + drive + "/" + disk + "/" + id;
+                var url = "/drive/pop_video/" + drive + "/" + disk + "/" + id;
                 //适配手机端
                 if($(window).width() < 500) {
                     var d_width = "95%";
@@ -381,7 +381,7 @@
                 });
             });
         });
-        
+
         function login() {
             if($(window).width() < 500) {
                 var d_width = "95%",

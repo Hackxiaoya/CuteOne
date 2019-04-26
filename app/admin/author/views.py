@@ -22,7 +22,7 @@ def author_list():
         if data_list:
             for result in data_list:
                 json_data["count"] = json_data["count"]+1
-                dirve_name = driveModels.drive.find_by_id(result.drive_id).title
+                dirve_name = driveModels.drive.find_by_id(result.drive_id).title if driveModels.drive.find_by_id(result.drive_id) else '未知'
                 json_data["data"].append(
                     {"id": result.id, "title": result.title, "dirve_name": dirve_name, "path": result.path, "password": result.password, "update_time":str(result.update_time), "create_time": str(result.create_time)})
         return json.dumps(json_data)
@@ -118,7 +118,7 @@ def group_list():
             for result in data_list:
                 json_data["count"] = json_data["count"]+1
                 json_data["data"].append(
-                    {"id": result.id, "title": result.title, "description": result.description, "update_time":str(result.update_time), "create_time": str(result.create_time)})
+                    {"id": result.id, "title": result.title, "description": result.description, "price": result.price, "update_time":str(result.update_time), "create_time": str(result.create_time)})
         return json.dumps(json_data)
     else:
         return render_template('admin/author/group.html', top_nav='author', activity_nav='group')
@@ -136,12 +136,14 @@ def group_edit(id):
             result["title"] = data_list.title
             result["description"] = data_list.description
             result["auth_group"] = data_list.auth_group
+            result["price"] = data_list.price
         else:
             result = {
                 'id': '0'
                 , 'title': ''
                 , 'description': ''
                 , 'auth_group': ''
+                , 'price': '0.00'
             }
         return render_template('admin/author/group_edit.html', top_nav='author', activity_nav='edit', data=result, author_list=author_list)
     else:
@@ -149,11 +151,12 @@ def group_edit(id):
         title = request.form['title']
         description = request.form['description']
         auth_group = request.form['auth_group']
+        price = request.form['price']
         if id != '0':
-            models.authGroup.update({"id": id, "title": title, "description": description, "auth_group": auth_group})
+            models.authGroup.update({"id": id, "title": title, "description": description, "auth_group": auth_group, "price": price})
         else:
             # 初始化role 并插入数据库
-            role = models.authGroup(title=title, description=description, auth_group=auth_group)
+            role = models.authGroup(title=title, description=description, auth_group=auth_group, price=price)
             MysqlDB.session.add(role)
             MysqlDB.session.flush()
             MysqlDB.session.commit()

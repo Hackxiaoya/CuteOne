@@ -12,21 +12,25 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">描述</label>
+            <label class="layui-form-label">url</label>
             <div class="layui-input-block">
-                <textarea name="description" placeholder="请输入描述" class="layui-textarea">{{data.description or ''}}</textarea>
+                <input type="text" name="url" value="{{ data.url }}" placeholder="URL" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">默认首页</label>
+            <label class="layui-form-label">类型</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="activate" lay-skin="switch" lay-text="是|否" {% if data.activate==1 %}checked{% endif %}>
+                <select name="type" placeholder="请选择类型" lay-filter="typetype">
+                    <option value="{{ data.type }}" {% if data.type == 0 %} selected {% endif %}>自定义</option>
+                    <option value="{{ data.type }}" {% if data.type == 1 %} selected {% endif %}>驱动</option>
+                    <option value="{{ data.type }}" {% if data.type == 2 %} selected {% endif %}>模型</option>
+                </select>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">排序</label>
+            <label class="layui-form-label">是否显示</label>
             <div class="layui-input-block">
-                <input type="text" name="sort" value="{{ data.sort }}" placeholder="排序，序号越小越靠前" class="layui-input">
+                <input type="checkbox" name="status" lay-skin="switch" lay-text="是|否" {% if data.status==1 %}checked{% endif %}>
             </div>
         </div>
         <div class="layui-form-item">
@@ -47,7 +51,7 @@
         // 确认按钮
         $('#form-submit').on('click', function () {
             $.ajax({
-                url: "/{{ data['id'] }}"
+                url: "/admin/drive/out_edit/{{ data['id'] }}"
                 ,type: "POST"
                 ,dataType: "json"
                 ,data: $('#form1').serialize()

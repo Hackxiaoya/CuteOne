@@ -10,26 +10,16 @@ class drive(MysqlDB.Model):
     __tablename__ = 'cuteone_drive'
     id = MysqlDB.Column(MysqlDB.INT, primary_key=True)
     title = MysqlDB.Column(MysqlDB.String(255), unique=False)
-    activate = MysqlDB.Column(MysqlDB.String(255), unique=False)
-    sort = MysqlDB.Column(MysqlDB.String(255), unique=False)
     description = MysqlDB.Column(MysqlDB.String(255), unique=False)
     update_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'), onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))
     create_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'))
 
     """
-        table: sort 要么留空
-        sort: 1是降序，2是升序
+        all
     """
     @classmethod
-    def all(cls, table="", sort=""):
-        if table == "sort":
-            if sort == 1:
-                order_by = drive.sort.desc()
-            else:
-                order_by = drive.sort.asc()
-        else:
-            order_by = drive.create_time.desc()
-        data = MysqlDB.session.query(cls).order_by(order_by).all()
+    def all(cls):
+        data = MysqlDB.session.query(cls).all()
         MysqlDB.session.close()
         return data
 

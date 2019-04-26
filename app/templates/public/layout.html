@@ -277,10 +277,10 @@
         <div class="mdui-container-fluid">
 			<div class="mdui-drive nexmoe-item">
                 <ul>
-                    {% for drive in drive_list %}
+                    {% for menu in menu_list %}
                         <li>
-                            <a href="/?drive={{ drive.id }}">
-                                {{ drive.title }}
+                            <a href="{{ menu.url }}">
+                                {{ menu.title }}
                             </a>
                         </li>
                     {% endfor %}

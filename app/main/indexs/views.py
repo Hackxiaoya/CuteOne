@@ -1,187 +1,32 @@
 # -*- coding:utf-8 -*-
-import re, urllib.parse, json
+import json
 from app import app
-from flask import render_template, request, make_response, redirect, session, url_for
-from flask_login import current_user
-from app.admin.drive import models as driveModels
+from flask import render_template
 from app.admin.system import models as systemModels
 from app.main import index
-from ..indexs import logic
+from app.admin.menu import models as menuModels
+from ..indexs import drive as driveViews
 import config
 THEMES = 'themes/'+ config.THEMES +'/'
-
-
-
-# Whether there is a string
-def thereisStr(str,arg):
-    result = str.find(arg)
-    if result > 0:
-        return True
-    else:
-        return False
-
-env = app.jinja_env
-env.filters['thereisStr'] = thereisStr  #注册自定义过滤器
-
 
 @index.before_request
 def toggle_web_site():
     toggle_web_site = systemModels.config.get_config("toggle_web_site")
     if toggle_web_site == "0":
         return render_template('toggle/index_1.html')
-    else:
-        drive = request.args.get('drive')
-        path = '' if request.args.get('path') is None else request.args.get('path')
-        if drive:
-            if current_user.get_id() is not None:
-                author = logic.author_judge(drive, current_user.id, path)
-                # author = logic.author_judge(drive, 1, path)
-            else:
-                author = logic.author_judge(drive, '', path)
-            if author:
-                print(author)
-                return render_template(THEMES+'index/author.html', drive_id=drive, path=path)
 
 
-
-# 驱动列表, 面包屑
 @index.context_processor
 def drive_list():
-    drive_list = driveModels.drive.all("sort", 2)
-    url_path = request.full_path
-    drive = request.args.get('drive')
-    path = request.args.get('path')
-    if drive:
-        drive_id = drive
-    else:
-        activate = driveModels.drive.find_activate()
-        drive_id = activate.id
-    disk_list = driveModels.drive_list.find_by_drive_id(drive_id)
-    load_disk_list = []
-    for item in disk_list:
-        load_disk_list.append({
-            "id": item.id,
-            "title": item.title
-        })
-
-    if path:
-        reres = re.findall('(.+?.+)path=(.+?.+)', url_path)[0]
-        crumbs_url = reres[0]
-        crumbs_list = re.split('[/]', path)
-        crumbs_list.pop(0)
-        crumbs_list_data = []
-        for i in range(len(crumbs_list)):
-            crumbs_list[i] = urllib.parse.unquote(crumbs_list[i])
-            name = urllib.parse.unquote(crumbs_list[i])
-            if i:
-                crumbs_list[i] = crumbs_list[i-1] + "/" + crumbs_list[i]
-
-            crumbs_list_data.append({"path": crumbs_list[i], "name": name})
-    else:
-        crumbs_url = "/?drive={}".format(drive_id)
-        crumbs_list_data = []
-    return dict(drive_list=drive_list, crumbs_url=crumbs_url, crumbs_list_data=crumbs_list_data, load_disk_list=load_disk_list)
+    menu_list = menuModels.menu.all(0, 1)
+    return dict(menu_list=menu_list)
 
 
-# 当前排序的key
-@index.context_processor
-def tableSort():
-    sortTable = 'lastModifiedDateTime' if request.args.get('sortTable') is None else request.args.get('sortTable')
-    sortType = 'more' if request.args.get('sortType') is None else request.args.get('sortType')
-    return dict(sortTable=sortTable, sortType=sortType)
-
-
-@index.route('/')  # 默认首页
+@index.route('/')
 def _index():
-    drive = request.args.get('drive')
-    disk = request.args.get('disk')
-    path = request.args.get('path')
-    search = request.args.get('search')
-    page_number = '1' if request.args.get('page') is None else request.args.get('page')
-    sortTable = 'lastModifiedDateTime' if request.args.get('sortTable') is None else request.args.get('sortTable')
-    sortType = 'more' if request.args.get('sortType') is None else request.args.get('sortType')
-    # 优先进行条件查询
-    if drive:
-        driveurl = '/?drive={}'.format(drive)
-        if disk:
-            disk_id = disk
-            driveurl = '{}&disk={}'.format(driveurl, disk)
-        else:
-            disk_id = driveModels.drive_list.find_by_chief(drive).id
-            driveurl = '{}&disk={}'.format(driveurl, disk_id)
-
-        if path:
-            data = logic.get_data(disk_id, path, search, sortTable, sortType, page_number)
-            current_url = '{}&path={}'.format(driveurl, path)
-        else:
-            data = logic.get_data(disk_id, '', search, sortTable, sortType, page_number)
-            current_url = '{}&path='.format(driveurl)
-    else:
-        activate = driveModels.drive.find_activate()
-        drive = activate.id
-        disk_id = driveModels.drive_list.find_by_chief(activate.id).id
-        data = logic.get_data(disk_id, '', search, sortTable, sortType, page_number)
-        current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
-    return render_template(THEMES+'index/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data["data"], pagination=data["pagination"])
-
-
-@index.route('/video/<int:drive_id>/<int:disk_id>/<string:id>/')
-@index.route('/video/<int:drive_id>/<int:disk_id>/<string:id>/<int:load>/<int:source_disk_id>/<string:source_id>')
-def video(drive_id, disk_id, id, load=None, source_disk_id=0, source_id=0):
-    # 负载切换
-    if load:
-        data = logic.get_load(drive_id, disk_id, source_disk_id, source_id)
-        return redirect(url_for('/.video', drive_id=drive_id, disk_id=disk_id, id=data), 301)
-    else:
-        data = logic.get_downloadUrl(drive_id, disk_id, id)
-        share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
-        donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
-        data["drive_id"] = drive_id
-        data["disk_id"] = disk_id
-        data["id"] = id
-        return render_template(THEMES+'index/video.html', share_url=share_url, donw_url=donw_url, data=data)
-
-
-@index.route('/get_downloadUrl/<int:drive_id>/<int:disk_id>/<string:id>')
-def get_downloadUrl(drive_id, disk_id, id):
-    data = logic.file_url(drive_id, disk_id, id)
-    return json.dumps(data)
-
-
-@index.route('/pop_video/<int:drive_id>/<int:disk_id>/<string:id>/')
-@index.route('/pop_video/<int:drive_id>/<int:disk_id>/<string:id>/<int:load>/<int:source_disk_id>/<string:source_id>')
-def pop_video(drive_id, disk_id, id, load=None, source_disk_id=0, source_id=0):
-    # 负载切换
-    if load:
-        data = logic.get_load(drive_id, disk_id, source_disk_id, source_id)
-        return redirect(url_for('/.pop_video',drive_id=drive_id, disk_id=disk_id, id=data), 301)
-    else:
-        data = logic.file_url(drive_id, disk_id, id)
-        share_url = "/video/{}/{}/{}".format(drive_id, disk_id, id)
-        donw_url = "/down_file/{}/{}/{}".format(drive_id, disk_id, id)
-        data["drive_id"] = drive_id
-        data["disk_id"] = disk_id
-        data["id"] = id
-        return render_template(THEMES+'index/pop_video.html', share_url=share_url, donw_url=donw_url, data=data)
-
-
-@index.route('/down_file/<int:drive_id>/<int:disk_id>/<string:id>')
-@index.route('/down_file/<int:drive_id>/<int:disk_id>/<string:id>/')
-def down_file(drive_id, disk_id, id):
-    response = logic.file_url(drive_id, disk_id, id)
-    data = make_response(redirect(response["url"]))
-    data.headers["Content-Disposition"] = "attachment; filename={}".format(response["name"].encode().decode('latin-1'))
-    return data
-
-
-@index.route('/approve', methods=['POST'])    # 认证密码，写入session
-def approve():
-    drive_id = request.form['drive_id']
-    path = request.form['path']
-    password = request.form['password']
-    res = logic.author_password(drive_id, path, password)
-    if res:
-        session[path] = password
-        return json.dumps({"code": 0, "msg": "密码正确！"})
-    else:
-        return json.dumps({"code": 1, "msg": "密码错误！"})
+    active = menuModels.menu.find_by_index()
+    if active.type == 0:
+        indexModel = driveViews.drive(active.type_name)
+    elif active.type == 2:
+        indexModel = getattr(eval(active.type_name+'Views'), active.type_name+'_index')()
+    return indexModel

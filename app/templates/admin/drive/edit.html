@@ -18,16 +18,11 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">默认首页</label>
-            <div class="layui-input-block">
-                <input type="checkbox" name="activate" lay-skin="switch" lay-text="是|否" {% if data.activate==1 %}checked{% endif %}>
+            <label class="layui-form-label">首页</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" name="activate" lay-text="是|否" {% if data.activate==1 %}checked{% endif %} lay-skin="switch">
             </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">排序</label>
-            <div class="layui-input-block">
-                <input type="text" name="sort" value="{{ data.sort }}" placeholder="排序，序号越小越靠前" class="layui-input">
-            </div>
+            <div class="layui-form-mid layui-word-aux">是/否</div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label"></label>

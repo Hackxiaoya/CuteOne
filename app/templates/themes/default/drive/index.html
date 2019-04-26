@@ -1,0 +1,246 @@
+{% extends 'themes/default/public/layout.html' %}
+
+{% block body %}
+<div class="mdui-container-fluid">
+    <div class="mdui-toolbar nexmoe-item">
+        <div class="loadSet">
+            <a href="{{crumbs_url}}">负载磁盘<i class="mdui-icon material-icons">keyboard_arrow_down</i></a>
+            <div class="small_icon_home">
+                <i class="mdui-icon material-icons">storage</i>
+            </div>
+            <ul>
+                {% for v in load_disk_list %}
+                    <li>
+                        <a href="javascript:void(0);" class="load_disk" data-id="{{ v.id }}">
+                            {{ v.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <i class="mdui-icon material-icons mdui-icon-dark" style="margin:0;">chevron_right</i>
+        {% for crumbs in crumbs_list_data %}
+            <a href="{{crumbs_url}}path=/{{ crumbs.path }}">{{ crumbs.name }}</a>/
+        {% endfor %}
+    </div>
+</div>
+<div class="mdui-container-fluid">
+    <div class="nexmoe-item">
+        <div class="mdui-row">
+            <ul class="mdui-list">
+                <li class="mdui-list-item th">
+                    <div class="mdui-col-xs-12 mdui-col-sm-7">文件 <i class="mdui-icon material-icons icon-sort" data-table="name" data-sort="more">expand_more</i></div>
+                    <div class="mdui-col-sm-3 mdui-text-right">修改时间 <i class="mdui-icon material-icons icon-sort" data-table="lastModifiedDateTime" data-sort="more">expand_more</i></div>
+                    <div class="mdui-col-sm-2 mdui-text-right">大小 <i class="mdui-icon material-icons icon-sort" data-table="size" data-sort="more">expand_more</i></div>
+                </li>
+                {% for v in data %}
+                    <li class="mdui-list-item mdui-ripple">
+                        {% if v.file=="image/jpeg" %}
+                            <a href="/drive/get_downloadUrl/{{ drive_id }}/{{ disk_id }}/{{ v.id }}" class="lightboxurl" data-lightbox="lightbox">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                    <i class="mdui-icon material-icons">image</i>
+                                    <span>{{ v.name }}</span>
+                                    <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                        <i class="mdui-icon material-icons">cloud_download</i>
+                                    </span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% elif v.file=="image/png" %}
+                            <a href="/drive/get_downloadUrl/{{ drive_id }}/{{ disk_id }}/{{ v.id }}" class="lightboxurl" data-lightbox="lightbox">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                    <i class="mdui-icon material-icons">image</i>
+                                    <span>{{ v.name }}</span>
+                                    <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                        <i class="mdui-icon material-icons">cloud_download</i>
+                                    </span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% elif v.file=="audio/mpeg" %}
+                            <a href="javascript:void(0);" class="{% if webconfig.is_music == '1' %}addMusicList{% else %}video_open{% endif %}" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name|safe }}">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                    <i class="mdui-icon material-icons">music_note</i>
+                                    <span>{{ v.name|safe }}</span>
+                                    <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                        <i class="mdui-icon material-icons">cloud_download</i>
+                                    </span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% elif v.file=="audio/x-wav" %}
+                            <a href="javascript:void(0);" class="{% if webconfig.is_music == '1' %}addMusicList{% else %}video_open{% endif %}" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name | safe }}">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                    <i class="mdui-icon material-icons">music_note</i>
+                                    <span>{{ v.name|safe }}</span>
+                                    <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                        <i class="mdui-icon material-icons">cloud_download</i>
+                                    </span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% elif v.file=="video/mp4" %}
+                            <a href="javascript:void(0);" class="video_open" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                    <i class="mdui-icon material-icons">videocam</i>
+                                    <span>{{ v.name }}</span>
+                                    <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                        <i class="mdui-icon material-icons">cloud_download</i>
+                                    </span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% elif v.file=="application/octet-stream" %}
+                            {% if v.name|thereisStr(".flac") %}
+                                <a href="javascript:void(0);" class="{% if webconfig.is_music == '1' %}addMusicList{% else %}video_open{% endif %}" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name | safe }}">
+                                    <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                        <i class="mdui-icon material-icons">music_note</i>
+                                        <span>{{ v.name|safe }}</span>
+                                        <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                            <i class="mdui-icon material-icons">cloud_download</i>
+                                        </span>
+                                    </div>
+                                    <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                    <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                                </a>
+                            {% else %}
+                                <a href="javascript:void(0);" class="video_open" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}">
+                                    <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                        <i class="mdui-icon material-icons">videocam</i>
+                                        <span>{{ v.name }}</span>
+                                        <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                            <i class="mdui-icon material-icons">cloud_download</i>
+                                        </span>
+                                    </div>
+                                    <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                    <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                                </a>
+                            {% endif %}
+                        {% elif v.file=="application/msword" %}
+                            <a href="javascript:void(0);" class="down_file" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                    <i class="mdui-icon material-icons">description</i>
+                                    <span>{{ v.name }}</span>
+                                    <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                        <i class="mdui-icon material-icons">cloud_download</i>
+                                    </span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% elif v.file=="application/vnd.ms-excel" %}
+                            <a href="javascript:void(0);" class="down_file" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                        <i class="mdui-icon material-icons">description</i>
+                                    <span>{{ v.name }}</span>
+                                    <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                        <i class="mdui-icon material-icons">cloud_download</i>
+                                    </span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% elif v.file=="application/pdf" %}
+                            <a href="javascript:void(0);" class="down_file" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                        <i class="mdui-icon material-icons">description</i>
+                                    <span>{{ v.name }}</span>
+                                    <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                        <i class="mdui-icon material-icons">cloud_download</i>
+                                    </span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% elif v.file=="application/zip" %}
+                            <a href="javascript:void(0);" class="down_file" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                    <i class="mdui-icon material-icons">view_day</i>
+                                    <span>{{ v.name }}</span>
+                                    <span class="down_file down_file_icon" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                        <i class="mdui-icon material-icons">cloud_download</i>
+                                    </span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% elif v.file=="folder" %}
+                            <a href="{{ current_url }}/{{ v.name }}">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                    <i class="mdui-icon material-icons">folder_open</i>
+                                    <span>{{ v.name }}</span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% else %}
+                            <a href="javascript:void(0);" class="down_file" data-drive="{{drive_id}}" data-disk="{{disk_id}}" data-id="{{v.id}}" data-name="{{ v.name }}">
+                                <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
+                                    <i class="mdui-icon material-icons">view_day</i>
+                                    <span>{{ v.name }}</span>
+                                </div>
+                                <div class="mdui-col-sm-3 mdui-text-right">{{ v.lastModifiedDateTime }}</div>
+                                <div class="mdui-col-sm-2 mdui-text-right">{{ v.size }}</div>
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="page-box">
+                <ul>
+                    <li>
+                        <span data-page="1" class="page-click">
+                            首页
+                        </span>
+                    </li>
+                    {% for i in pagination.page %}
+                        {% if loop.index == 2 %}
+                            {% if pagination.now_page | int > 3 %}
+                                <li style="width: 20px;line-height: 30px;">
+                                    ...
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                        <li class="{% if i == pagination.now_page %}current{% endif %}">
+                            <span data-page="{{i}}" class="{% if i != pagination.now_page %}page-click{% endif %}">
+                                {{i}}
+                            </span>
+                        </li>
+                        {% if loop.index == 4 %}
+                            {% if pagination.count | int > 5 %}
+                                {% if pagination.now_page | int > 3 %}
+                                    {% if pagination.now_page | int < pagination.count | int -1 %}
+                                        <li style="width: 20px;line-height: 30px;">
+                                            ...
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <li>
+                        <i class="allpage">
+                            共 {{ pagination.count }} 页
+                        </i>
+                    </li>
+                    <li>
+                        <span data-page="{{ pagination.count }}" class="page-click">
+                            尾页
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+{% endblock %}
