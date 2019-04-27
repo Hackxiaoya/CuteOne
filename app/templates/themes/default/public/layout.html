@@ -214,7 +214,7 @@
                 if(urlsortTable){
                     reptable = replaceParamVal(window.location.search, "sortTable", sort_table);
                     repsort = replaceParamVal(reptable, "sortType", sort_sort);
-                    window.location.href = protocolStr + window.location.host + "/" + repsort;
+                    window.location.href = protocolStr + window.location.host + "/drive/" + repsort;
                 }else{
                     if(getUrlParam("drive")){
                         window.location.href = window.location.href + "&sortTable="+sort_table+"&sortType="+sort_sort
@@ -230,7 +230,7 @@
                 let urlpage = getUrlParam("page");
                 if(urlpage){
                     rep= replaceParamVal(window.location.search, "page", page);
-                    window.location.href = protocolStr + window.location.host + "/" + rep;
+                    window.location.href = protocolStr + window.location.host + "/drive/" + rep;
                 }else{
                     if(getUrlParam("drive")){
                         window.location.href = window.location.href + "&page="+page
