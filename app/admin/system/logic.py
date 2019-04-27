@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-import os, time
+import os, time, shutil
 import configparser
 
 
@@ -21,7 +21,6 @@ def get_themes_list():
         temp = {}
         for i in options:
             temp[i[0]] = i[1]
-            temp['img'] = "/static/themes/{}/cover.png".format(options[1][1])
         data_list.append(temp)
     return data_list
 
@@ -37,6 +36,16 @@ def modify_themes_config(name):
     path = os.getcwd() + "/app/templates/themes"
     path_list = os.listdir(path)
     config_path = os.getcwd()+"/config.py"
+
+    themes_path = "{}/app/static/themes/{}".format(os.getcwd(), name)
+    static_path = "{}/{}/static".format(path, name)
+    try:
+        if os.path.exists(themes_path):
+            shutil.rmtree(themes_path)
+        shutil.copytree(static_path, themes_path)
+    except Exception as e:
+        return False
+
     result = ''
     with open(config_path, 'r', encoding='UTF-8') as f:
         for line in f.readlines():
@@ -54,3 +63,4 @@ def modify_themes_config(name):
         else:
             conf.set("config", "status", "0")
         conf.write(open("{}/{}/config.ini".format(path, item), "w"))
+    return True

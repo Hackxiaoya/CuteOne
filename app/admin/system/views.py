@@ -119,5 +119,8 @@ def themes():
         return render_template('admin/system/themes.html', top_nav='system', activity_nav='themes', data=themes_list)
     else:
         name = request.form['name']
-        logic.modify_themes_config(name)
-        return json.dumps({"code": 0, "msg": "保存成功！"})
+        res = logic.modify_themes_config(name)
+        if res:
+            return json.dumps({"code": 0, "msg": "保存成功, 重启程序生效！"})
+        else:
+            return json.dumps({"code": 1, "msg": "保存失败！"})
