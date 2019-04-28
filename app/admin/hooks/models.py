@@ -3,12 +3,14 @@ import time
 from app import MysqlDB
 from sqlalchemy import and_,or_
 
-class model(MysqlDB.Model):
-    __tablename__ = 'cuteone_model'
+class hooks(MysqlDB.Model):
+    __tablename__ = 'cuteone_hooks'
     id = MysqlDB.Column(MysqlDB.INT, primary_key=True)
-    name = MysqlDB.Column(MysqlDB.String(255), unique=False)
     title = MysqlDB.Column(MysqlDB.String(255), unique=False)
-    config = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    description = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    source = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    type = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    method = MysqlDB.Column(MysqlDB.String(255), unique=False)
     status = MysqlDB.Column(MysqlDB.String(255), unique=False, default=1)
     update_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'), onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))
     create_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'))
@@ -28,8 +30,8 @@ class model(MysqlDB.Model):
 
 
     @classmethod
-    def find_by_name(cls, name):
-        data = MysqlDB.session.query(cls).filter(cls.name == name).first()
+    def find_by_title(cls, title):
+        data = MysqlDB.session.query(cls).filter(cls.title == title).first()
         MysqlDB.session.close()
         return data
 
@@ -45,9 +47,8 @@ class model(MysqlDB.Model):
 
 
     @classmethod
-    def deldata_by_name(cls, name):
-        data = MysqlDB.session.query(cls).filter(cls.name == name).first()
-        MysqlDB.session.delete(data)
+    def deldata_by_source(cls, name, type):
+        MysqlDB.session.query(cls).filter(cls.source == name, cls.type == type).delete()
         MysqlDB.session.flush()
         MysqlDB.session.commit()
         MysqlDB.session.close()

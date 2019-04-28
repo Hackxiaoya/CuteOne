@@ -1,18 +1,16 @@
 # -*- coding:utf-8 -*-
 from flask import request, render_template, json
 from app import MysqlDB
-import config
 from .. import admin
 from . import models
 from . import logic
 from ..drive import models as driveModels
-from app import common
 from app import decorators
 
 
 @admin.route('/task/list', methods=['GET'])
 @admin.route('/task/list/')
-# @decorators.login_require
+@decorators.login_require
 def task_list():
     if request.args.get('page'):
         data_list = models.task.all()
@@ -39,7 +37,7 @@ def task_list():
 
 
 @admin.route('/task/task_edit/<int:id>', methods=['GET', 'POST'])
-# @decorators.login_require
+@decorators.login_require
 def task_edit(id):
     if request.method == 'GET':
         drive_list = driveModels.task.all()
@@ -78,7 +76,7 @@ def task_edit(id):
 
 
 @admin.route('/task/task_del/<int:id>', methods=['GET', 'POST'])  # 删除
-# @decorators.login_require
+@decorators.login_require
 def task_del(id):
     models.task.deldata(id)
     return json.dumps({"code": 0, "msg": "完成！"})

@@ -8,13 +8,13 @@ from ..hooks import models as hooksModels
 
 
 """
-    Get Model Config List
+    Get Plugin Config List
     @Author: yyyvy <76836785@qq.com>
     @Description:
     @Time: 2019-04-25
 """
-def get_model_list():
-    path = os.getcwd()+"/app/model"
+def get_plugin_list():
+    path = os.getcwd()+"/app/plugin"
     path_list = os.listdir(path)
     path_list.remove("README.md")
     data_list = []
@@ -30,13 +30,13 @@ def get_model_list():
 
 
 """
-    Get Model Config Info
+    Get Plugin Config Info
     @Author: yyyvy <76836785@qq.com>
     @Description:
     @Time: 2019-04-25
 """
-def get_model_info(name):
-    path = "{}/app/model/{}/config.ini".format(os.getcwd(), name)
+def get_plugin_info(name):
+    path = "{}/app/plugin/{}/config.ini".format(os.getcwd(), name)
     conf = configparser.ConfigParser()
     conf.read(path, encoding="utf-8")
     system_version = conf.get('config', 'system_version')
@@ -60,15 +60,15 @@ def get_model_info(name):
 
 
 """
-    Install Model
+    Install Plugin
     @Author: yyyvy <76836785@qq.com>
     @Description:
     @Time: 2019-04-25
 """
-def install_model(name):
+def install_plugin(name):
     admin_themes(name, True)
     hook(name, True)
-    model_path = '{}/app/model/{}/install/'.format(os.getcwd(), name)
+    model_path = '{}/app/plugin/{}/install/'.format(os.getcwd(), name)
     if os.path.isfile(model_path+"install.sql"):
         try:
             cursor = MysqlDB
@@ -107,15 +107,15 @@ def install_model(name):
 
 
 """
-    UnInstall Model
+    UnInstall Plugin
     @Author: yyyvy <76836785@qq.com>
     @Description:
     @Time: 2019-04-25
 """
-def un_install_model(name):
+def un_install_plugin(name):
     admin_themes(name, False)
     hook(name, False)
-    model_path = '{}/app/model/{}/install/'.format(os.getcwd(), name)
+    model_path = '{}/app/plugin/{}/install/'.format(os.getcwd(), name)
     if os.path.isfile(model_path+"uninstall.sql"):
         try:
             cursor = MysqlDB
@@ -138,8 +138,8 @@ def un_install_model(name):
     @Time: 2019-04-25
 """
 def admin_themes(model, status=True):
-    model_path = "{}/app/model/{}/themes/admin".format(os.getcwd(),model)
-    folder_path = "{}/app/templates/admin/model/{}".format(os.getcwd(),model)
+    model_path = "{}/app/plugin/{}/themes/admin".format(os.getcwd(),model)
+    folder_path = "{}/app/templates/admin/plugin/{}".format(os.getcwd(),model)
     try:
         if status:
             if not folder_path:
@@ -160,7 +160,7 @@ def admin_themes(model, status=True):
     @Time: 2019-04-29
 """
 def hook(name, status=True):
-    plugin_path = '{}/app/model/{}/hook.json'.format(os.getcwd(), name)
+    plugin_path = '{}/app/plugin/{}/hook.json'.format(os.getcwd(), name)
     if status:
         if os.path.isfile(plugin_path):
             with open(plugin_path, "r", encoding="UTF-8") as menu_file:

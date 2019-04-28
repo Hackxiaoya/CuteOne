@@ -157,8 +157,32 @@
                             </dd>
                         </dl>
                     </li>
+                    <li class="layui-nav-item {% if 'plugin'== top_nav %}layui-nav-itemed{% endif %}">
+                        <a href="javascript:;" lay-tips="插件">
+                            <i class="fa fa-puzzle-piece"></i>
+                            <cite>插件管理</cite>
+                            <span class="layui-nav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd class="{% if 'plugin_list'== activity_nav %}layui-this{% endif %}">
+                                <a href="/admin/plugin/list">插件列表</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item {% if 'hooks'== top_nav %}layui-nav-itemed{% endif %}">
+                        <a href="javascript:;" lay-tips="钩子">
+                            <i class="fa fa-anchor"></i>
+                            <cite>钩子管理</cite>
+                            <span class="layui-nav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd class="{% if 'hooks_list'== activity_nav %}layui-this{% endif %}">
+                                <a href="/admin/hooks/list">钩子列表</a>
+                            </dd>
+                        </dl>
+                    </li>
                     {% for menu in menu_list %}
-                        <li class="layui-nav-item {% if 'model_'+menu.top_nav == top_nav %}layui-nav-itemed{% endif %}">
+                        <li class="layui-nav-item {% if menu.top_nav == top_nav %}layui-nav-itemed{% endif %}">
                             <a href="javascript:;" lay-tips="{{ menu.title }}">
                                 <i class="fa fa-cube"></i>
                                 <cite>{{ menu.title }}</cite>

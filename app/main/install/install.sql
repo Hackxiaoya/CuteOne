@@ -167,6 +167,23 @@ CREATE TABLE `cuteone_funds`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '资金列表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for cuteone_hooks
+-- ----------------------------
+DROP TABLE IF EXISTS `cuteone_hooks`;
+CREATE TABLE `cuteone_hooks`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '钩子名称',
+  `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '钩子描述',
+  `source` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '钩子来源于什么模块或插件',
+  `type` int(1) NOT NULL DEFAULT 0 COMMENT '钩子类型，0模型，1插件',
+  `method` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '钩子方法函数名',
+  `status` int(1) NOT NULL DEFAULT 1 COMMENT '状态',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新日期',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建日期',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '钩子表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for cuteone_menu
 -- ----------------------------
 DROP TABLE IF EXISTS `cuteone_menu`;
@@ -189,7 +206,6 @@ CREATE TABLE `cuteone_menu`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 167 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '菜单表' ROW_FORMAT = Dynamic;
 
-
 -- ----------------------------
 -- Table structure for cuteone_model
 -- ----------------------------
@@ -198,11 +214,27 @@ CREATE TABLE `cuteone_model`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '唯一名称',
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
+  `config` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '配置',
   `status` int(1) NOT NULL DEFAULT 0 COMMENT '状态',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新日期',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建日期',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '模型表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '模型表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for cuteone_plugin
+-- ----------------------------
+DROP TABLE IF EXISTS `cuteone_plugin`;
+CREATE TABLE `cuteone_plugin`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '唯一标识',
+  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
+  `config` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '配资',
+  `status` int(1) NOT NULL DEFAULT 0 COMMENT '状态',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新日期',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建日期',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '插件表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cuteone_task

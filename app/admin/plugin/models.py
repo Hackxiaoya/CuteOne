@@ -3,8 +3,8 @@ import time
 from app import MysqlDB
 from sqlalchemy import and_,or_
 
-class model(MysqlDB.Model):
-    __tablename__ = 'cuteone_model'
+class plugin(MysqlDB.Model):
+    __tablename__ = 'cuteone_plugin'
     id = MysqlDB.Column(MysqlDB.INT, primary_key=True)
     name = MysqlDB.Column(MysqlDB.String(255), unique=False)
     title = MysqlDB.Column(MysqlDB.String(255), unique=False)
@@ -52,6 +52,14 @@ class model(MysqlDB.Model):
         MysqlDB.session.commit()
         MysqlDB.session.close()
         return
+
+    @classmethod
+    def update_by_name(cls, data):
+        MysqlDB.session.query(cls).filter(cls.name == data['name']).update(data)
+        MysqlDB.session.flush()
+        MysqlDB.session.commit()
+        return
+
 
     @classmethod
     def update(cls, data):
