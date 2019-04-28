@@ -66,9 +66,6 @@ def get_model_info(name):
 """
 def install_model(name):
     admin_themes(name, True)
-    revise_blueprint('{}/app/admin'.format(os.getcwd(), name), 'movie.admin', True)
-    revise_blueprint('{}/app/main'.format(os.getcwd(), name), 'movie.controller', True)
-    revise_views('movie', True)
     model_path = '{}/app/model/{}/install/'.format(os.getcwd(), name)
     if os.path.isfile(model_path+"install.sql"):
         try:
@@ -115,9 +112,6 @@ def install_model(name):
 """
 def un_install_model(name):
     admin_themes(name, False)
-    revise_blueprint('{}/app/admin'.format(os.getcwd(), name), 'movie.admin', False)
-    revise_blueprint('{}/app/main'.format(os.getcwd(), name), 'movie.controller', False)
-    revise_views('movie', False)
     model_path = '{}/app/model/{}/install/'.format(os.getcwd(), name)
     if os.path.isfile(model_path+"uninstall.sql"):
         try:
@@ -152,79 +146,5 @@ def admin_themes(model, status=True):
         else:
             shutil.move(folder_path+"/admin", model_path)
             os.rmdir(folder_path)
-    except:
-        return False
-
-
-
-
-
-
-"""
-    revise Blueprint
-    @Author: yyyvy <76836785@qq.com>
-    @Description:
-    @Time: 2019-04-25
-"""
-def revise_blueprint(path, model, status=True):
-    config_path = path + '/__init__.py'
-    result = ''
-    ifOn = False
-    try:
-        if status:
-            with open(config_path, 'r', encoding='UTF-8') as f:
-                for line in f.readlines():
-                    if (line.find('from app.model.'+model+' import views') == 0):
-                        ifOn = True
-                    result += line
-                if ifOn is False:
-                    line = '\n' + 'from app.model.'+model+' import views'
-                    result += line
-        else:
-            with open(config_path, 'r', encoding='UTF-8') as f:
-                for line in f.readlines():
-                    if (line.find('from app.model.'+model+' import views') == 0):
-                        line = ''
-                    result += line
-        with open(config_path, 'w', encoding='UTF-8') as f:
-            f.writelines(result)
-        return
-    except:
-        return False
-
-
-"""
-    revise views
-    @Author: yyyvy <76836785@qq.com>
-    @Description:
-    @Time: 2019-04-25
-"""
-def revise_views(model, status=True):
-    config_path = '{}/app/main/indexs/views.py'.format(os.getcwd())
-    result = ''
-    ifOn = False
-    try:
-        if status:
-            with open(config_path, 'r', encoding='UTF-8') as f:
-                for line in f.readlines():
-                    if (line.find('from app.model.'+model+'.controller import views as '+model+'Views') == 0):
-                        ifOn = True
-                    result += line
-            if ifOn is False:
-                result = ''
-                with open(config_path, 'r', encoding='UTF-8') as f:
-                    for line in f.readlines():
-                        if (line.find("THEMES = 'themes/'+ config.THEMES +'/'") == 0):
-                            line += 'from app.model.'+model+'.controller import views as '+model+'Views' + '\n'
-                        result += line
-        else:
-            with open(config_path, 'r', encoding='UTF-8') as f:
-                for line in f.readlines():
-                    if (line.find('from app.model.'+model+'.controller import views as '+model+'Views') == 0):
-                        line = ''
-                    result += line
-        with open(config_path, 'w', encoding='UTF-8') as f:
-            f.writelines(result)
-        return
     except:
         return False

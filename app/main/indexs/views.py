@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-import json
+import json, importlib
 from app import app
 from flask import render_template
 from app.admin.system import models as systemModels
@@ -28,5 +28,6 @@ def _index():
     if active.type == 1:
         indexModel = driveViews.drive(active.type_name)
     elif active.type == 2:
-        indexModel = getattr(eval(active.type_name+'Views'), active.type_name+'_index')()
+        model_name = importlib.import_module("app.model." + active.type_name + ".controller.views")  # 相当于from app.model.movie.controller import views
+        indexModel = model_name.movie_index()
     return indexModel

@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
+import importlib, os
 from flask import Blueprint, session
 from .menu import models as menuModels
+from .model import models as modelModels
 
 admin = Blueprint('admin', __name__)  # 创建一个蓝图对象，设置别名
 
@@ -49,3 +51,8 @@ from .syn import views
 from .users import views
 from .model import views
 from .files import views
+
+model_list = modelModels.model.all()
+if model_list:
+    for item in model_list:
+        importlib.import_module("app.model."+item.name+".admin.views")  # 相当于from app.model.movie.admin import views

@@ -38,7 +38,7 @@ def model_install():
             MysqlDB.session.add(role)
             MysqlDB.session.flush()
             MysqlDB.session.commit()
-            return json.dumps({"code": 0, "msg": "完成！"})
+            return json.dumps({"code": 0, "msg": "完成, 重启程序生效！"})
         else:
             return json.dumps({"code": 1, "msg": "失败！"})
     else:
