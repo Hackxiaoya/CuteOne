@@ -4,7 +4,7 @@
 > 模块化、插件化，可以使用模块来进行搭建影视站、视频站、下载站、音乐站、CMS、外链平台等等...  
 > 钩子功能，方便扩展各种功能；  
 
-2.X下载    
+### 2.X下载    
 > git clone -b dev https://github.com/Hackxiaoya/CuteOne.git  
 
 **master分支保持1.X版本，只修复BUG，不再新增功能，直到2.X版本稳定了，才会合并过来；**  
