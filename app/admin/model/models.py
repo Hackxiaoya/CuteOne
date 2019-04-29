@@ -35,6 +35,14 @@ class model(MysqlDB.Model):
 
 
     @classmethod
+    def update_by_name(cls, data):
+        MysqlDB.session.query(cls).filter(cls.name == data['name']).update(data)
+        MysqlDB.session.flush()
+        MysqlDB.session.commit()
+        return
+
+
+    @classmethod
     def deldata(cls, id):
         data = MysqlDB.session.query(cls).filter(cls.id == id).first()
         MysqlDB.session.delete(data)
