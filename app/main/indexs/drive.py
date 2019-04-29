@@ -160,7 +160,7 @@ def pop_video(drive_id, disk_id, id, load=None, source_disk_id=0, source_id=0):
         data["drive_id"] = drive_id
         data["disk_id"] = disk_id
         data["id"] = id
-        return render_template(THEMES+'index/pop_video.html', share_url=share_url, donw_url=donw_url, data=data)
+        return render_template(THEMES+'drive/pop_video.html', share_url=share_url, donw_url=donw_url, data=data)
 
 
 @index.route('/drive/down_file/<int:drive_id>/<int:disk_id>/<string:id>')
