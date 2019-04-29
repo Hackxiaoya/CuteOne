@@ -45,8 +45,8 @@ def hashPwd(data):
     @Time: 2019-03-16
 """
 def utc_to_local(utc):
-    UTC_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
-    utcTime = datetime.datetime.strptime(utc, UTC_FORMAT)
+    UTC_FORMAT = "%Y-%m-%dT%H:%M:%S"
+    utcTime = datetime.datetime.strptime(utc[0:18], UTC_FORMAT)
     localtime = utcTime + datetime.timedelta(hours=8)
     return localtime
 
