@@ -55,7 +55,6 @@ def drive_list(id):
             "id": item.id,
             "title": item.title
         })
-
     if path:
         reres = re.findall('(.+?.+)path=(.+?.+)', url_path)[0]
         crumbs_url = reres[0]
@@ -72,6 +71,7 @@ def drive_list(id):
     else:
         crumbs_url = "/?drive={}".format(drive_id)
         crumbs_list_data = []
+
     return dict(crumbs_url=crumbs_url, crumbs_list_data=crumbs_list_data, load_disk_list=load_disk_list)
 
 
@@ -93,14 +93,14 @@ def drive(id=0):
     sortTable = 'lastModifiedDateTime' if request.args.get('sortTable') is None else request.args.get('sortTable')
     sortType = 'more' if request.args.get('sortType') is None else request.args.get('sortType')
 
-    drive_list(id)
+    drive_other_info =drive_list(id)
     author = author_judge_at()
     if author:
         return render_template(THEMES + 'drive/author.html', drive_id=drive, path=path)
 
     # 优先进行条件查询
     if drive:
-        driveurl = '/?drive={}'.format(drive)
+        driveurl = '/drive/?drive={}'.format(drive)
         if disk:
             disk_id = disk
             driveurl = '{}&disk={}'.format(driveurl, disk)
@@ -119,8 +119,8 @@ def drive(id=0):
         drive = activate.id
         disk_id = driveModels.drive_list.find_by_chief(activate.id).id
         data = logic.get_data(disk_id, '', search, sortTable, sortType, page_number)
-        current_url = '/?drive={}&disk={}&path='.format(activate.id, disk_id)
-    return render_template(THEMES+'drive/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, data=data["data"], pagination=data["pagination"])
+        current_url = '/drive/?drive={}&disk={}&path='.format(activate.id, disk_id)
+    return render_template(THEMES+'drive/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, crumbs_url=drive_other_info["crumbs_url"], crumbs_list_data=drive_other_info["crumbs_list_data"], load_disk_list=drive_other_info["load_disk_list"], data=data["data"], pagination=data["pagination"])
 
 
 @index.route('/drive/video/<int:drive_id>/<int:disk_id>/<string:id>/')
