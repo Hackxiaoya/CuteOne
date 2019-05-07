@@ -270,7 +270,7 @@ def file_uploads_success():
         os.rmdir(target_filename)   # 删除文件夹
 
     # # 初始化role 并插入数据库
-    role = taskModels.task(drive_id=drive_id, file_name=fileName,path=path, type='uploads', status=0)
+    role = taskModels.uploads_list(drive_id=drive_id, file_name=fileName,path=path, type='uploads', status=0)
     MysqlDB.session.add(role)
     MysqlDB.session.flush()
     MysqlDB.session.commit()
