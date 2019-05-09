@@ -65,7 +65,7 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    任务列表
+                    定时任务
                 </div>
                 <div class="layui-card-body">
                     <div style="padding-bottom: 10px;">
@@ -73,6 +73,7 @@
                     </div>
                     <table class="layui-hide" id="list-table" lay-filter="list-table"></table>
                     <script type="text/html" id="list-table-bar">
+                        <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
                         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
                     </script>
                 </div>
@@ -112,9 +113,9 @@
                     {field:'id', width:80, title: 'ID'}
                     ,{field:'title', width:150, title: '标题'}
                     ,{field:'description', width:250, title: '描述'}
-                    ,{field:'path', width:200, title: '远程路径'}
-                    ,{field:'type', width:100, title: '类型'}
-                    ,{field:'status', width:100, title: '状态'}
+                    ,{field:'command', width:250, title: '命令'}
+                    ,{field:'stime', width:80, title: '间隔'}
+                    ,{field:'status', width:80, title: '状态'}
                     ,{field:'last_time', width:180, title: '最后执行'}
                     ,{field:'update_time', width:180, title: '更新时间'}
                     ,{field:'create_time', width:180, title: '创建时间'}

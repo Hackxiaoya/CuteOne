@@ -274,7 +274,7 @@ def get_downloadUrl(drive_id, disk_id, id):
     get_res = json.loads(get_res.text)
     if 'error' in get_res.keys():
         driveLogic.reacquireToken(disk_id)
-        get_downloadUrl(drive_id, disk_id, id)
+        return get_downloadUrl(drive_id, disk_id, id)
     else:
         if '@microsoft.graph.downloadUrl' in get_res.keys():
             drivename = "drive_" + str(disk_id)
