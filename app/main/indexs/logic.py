@@ -282,7 +282,7 @@ def get_downloadUrl(drive_id, disk_id, id):
             collection.update_one({"id":get_res["id"]}, {"$set": {"downloadUrl":get_res["@microsoft.graph.downloadUrl"],"timeout":int(time.time())+300}})
             return {"name": get_res["name"], "downloadUrl": get_res["@microsoft.graph.downloadUrl"]}
         else:
-            get_downloadUrl(drive_id, disk_id, id)
+            return get_downloadUrl(drive_id, disk_id, id)
 
 
 """
