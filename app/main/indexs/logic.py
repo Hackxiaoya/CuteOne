@@ -279,7 +279,23 @@ def get_downloadUrl(drive_id, disk_id, id):
         if '@microsoft.graph.downloadUrl' in get_res.keys():
             drivename = "drive_" + str(disk_id)
             collection = MongoDB.db[drivename]
-            collection.update_one({"id":get_res["id"]}, {"$set": {"downloadUrl":get_res["@microsoft.graph.downloadUrl"],"timeout":int(time.time())+300}})
+            result = collection.find_one({"id": get_res["id"]})
+            if result:
+                collection.update_one({"id":get_res["id"]}, {"$set": {"downloadUrl":get_res["@microsoft.graph.downloadUrl"],"timeout":int(time.time())+300}})
+            else:
+                dic = {
+                    "id": get_res["id"],
+                    "parentReference": get_res["parentReference"]["id"],
+                    "name": get_res["name"],
+                    "file": get_res["file"]["mimeType"],
+                    "path": get_res["parentReference"]["path"].replace("/drive/root:", ""),
+                    "size": get_res["size"],
+                    "createdDateTime": common.utc_to_local(get_res["fileSystemInfo"]["createdDateTime"]),
+                    "lastModifiedDateTime": common.utc_to_local(get_res["fileSystemInfo"]["lastModifiedDateTime"]),
+                    "downloadUrl": get_res["@microsoft.graph.downloadUrl"],
+                    "timeout": int(time.time()) + 300
+                }
+                collection.insert_one(dic)
             return {"name": get_res["name"], "downloadUrl": get_res["@microsoft.graph.downloadUrl"]}
         else:
             return get_downloadUrl(drive_id, disk_id, id)
@@ -298,11 +314,15 @@ def file_url(drive_id, disk_id, id):
     drivename = "drive_" + str(disk_id)
     collection = MongoDB.db[drivename]
     result = collection.find_one({"id": id})
-    if int(result["timeout"]) <= int(time.time()):
+    if result:
+        if int(result["timeout"]) <= int(time.time()):
+            get_res = get_downloadUrl(drive_id, disk_id, id)
+            return {"name": get_res["name"], "url": get_res["downloadUrl"]}
+        else:
+            return {"name": result["name"], "url": result["downloadUrl"]}
+    else:
         get_res = get_downloadUrl(drive_id, disk_id, id)
         return {"name": get_res["name"], "url": get_res["downloadUrl"]}
-    else:
-        return {"name": result["name"], "url": result["downloadUrl"]}
 
 """
     获取文件负载下载地址
