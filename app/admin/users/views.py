@@ -37,7 +37,7 @@ def users_list():
 
 
 @admin.route('/users/edit/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
-@decorators.login_require
+# @decorators.login_require
 def users_edit(id):
     if request.method == 'GET':
         group_list = authorModels.authGroup.all()

@@ -16,7 +16,7 @@ def restart_web():
     except Exception as e:
         pass
     time.sleep(1)
-    subprocess.Popen("nohop uwsgi --ini {}/uwsgi.ini &".format(os.getcwd()), shell=True)
+    subprocess.Popen("nohup uwsgi --ini {}/uwsgi.ini &".format(os.getcwd()), shell=True)
 
 
 if __name__ =='__main__':

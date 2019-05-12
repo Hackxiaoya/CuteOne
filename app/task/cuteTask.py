@@ -1,9 +1,10 @@
 # -*- coding:utf-8 -*-
 import os, sys, json, threading, time
+dir_path = os.path.split(os.path.abspath(sys.argv[0]))[0]
+sys.path.append(dir_path+"/../../")
 sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
 from app import MongoDB
-from app.admin.drive import logic
-from app.admin.drive import models
+from app.admin.drive import logic, models
 from app import common
 
 """

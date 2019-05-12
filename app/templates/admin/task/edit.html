@@ -47,7 +47,7 @@
         // 确认按钮
         $('#form-submit').on('click', function () {
             $.ajax({
-                url: "/admin/drive/edit/{{ data['id'] }}"
+                url: "/{{ data['id'] }}"
                 ,type: "POST"
                 ,dataType: "json"
                 ,data: $('#form1').serialize()

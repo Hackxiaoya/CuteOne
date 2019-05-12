@@ -111,13 +111,15 @@
             table.render({
                 elem: '#list-table'
                 ,url: './'
+                ,where: {
+                    time: Date.now()
+                }
                 ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
                 ,cols: [[
                     {field:'id', width:80, title: 'ID'}
                     ,{field:'title', width:150, title: '标题'}
                     ,{field:'description', width:300, title: '描述'}
                     ,{field:'drive_number', width:100, title: '网盘数量'}
-                    ,{field:'sort', width:100, title: '排序'}
                     ,{field:'syn_task_status', width:130, title: '主从状态'}
                     ,{field:'update_time', width:180, title: '更新时间'}
                     ,{field:'create_time', width:180, title: '创建时间'}

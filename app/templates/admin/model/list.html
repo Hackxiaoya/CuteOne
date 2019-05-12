@@ -1,0 +1,141 @@
+{% extends 'admin/public/layout.html' %}
+
+{% block style %}
+    <style>
+        .layui-carousel {
+            background: #f3f3f3;
+        }
+        img {
+            width: 100%;
+            height: 200px;
+        }
+        h2 {
+            margin: 10px;
+        }
+        .theme-info {
+            margin: 10px;
+            height: 45px;
+            overflow: hidden;
+        }
+        .theme-excerpt {
+            text-align: right;
+            padding: 0 10px 10px 0;
+        }
+        .version {
+            float: left;
+            padding: 10px;
+        }
+        .author {
+            float: left;
+            padding: 10px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">Model Setting</div>
+                <div class="layui-row layui-form">
+                    {% for item in data %}
+                    <div class="layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-body">
+                                <div class="layui-carousel">
+                                    <img src="https://images.weserv.nl/?url={{ item.img }}" alt="">
+                                    <h2 class="title">
+                                        {{ item.title }}
+                                    </h2>
+                                    <div class="theme-info">
+                                        <p>
+                                            {{ item.description }}
+                                        </p>
+                                    </div>
+                                    <div class="theme-excerpt">
+                                        <div class="version">
+                                            Version: {{ item.version }}
+                                        </div>
+                                        <div class="author">
+                                            系统版本: {{ item.system_version }}
+                                        </div>
+                                        <div class="author">
+                                            By: {{ item.author }}
+                                        </div>
+                                        <div class="layui-input-inline">
+                                            {% if item.status == 1 %}
+                                                <button class="layui-btn layui-btn-danger layui-btn-xs" id="uninstall" data-name="{{ item.name }}">卸载模块</button>
+                                            {% else %}
+                                                <button class="layui-btn layui-btn-normal layui-btn-xs" id="install" data-title="{{ item.title }}" data-name="{{ item.name }}">安装模块</button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    layui.use(['form', 'layer'], function(){
+        var $ = layui.$; //重点处
+        //监听提交
+        $('#install').on('click', function () {
+            var title = $(this).data('title');
+            var name = $(this).data('name');
+            layer.confirm('确定安装此模块?'
+                ,function(index, layero){
+                    $.ajax({
+                        url: "/admin/model/install"
+                        ,type: "POST"
+                        ,dataType: "json"
+                        ,data: {title:title, name:name}
+                        ,success: function (data) {
+                            if(data.code==0){
+                                layer.msg('成功！', {icon: 1});
+                                location.reload();
+                                layer.close(index);
+                            }else{
+                                layer.msg(data.msg);
+                                return false;
+                            }
+                        }
+                    });
+                }
+            );
+        });
+        $('#uninstall').on('click', function () {
+            var name = $(this).data('name');
+            layer.confirm('确定卸载此模块?'
+                ,function(index, layero){
+                    $.ajax({
+                        url: "/admin/model/uninstall"
+                        ,type: "POST"
+                        ,dataType: "json"
+                        ,data: {name:name}
+                        ,success: function (data) {
+                            if(data.code==0){
+                                layer.msg('成功！', {icon: 1});
+                                location.reload();
+                                layer.close(index);
+                            }else{
+                                layer.msg(data.msg);
+                                return false;
+                            }
+                        }
+                    });
+                }
+            );
+        });
+    });
+</script>
+{% endblock %}

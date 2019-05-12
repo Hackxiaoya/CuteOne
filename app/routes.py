@@ -30,7 +30,6 @@ app.app.register_blueprint(install, url_prefix='/install', template_folder=TEMPL
 app.app.register_blueprint(admin_blueprint, url_prefix='/admin', template_folder=TEMPLATES_DIR, static_folder=STATICFILES_DIR)
 
 
-
 """
     前台
 """

@@ -31,7 +31,7 @@ def upProcess(task_id, drive_id, fileName, remotePath):
             putfilesmall(item.id, drive_id, fileName, remotePath)
     target_filename = os.getcwd()+"/temp_uploads/" + str(drive_id) + "/" + fileName
     os.remove(target_filename)  # 删除文件
-    taskModels.task.update({"id": task_id, "status":1}) # 更新任务状态
+    taskModels.uploads_list.update({"id": task_id, "status":1}) # 更新任务状态
 
 
 # def putfile(dirve_id, id, fileName, remotePath):

@@ -45,7 +45,7 @@
                         <div class="layui-card">
                             <div class="layui-card-body">
                                 <div class="layui-carousel">
-                                    <img src="{{ item.img | safe }}" alt="">
+                                    <img src="https://images.weserv.nl/?url={{ item.img | safe }}" alt="">
                                     <h2 class="title">
                                         {{ item.title }}
                                     </h2>
@@ -94,14 +94,19 @@
                         ,type: "POST"
                         ,dataType: "json"
                         ,data: {name:data.value}
-                        ,success: function (data) {
-                            if(data.code==0){
-                                layer.msg('成功！', {icon: 1});
-                                location.reload();
+                        ,success: function (res) {
+                            if(res.code==0){
+                                layer.msg(res.msg, {icon: 1});
                                 layer.close(index);
+                                setTimeout(function () {
+                                    location.reload();
+                                },1000);
                             }else{
                                 data.elem.checked=!x;
-                                layer.msg(data.msg);
+                                layer.msg(res.msg);
+                                setTimeout(function () {
+                                    location.reload();
+                                },1000);
                                 return false;
                             }
                         }

@@ -76,6 +76,7 @@ class authGroup(MysqlDB.Model):
     title = MysqlDB.Column(MysqlDB.String(255), unique=False)
     auth_group = MysqlDB.Column(MysqlDB.String(255), unique=False)
     description = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    price = MysqlDB.Column(MysqlDB.String(255), unique=False)
     update_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'), onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))
     create_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'))
 

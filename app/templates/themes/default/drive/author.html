@@ -81,7 +81,7 @@
         $("#get_password").on("click", function () {
             var password = $("#password").val();
             $.ajax({
-                url: "/approve",
+                url: "/drive/approve",
                 type: "POST",
                 dataType:  'json',
                 data: {password:password, drive_id:"{{drive_id}}", path:"{{path}}"},

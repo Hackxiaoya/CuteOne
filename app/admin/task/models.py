@@ -6,6 +6,50 @@ from sqlalchemy import and_,or_
 class task(MysqlDB.Model):
     __tablename__ = 'cuteone_task'
     id = MysqlDB.Column(MysqlDB.INT, primary_key=True)
+    title = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    description = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    path = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    type = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    status = MysqlDB.Column(MysqlDB.String(255), unique=False, default=1)
+    last_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'), onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))
+    update_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'), onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))
+    create_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'))
+
+    @classmethod
+    def all(cls):
+        data = cls.query.all()
+        MysqlDB.session.close()
+        return data
+
+    # 根据ID查询出结果
+    @classmethod
+    def find_by_id(cls, id):
+        data = cls.query.filter(cls.id == id).first()
+        MysqlDB.session.close()
+        return data
+
+
+    @classmethod
+    def deldata(cls, id):
+        data = MysqlDB.session.query(cls).filter(cls.id == id).first()
+        MysqlDB.session.delete(data)
+        MysqlDB.session.commit()
+        MysqlDB.session.flush()
+        MysqlDB.session.close()
+        return
+
+
+    @classmethod
+    def update(cls, data):
+        MysqlDB.session.query(cls).filter(cls.id == data['id']).update(data)
+        MysqlDB.session.flush()
+        MysqlDB.session.commit()
+        return
+
+
+class uploads_list(MysqlDB.Model):
+    __tablename__ = 'cuteone_uploads_list'
+    id = MysqlDB.Column(MysqlDB.INT, primary_key=True)
     drive_id = MysqlDB.Column(MysqlDB.String(255), unique=False)
     file_name = MysqlDB.Column(MysqlDB.String(255), unique=False)
     type = MysqlDB.Column(MysqlDB.String(255), unique=False)

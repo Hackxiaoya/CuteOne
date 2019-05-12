@@ -65,14 +65,15 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    任务列表
+                    定时任务
                 </div>
                 <div class="layui-card-body">
-                    <!--<div style="padding-bottom: 10px;">-->
-                        <!--<button class="layui-btn" layadmin-event="add">添加任务</button>-->
-                    <!--</div>-->
+                    <div style="padding-bottom: 10px;">
+                        <button class="layui-btn" layadmin-event="add">添加任务</button>
+                    </div>
                     <table class="layui-hide" id="list-table" lay-filter="list-table"></table>
                     <script type="text/html" id="list-table-bar">
+                        <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
                         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
                     </script>
                 </div>
@@ -95,7 +96,7 @@
                 ,title: '添加任务'
                 ,shadeClose: true
                 ,area: ["550px", "550px"]
-                ,content: '/admin/task/edit/0'
+                ,content: '../task_edit/0'
                 ,end: function () {
                     tablerender();  // 渲染表格
                 }
@@ -110,11 +111,12 @@
                 ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
                 ,cols: [[
                     {field:'id', width:80, title: 'ID'}
-                    ,{field:'drive_name', width:150, title: '驱动'}
-                    ,{field:'file_name', width:320, title: '文件名'}
-                    ,{field:'path', width:350, title: '远程路径'}
-                    ,{field:'type', width:100, title: '类型'}
-                    ,{field:'status', width:100, title: '状态'}
+                    ,{field:'title', width:150, title: '标题'}
+                    ,{field:'description', width:250, title: '描述'}
+                    ,{field:'command', width:250, title: '命令'}
+                    ,{field:'stime', width:80, title: '间隔'}
+                    ,{field:'status', width:80, title: '状态'}
+                    ,{field:'last_time', width:180, title: '最后执行'}
                     ,{field:'update_time', width:180, title: '更新时间'}
                     ,{field:'create_time', width:180, title: '创建时间'}
                     ,{title:"操作", width:150, align:"center", fixed:"right", toolbar:"#list-table-bar"}
@@ -127,13 +129,22 @@
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的DOM对象
 
-            if(layEvent === 'manage'){ //管理
-                // self.location.href = '/admin/drive/disk_list/'+data.id
+            if(layEvent === 'edit'){ //管理
+                layer.open({
+                    type: 2
+                    ,title: '编辑任务'
+                    ,shadeClose: true
+                    ,area: ["550px", "550px"]
+                    ,content: '../task_edit/'+data.id
+                    ,end: function () { // 层被关闭，重新渲染
+                        tablerender();
+                    }
+                });
             } else if(layEvent === 'del'){ //删除
                 layer.confirm('真的删除这个任务吗？', function(index){
                     //向服务端发送删除指令
                     $.ajax({
-                        url: "/admin/task/del/"+data.id
+                        url: "../task_del/"+data.id
                         ,type: "GET"
                         ,dataType: "json"
                         ,success: function (data) {
@@ -146,17 +157,6 @@
                             }
                         }
                     });
-                });
-            } else if(layEvent === 'edit'){ //编辑
-                layer.open({
-                    type: 2
-                    ,title: '编辑驱动'
-                    ,shadeClose: true
-                    ,area: ["550px", "550px"]
-                    ,content: '/admin/task/edit/'+data.id
-                    ,end: function () { // 层被关闭，重新渲染
-                        tablerender();
-                    }
                 });
             }
         });
