@@ -151,7 +151,7 @@ def group_edit(id):
         title = request.form['title']
         description = request.form['description']
         auth_group = request.form['auth_group']
-        price = request.form['price']
+        price = '0.00'
         if id != '0':
             models.authGroup.update({"id": id, "title": title, "description": description, "auth_group": auth_group, "price": price})
         else:
