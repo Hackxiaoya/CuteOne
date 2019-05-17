@@ -101,7 +101,7 @@ def author_password(drive_id, path='', password=''):
     sortType： 排序类型  less是ASCENDING升序，more是DESCENDING降序
 """
 def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sortType='more', page=1):
-    drive_id = driveModels.drive_list.find_by_id(disk_id).id
+    drive_id = driveModels.drive_list.find_by_id(disk_id).drive_id
     authorres = authorModels.authrule.find_by_drive_id_all(drive_id)
     authorpath = [] # 权限路径信息数组
     for i in authorres:
