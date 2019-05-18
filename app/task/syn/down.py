@@ -1,9 +1,11 @@
 # -*- coding:utf-8 -*-
-import threading,sys
+import threading,sys,psutil
 import requests
 import time
 import os
 from app import common
+
+semlock = ""
 
 class MulThreadDownload(threading.Thread):
     def __init__(self,drive_id, url,startpos,endpos,f):
@@ -15,6 +17,7 @@ class MulThreadDownload(threading.Thread):
         self.fd = f
 
     def download(self):
+        global semlock
         common.send_socket(self.drive_id, "{} | 开始下载进程 {} | {}".format(time.strftime('%Y-%m-%d %H:%M:%S'), self.getName(), time.time()))
         # print("start thread:%s at %s" % (self.getName(), time.time()))
         headers = {"Range":"bytes=%s-%s"%(self.startpos,self.endpos)}
@@ -23,6 +26,7 @@ class MulThreadDownload(threading.Thread):
         # 所以下面是直接write(res.content)
         self.fd.seek(self.startpos)
         self.fd.write(res.content)
+        semlock.release()
         common.send_socket(self.drive_id, "{} | 结束下载进程 {} | {}".format(time.strftime('%Y-%m-%d %H:%M:%S'), self.getName(), time.time()))
         # print("stop thread:%s at %s" % (self.getName(), time.time()))
         self.fd.close()
@@ -40,7 +44,7 @@ class MulThreadDownload(threading.Thread):
     drive_id: 驱动ID
 """
 def down_file(url, fileName, drive_id):
-
+    global semlock
     # 获取文件的大小和文件名
     filename = "{}/temp_uploads/syn_temp/{}/{}".format(os.getcwd(), drive_id, fileName)
     if not os.path.exists("{}/temp_uploads/syn_temp/{}".format(os.getcwd(), drive_id)):
@@ -57,9 +61,18 @@ def down_file(url, fileName, drive_id):
     # 线程数
     threadnum = 5
     # 信号量，同时只允许10个线程运行
-    threading.BoundedSemaphore(threadnum)
+    semlock = threading.BoundedSemaphore(threadnum)
     # 默认3线程现在，也可以通过传参的方式设置线程数
-    step = filesize // threadnum
+    step = filesize // threadnum - 100000000
+    # 文件分块如果大于虚拟内存 则执行优化分块大小
+    if step > psutil.virtual_memory().free // threadnum:
+        threadnum_size = threadnum
+        while step > psutil.virtual_memory().free // threadnum:
+            step = filesize // threadnum_size 
+            threadnum_size+=1
+    else:
+        step = filesize // threadnum
+    # exit()
     mtd_list = []
     start = 0
     end = -1
@@ -72,6 +85,7 @@ def down_file(url, fileName, drive_id):
         fileno = f.fileno()
         # 如果文件大小为11字节，那就是获取文件0-10的位置的数据。如果end = 10，说明数据已经获取完了。
         while end < filesize - 1:
+            semlock.acquire()
             start = end + 1
             end = start + step - 1
             if end > filesize:
