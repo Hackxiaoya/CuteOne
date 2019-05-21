@@ -66,9 +66,9 @@
                                         </div>
                                         <div class="layui-input-inline">
                                             {% if item.status == 1 %}
-                                                <button class="layui-btn layui-btn-danger layui-btn-xs" id="uninstall" data-name="{{ item.name }}">卸载插件</button>
+                                                <button class="layui-btn layui-btn-danger layui-btn-xs uninstall" data-name="{{ item.name }}">卸载插件</button>
                                             {% else %}
-                                                <button class="layui-btn layui-btn-normal layui-btn-xs" id="install" data-title="{{ item.title }}" data-name="{{ item.name }}">安装插件</button>
+                                                <button class="layui-btn layui-btn-normal layui-btn-xs install" data-title="{{ item.title }}" data-name="{{ item.name }}">安装插件</button>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -89,7 +89,7 @@
     layui.use(['form', 'layer'], function(){
         var $ = layui.$; //重点处
         //监听提交
-        $('#install').on('click', function () {
+        $('.install').on('click', function () {
             var title = $(this).data('title');
             var name = $(this).data('name');
             layer.confirm('确定安装此插件?'
@@ -113,7 +113,7 @@
                 }
             );
         });
-        $('#uninstall').on('click', function () {
+        $('.uninstall').on('click', function () {
             var name = $(this).data('name');
             layer.confirm('确定卸载此插件?'
                 ,function(index, layero){

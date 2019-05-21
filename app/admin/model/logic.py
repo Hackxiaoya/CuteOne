@@ -142,10 +142,11 @@ def admin_themes(model, status=True):
     folder_path = "{}/app/templates/admin/model/{}".format(os.getcwd(),model)
     try:
         if status:
-            if not folder_path:
-                # 如果不存在则创建目录
-                os.makedirs(folder_path)
-            shutil.move(model_path, folder_path+"/admin")
+            if os.path.isdir(model_path):
+                if os.path.isdir(folder_path):
+                    # 如果不存在则创建目录
+                    os.makedirs(folder_path)
+                shutil.move(model_path, folder_path+"/admin")
         else:
             shutil.move(folder_path+"/admin", model_path)
             os.rmdir(folder_path)

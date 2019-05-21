@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import os, configparser
 from flask import request, render_template, json
 from app import MysqlDB
 from .. import admin
@@ -38,6 +39,13 @@ def plugin_install():
             MysqlDB.session.add(role)
             MysqlDB.session.flush()
             MysqlDB.session.commit()
+
+            path = "{}/app/plugin/{}/config.ini".format(os.getcwd(), name)
+            conf = configparser.ConfigParser()
+            conf.read(path, encoding="utf-8")
+            if conf.has_option("config", "config_table"):
+                models.plugin.update_by_name({"name":name, "config":conf.get("config", "config_table")})
+
             return json.dumps({"code": 0, "msg": "完成！"})
         else:
             return json.dumps({"code": 1, "msg": "失败！"})
