@@ -12,7 +12,7 @@ from app import MongoDB
 SystemInfo = {
     "name": "CuteOne",
     "versionType": "Free",
-    "versions": "2.3.0",
+    "versions": "2.3.1",
     "server": ""
 }
 
