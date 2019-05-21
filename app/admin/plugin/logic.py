@@ -137,13 +137,13 @@ def un_install_plugin(name):
     @Description:
     @Time: 2019-04-25
 """
-def admin_themes(model, status=True):
-    model_path = "{}/app/plugin/{}/themes/admin".format(os.getcwd(),model)
-    folder_path = "{}/app/templates/admin/plugin/{}".format(os.getcwd(),model)
+def admin_themes(name, status=True):
+    model_path = "{}/app/plugin/{}/themes/admin".format(os.getcwd(), name)
+    folder_path = "{}/app/templates/admin/plugin/{}".format(os.getcwd(), name)
     try:
         if status:
             if os.path.isdir(model_path):
-                if os.path.isdir(folder_path):
+                if os.path.isdir(folder_path) is False:
                     # 如果不存在则创建目录
                     os.makedirs(folder_path)
                 shutil.move(model_path, folder_path+"/admin")
