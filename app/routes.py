@@ -18,6 +18,7 @@ def error(e):
     return render_template('error/404.html'), 500
 
 
+
 """
     安装程序
 """

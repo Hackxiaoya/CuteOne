@@ -11,6 +11,7 @@ class hooks(MysqlDB.Model):
     source = MysqlDB.Column(MysqlDB.String(255), unique=False)
     type = MysqlDB.Column(MysqlDB.String(255), unique=False)
     method = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    position = MysqlDB.Column(MysqlDB.String(255), unique=False)
     status = MysqlDB.Column(MysqlDB.String(255), unique=False, default=1)
     update_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'), onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))
     create_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'))
@@ -32,6 +33,13 @@ class hooks(MysqlDB.Model):
     @classmethod
     def find_by_title(cls, title):
         data = MysqlDB.session.query(cls).filter(cls.title == title).first()
+        MysqlDB.session.close()
+        return data
+
+
+    @classmethod
+    def find_by_position(cls, position):
+        data = MysqlDB.session.query(cls).filter(cls.position == position, cls.status == 1).all()
         MysqlDB.session.close()
         return data
 

@@ -8,8 +8,10 @@ class task(MysqlDB.Model):
     id = MysqlDB.Column(MysqlDB.INT, primary_key=True)
     title = MysqlDB.Column(MysqlDB.String(255), unique=False)
     description = MysqlDB.Column(MysqlDB.String(255), unique=False)
-    path = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    command = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    stime = MysqlDB.Column(MysqlDB.String(255), unique=False)
     type = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    source = MysqlDB.Column(MysqlDB.String(255), unique=False)
     status = MysqlDB.Column(MysqlDB.String(255), unique=False, default=1)
     last_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'), onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))
     update_time = MysqlDB.Column(MysqlDB.DateTime(255), default=time.strftime('%Y-%m-%d %H:%M:%S'), onupdate=time.strftime('%Y-%m-%d %H:%M:%S'))
@@ -25,6 +27,12 @@ class task(MysqlDB.Model):
     @classmethod
     def find_by_id(cls, id):
         data = cls.query.filter(cls.id == id).first()
+        MysqlDB.session.close()
+        return data
+
+    @classmethod
+    def find_status(cls, status):
+        data = cls.query.filter(cls.status == status).all()
         MysqlDB.session.close()
         return data
 

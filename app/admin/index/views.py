@@ -1,9 +1,8 @@
 # -*- coding:utf-8 -*-
 from flask import render_template, session, request, json, redirect
 from app.admin import admin
-from app import common
 from ..system import models
-from app import decorators
+from app import common
 
 
 @admin.route('/index/login', methods=['GET', 'POST'])  # 登录页
@@ -32,7 +31,7 @@ def logout():
 
 @admin.route('/')  # 后台首页
 @admin.route('/index')  # 后台首页
-@decorators.login_require
+@common.login_require
 def _index():
     return render_template('admin/index/index.html', activity_nav='index', data='')
 

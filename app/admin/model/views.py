@@ -6,13 +6,12 @@ from .. import admin
 from ..menu import models as menuModels
 from ..model import logic
 from ..model import models
-from app import decorators
-
+from app import common
 
 
 @admin.route('/model/list', methods=['GET'])
 @admin.route('/model/list/')
-@decorators.login_require
+@common.login_require
 def model_list():
     if request.method == 'GET':
         model_list = logic.get_model_list()
@@ -26,12 +25,12 @@ def model_list():
 
 
 @admin.route('/model/install', methods=['GET', 'POST'])
-@decorators.login_require
+@common.login_require
 def model_install():
     title = request.form['title']
     name = request.form['name']
     config_info = logic.get_model_info(name)
-    if config_info:
+    if config_info["code"] == 0:
         res = logic.install_model(name)
         if res:
             # 初始化role 并插入数据库
@@ -50,11 +49,11 @@ def model_install():
         else:
             return json.dumps({"code": 1, "msg": "失败！"})
     else:
-        return json.dumps({"code": 1, "msg": "系统版本太低！"})
+        return json.dumps({"code": 1, "msg": config_info["msg"]})
 
 
 @admin.route('/model/uninstall', methods=['GET', 'POST'])
-@decorators.login_require
+@common.login_require
 def model_uninstall():
     name = request.form['name']
     models.model.deldata_by_name(name)

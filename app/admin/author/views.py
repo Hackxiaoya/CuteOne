@@ -1,12 +1,10 @@
 # -*- coding:utf-8 -*-
 from flask import request, render_template, json
 from app import MysqlDB
-import config
 from .. import admin
 from ..author import models
 from ..drive import models as driveModels
 from app import common
-from app import decorators
 from operator import itemgetter
 from itertools import groupby
 
@@ -14,7 +12,7 @@ from itertools import groupby
 
 @admin.route('/author/list', methods=['GET'])
 @admin.route('/author/list/')
-@decorators.login_require
+@common.login_require
 def author_list():
     if request.args.get('page'):
         data_list = models.authrule.all()
@@ -31,7 +29,7 @@ def author_list():
 
 
 @admin.route('/author/edit/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
-@decorators.login_require
+@common.login_require
 def author_edit(id):
     if request.method == 'GET':
         drive_list = driveModels.drive.all()
@@ -77,7 +75,7 @@ def author_edit(id):
 
 
 @admin.route('/author/del/<int:id>', methods=['GET', 'POST'])  # 删除
-@decorators.login_require
+@common.login_require
 def author_del(id):
     models.authrule.deldata(id)
     return json.dumps({"code": 0, "msg": "完成！"})
@@ -109,7 +107,7 @@ def get_author_list():
 
 @admin.route('/author/group', methods=['GET'])
 @admin.route('/author/group/')
-@decorators.login_require
+@common.login_require
 def group_list():
     if request.args.get('page'):
         data_list = models.authGroup.all()
@@ -125,7 +123,7 @@ def group_list():
 
 
 @admin.route('/author/group_edit/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
-@decorators.login_require
+@common.login_require
 def group_edit(id):
     if request.method == 'GET':
         author_list = get_author_list()
@@ -151,7 +149,7 @@ def group_edit(id):
         title = request.form['title']
         description = request.form['description']
         auth_group = request.form['auth_group']
-        price = '0.00'
+        price = request.form['price']
         if id != '0':
             models.authGroup.update({"id": id, "title": title, "description": description, "auth_group": auth_group, "price": price})
         else:
@@ -164,7 +162,7 @@ def group_edit(id):
 
 
 @admin.route('/author/group_del/<int:id>', methods=['GET', 'POST'])  # 删除
-@decorators.login_require
+@common.login_require
 def group_del(id):
     models.authGroup.deldata(id)
     return json.dumps({"code": 0, "msg": "完成！"})

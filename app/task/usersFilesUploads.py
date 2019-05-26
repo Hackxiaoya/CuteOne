@@ -88,7 +88,7 @@ def putfilesmall(id, uid, files_disk_id, fileName, remotePath, times=1):
     pull_res = json.loads(pull_res.text)
     if 'error' in pull_res.keys():
         usersLogic.reacquireToken(files_disk_id)
-        putfilesmall(id, uid, files_disk_id, fileName, remotePath, times)
+        return putfilesmall(id, uid, files_disk_id, fileName, remotePath, times)
     else:
         return pull_res
 

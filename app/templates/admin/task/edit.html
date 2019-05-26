@@ -5,6 +5,7 @@
 <div class="layui-form" style="padding: 20px 30px 0 0;">
     <form id="form1" onsubmit="return false" action="##" method="post">
         <input type="hidden" name="id" value="{{ data.id }}">
+        <input type="hidden" name="source" value="{{ data.source }}">
         <div class="layui-form-item">
             <label class="layui-form-label">标题</label>
             <div class="layui-input-block">
@@ -18,15 +19,22 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">默认首页</label>
+            <label class="layui-form-label">命令</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="activate" lay-skin="switch" lay-text="是|否" {% if data.activate==1 %}checked{% endif %}>
+                <input type="text" name="command" value="{{ data.command }}" placeholder="请输入命令" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">排序</label>
+            <label class="layui-form-label">间隔时间</label>
             <div class="layui-input-block">
-                <input type="text" name="sort" value="{{ data.sort }}" placeholder="排序，序号越小越靠前" class="layui-input">
+                <input type="text" name="stime" value="{{ data.stime }}" placeholder="请输入间隔时间" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux layui-col-xs-offset3">单位为 秒，请勿设置时间太短</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="status" lay-skin="switch" lay-text="开启|关闭" {% if data.status==1 %}checked{% endif %}>
             </div>
         </div>
         <div class="layui-form-item">
@@ -47,7 +55,7 @@
         // 确认按钮
         $('#form-submit').on('click', function () {
             $.ajax({
-                url: "/{{ data['id'] }}"
+                url: "./{{ data['id'] }}"
                 ,type: "POST"
                 ,dataType: "json"
                 ,data: $('#form1').serialize()

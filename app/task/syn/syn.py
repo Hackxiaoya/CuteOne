@@ -24,8 +24,8 @@ from app import common
 def pull_chief_dirve_info(drive_id):
     drivename = "syn_drive_" + str(drive_id)
     collectionList = MongoDB.db.list_collection_names()
-    chief_id = driveModels.drive_list.find_by_chief(drive_id).id    # 查询主盘
-    if drivename not in collectionList: # 如果不存在集合，就进行主盘信息拉取
+    chief_id = driveModels.disk.find_by_chief(drive_id).id    # 查询主盘
+    if drivename not in collectionList: # 如果不存在同步的集合，进行主盘信息拉取
         task_getlist(chief_id, '', drive_id)
     contrast_dif(drive_id)  # 差异对比
     collection = MongoDB.db[drivename]
@@ -133,21 +133,25 @@ def task_write(disk_id, data):
     file_id: 文件id
 """
 def pull_dirve_file(chief_id, file_id):
-    data_list = driveModels.drive_list.find_by_id(chief_id)
+    data_list = driveModels.disk.find_by_id(chief_id)
     token = json.loads(json.loads(data_list.token))
-    BaseUrl = config.app_url + 'v1.0/me/drive/items/' + file_id
+    if data_list.types == 1:
+        app_url = config.app_url
+    else:
+        app_url = config.China_app_url
+    BaseUrl = app_url + 'v1.0/me/drive/items/' + file_id
     headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
     try:
         get_res = requests.get(BaseUrl, headers=headers, timeout=30)
         get_res = json.loads(get_res.text)
         if 'error' in get_res.keys():
-            logic.reacquireToken(chief_id)
-            pull_dirve_file(chief_id, file_id)
+            common.reacquireToken(chief_id)
+            return pull_dirve_file(chief_id, file_id)
         else:
             if '@microsoft.graph.downloadUrl' in get_res.keys():
                 return {"name": get_res["name"], "url": get_res["@microsoft.graph.downloadUrl"]}
             else:
-                pull_dirve_file(chief_id, file_id)
+                return pull_dirve_file(chief_id, file_id)
     except Exception as e:
         pass
         # print(e)
@@ -180,19 +184,19 @@ def getMongoDB(dbName):
 """
 def contrast_dif(drive_id):
     common.send_socket(drive_id, "{} | 开始对比差异".format(time.strftime('%Y-%m-%d %H:%M:%S')))
-    disk_list = driveModels.drive_list.find_by_drive_id(drive_id)
+    disk_list = driveModels.disk.find_by_drive_id(drive_id)
     disk_list_res = []
     # 列出缓存集
     for item in disk_list:
         if item.chief != "1":
-            disk_list_res.append("drive_"+str(item.id))
+            disk_list_res.append("disk_"+str(item.id))
     # 缓存集差异对比
     for dbname in disk_list_res:
         collectionList = MongoDB.db.list_collection_names()
         if dbname in collectionList:  # 如果存在集合，就进行差异对比
             contrast_dif_one_disk(dbname, drive_id)
         else:
-            disk_id = dbname.replace("drive_", "")
+            disk_id = dbname.replace("disk_", "")
             common.send_socket(drive_id, "{} | 发现差异，Disk_id: {}".format(time.strftime('%Y-%m-%d %H:%M:%S'), disk_id))
             synDb = MongoDB.db["syn_drive_" + str(drive_id)]
             synDb_data = synDb.find()
@@ -215,13 +219,13 @@ def contrast_dif(drive_id):
 """
 def contrast_dif_one_disk(dbname, drive_id):
     synDb = getMongoDB("syn_drive_" + str(drive_id))
-    disk_id = dbname.replace("drive_", "")
+    disk_id = dbname.replace("disk_", "")
     for item in synDb:
         thread_dif_one(item["name"], item["path"], drive_id, disk_id)
 
 
 def thread_dif_one(name, path, drive_id, disk_id):
-    collection = MongoDB.db["drive_" + str(disk_id)]
+    collection = MongoDB.db["disk_" + str(disk_id)]
     res = collection.find_one({"name": name, "path": path})
     if res is None:
         synDb = MongoDB.db["syn_drive_" + str(drive_id)]

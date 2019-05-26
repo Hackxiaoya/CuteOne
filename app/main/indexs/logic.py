@@ -1,17 +1,14 @@
 # -*- coding:utf-8 -*-
 import config, json, requests, re, time
 import math
-import numpy
 from flask import session
 from app import MongoDB
 import pymongo
 from app import common
 from flask_login import current_user
 from ...admin.drive import models as driveModels
-from ...admin.drive import logic as driveLogic
 from ...admin.author import models as authorModels
 from ...admin.system import models as systemModels
-from ...admin.users import models as usersModels
 
 
 """
@@ -31,27 +28,10 @@ def author_judge(drive_id, users_id='', path=''):
         for item in temp:
             temp_path += "/" + item
 
-        if users_id:    # 如果是会员
-            group_id = usersModels.users.find_by_id(users_id).group
-            if group_id == 0:
-                res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
-                if res:
-                    if res.password != session.get(temp_path):
-                        return True
-                    else:
-                        return False
-            else:
-                res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
-                if res:
-                    group_data = authorModels.authGroup.find_by_id(group_id).auth_group
-                    group_data = group_data.split(",")
-                    for item in group_data:
-                        res = authorModels.authrule.find_by_id_drive_path(item, drive_id, temp_path)
-                        if res is not None:
-                            return False
-                    return True
-                else:
-                    return False
+        # 用户权限判断钩子
+        res = common.hooks_give("model", "users", "author_judge")
+        if res:
+            return True
         else:
             res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
             if res:
@@ -101,13 +81,13 @@ def author_password(drive_id, path='', password=''):
     sortType： 排序类型  less是ASCENDING升序，more是DESCENDING降序
 """
 def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sortType='more', page=1):
-    drive_id = driveModels.drive_list.find_by_id(disk_id).drive_id
+    drive_id = driveModels.disk.find_by_id(disk_id).drive_id
     authorres = authorModels.authrule.find_by_drive_id_all(drive_id)
     authorpath = [] # 权限路径信息数组
     for i in authorres:
         authorpath.append({"path":i.path, "login_hide":i.login_hide})
     search_type = systemModels.config.get_config('search_type')
-    drivename = "drive_" + str(disk_id)
+    drivename = "disk_" + str(disk_id)
     collection = MongoDB.db[drivename]
     data = []
     if sortType == "more":
@@ -266,18 +246,22 @@ def Pagination_data(data, page):
     res_id: 资源id
 """
 def get_downloadUrl(drive_id, disk_id, id):
-    data_list = driveModels.drive_list.find_by_id(disk_id)
+    data_list = driveModels.disk.find_by_id(disk_id)
     token = json.loads(json.loads(data_list.token))
-    BaseUrl = config.app_url + 'v1.0/me/drive/items/' + id
+    if data_list.types == 1:
+        app_url = config.app_url
+    else:
+        app_url = config.China_app_url
+    BaseUrl = app_url + 'v1.0/me/drive/items/' + id
     headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
     get_res = requests.get(BaseUrl, headers=headers, timeout=30)
     get_res = json.loads(get_res.text)
     if 'error' in get_res.keys():
-        driveLogic.reacquireToken(disk_id)
+        common.reacquireToken(disk_id)
         return get_downloadUrl(drive_id, disk_id, id)
     else:
         if '@microsoft.graph.downloadUrl' in get_res.keys():
-            drivename = "drive_" + str(disk_id)
+            drivename = "disk_" + str(disk_id)
             collection = MongoDB.db[drivename]
             result = collection.find_one({"id": get_res["id"]})
             if result:
@@ -311,7 +295,7 @@ def get_downloadUrl(drive_id, disk_id, id):
     res_id: 资源id
 """
 def file_url(drive_id, disk_id, id):
-    drivename = "drive_" + str(disk_id)
+    drivename = "disk_" + str(disk_id)
     collection = MongoDB.db[drivename]
     result = collection.find_one({"id": id})
     if result:
@@ -324,6 +308,7 @@ def file_url(drive_id, disk_id, id):
         get_res = get_downloadUrl(drive_id, disk_id, id)
         return {"name": get_res["name"], "url": get_res["downloadUrl"]}
 
+
 """
     获取文件负载下载地址
     @Author: yyyvy <76836785@qq.com>
@@ -335,9 +320,9 @@ def file_url(drive_id, disk_id, id):
     source_id: 来源资源id
 """
 def get_load(drive_id, disk_id, source_disk_id, source_id):
-    source_collection = MongoDB.db["drive_" + str(source_disk_id)]
+    source_collection = MongoDB.db["disk_" + str(source_disk_id)]
     source_result = source_collection.find_one({"id": source_id})
-    drivename = "drive_" + str(disk_id)
+    drivename = "disk_" + str(disk_id)
     collection = MongoDB.db[drivename]
     result = collection.find_one({"name": source_result["name"], "path": source_result["path"]})
     return result["id"]

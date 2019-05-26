@@ -21,11 +21,10 @@ def webconfig():
 
 
 from .indexs import views
-from .users import views
 try:
-	model_list = modelModels.model.all()
-	if model_list:
-	    for item in model_list:
-	        importlib.import_module("app.model."+item.name+".controller.views")  # 相当于from app.model.movie.admin import views
+    model_list = modelModels.model.all()
+    if model_list:
+        for item in model_list:
+            importlib.import_module("app.model."+item.name+".controller.views")  # 相当于from app.model.movie.admin import views
 except Exception as e:
     pass

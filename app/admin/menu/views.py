@@ -3,12 +3,12 @@ from flask import render_template, request, json
 from app import MysqlDB
 from app.admin import admin
 from ..menu import models
-from app import decorators
+from app import common
 
 
 @admin.route('/menu/in_menu_list', methods=['GET'])
 @admin.route('/menu/in_menu_list/')  # 设置分页
-@decorators.login_require
+@common.login_require
 def in_menu_list():
     if request.args.get('page'):
         data_list = models.menu.all(0, 1, 2)
@@ -41,7 +41,7 @@ def in_menu_list():
 
 @admin.route('/menu/out_menu_list', methods=['GET'])
 @admin.route('/menu/out_menu_list/')  # 设置分页
-@decorators.login_require
+@common.login_require
 def out_menu_list():
     if request.args.get('page'):
         data_list = models.menu.all(1)
@@ -73,7 +73,7 @@ def out_menu_list():
 
 
 @admin.route('/menu/in_edit/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
-@decorators.login_require
+@common.login_require
 def in_menu_edit(id):
     if request.method == 'GET':
         if id:
@@ -123,7 +123,7 @@ def in_menu_edit(id):
 
 
 @admin.route('/menu/out_edit/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
-@decorators.login_require
+@common.login_require
 def out_menu_edit(id):
     if request.method == 'GET':
         if id:
@@ -171,7 +171,7 @@ def out_menu_edit(id):
 
 
 @admin.route('/menu/del/<int:id>', methods=['GET', 'POST'])  # 新增/编辑
-@decorators.login_require
+@common.login_require
 def menu_del(id):
     models.menu.deldata(id)
     return json.dumps({"code": 0, "msg": "完成！"})

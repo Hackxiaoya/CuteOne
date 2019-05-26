@@ -6,13 +6,12 @@ from .. import admin
 from ..menu import models as menuModels
 from ..plugin import logic
 from ..plugin import models
-from app import decorators
-
+from app import common
 
 
 @admin.route('/plugin/list', methods=['GET'])
 @admin.route('/plugin/list/')
-@decorators.login_require
+@common.login_require
 def plugin_list():
     if request.method == 'GET':
         model_list = logic.get_plugin_list()
@@ -26,7 +25,7 @@ def plugin_list():
 
 
 @admin.route('/plugin/install', methods=['GET', 'POST'])
-@decorators.login_require
+@common.login_require
 def plugin_install():
     title = request.form['title']
     name = request.form['name']
@@ -54,7 +53,7 @@ def plugin_install():
 
 
 @admin.route('/plugin/uninstall', methods=['GET', 'POST'])
-@decorators.login_require
+@common.login_require
 def plugin_uninstall():
     name = request.form['name']
     models.plugin.deldata_by_name(name)

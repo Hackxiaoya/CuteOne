@@ -59,11 +59,12 @@ class drive(MysqlDB.Model):
 
 
 
-class drive_list(MysqlDB.Model):
-    __tablename__ = 'cuteone_drive_list'
+class disk(MysqlDB.Model):
+    __tablename__ = 'cuteone_disk'
     id = MysqlDB.Column(MysqlDB.INT, primary_key=True)
     drive_id = MysqlDB.Column(MysqlDB.String(255), unique=False)
     title = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    types = MysqlDB.Column(MysqlDB.String(255), unique=False, default=1)
     client_id = MysqlDB.Column(MysqlDB.String(255), unique=False)
     client_secret = MysqlDB.Column(MysqlDB.String(255), unique=False)
     token = MysqlDB.Column(MysqlDB.String(255), unique=False)
@@ -136,18 +137,19 @@ class drive_list(MysqlDB.Model):
 
 # 删除MongoDB的表
 def mongodb_del_drive(id):
-    drivename = "drive_" + str(id)
-    MongoDB.db[drivename].remove()  # 移除集合所有数据
-    MongoDB.db[drivename].drop()  # 删除集合
+    diskname = "disk_" + str(id)
+    MongoDB.db[diskname].remove()  # 移除集合所有数据
+    MongoDB.db[diskname].drop()  # 删除集合
     return
+
 
 # 查询MongoDB的指定缓存表数据总数
 def mongodb_count(id):
-    drivename = "drive_" + str(id)
-    return MongoDB.db[drivename].count()  # 查询总数
+    return MongoDB.db["disk_" + str(id)].count()  # 查询总数
+
 
 # 查询MongoDB的指定网盘指定路径ID
 def mongodb_find_parent_id(id, path):
-    collection = "drive_" + str(id)
+    collection = "disk_" + str(id)
     res = json.dumps(collection.find({"path": path}))
     return res["id"]

@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
-import json, importlib
-from app import app
+import importlib
 from flask import render_template
 from app.admin.system import models as systemModels
 from app.main import index

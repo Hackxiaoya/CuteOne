@@ -1,29 +1,11 @@
 # -*- coding:utf-8 -*-
-import os, sys, json, requests, threading
+import os, json, requests, threading
 from app import MongoDB
 from ... import common
 import config
 from ..drive import models
 
-"""
-    OneDrive 重新获取token
-    @Author: yyyvy <76836785@qq.com>
-    @Description:
-    @Time: 2019-03-16
-    id: 网盘ID
-"""
-def reacquireToken(id):
-    data_list = models.drive_list.find_by_id(id)
-    token = json.loads(json.loads(data_list.token))
-    redirect_url = "http://127.0.0.1/"
-    ReFreshData = 'client_id={client_id}&redirect_uri={redirect_uri}&client_secret={client_secret}&refresh_token={refresh_token}&grant_type=refresh_token'
-    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    data = ReFreshData.format(client_id = data_list.client_id, redirect_uri = redirect_url, client_secret = data_list.client_secret,
-                              refresh_token = token["refresh_token"])
-    url = config.BaseAuthUrl+'/common/oauth2/v2.0/token'
-    res = requests.post(url, data=data, headers=headers)
-    models.drive_list.update({"id": id, "token": json.dumps(res.text)}) # 更新数据库的Token
-    return res.text
+
 
 
 """
@@ -35,19 +17,23 @@ def reacquireToken(id):
     path: 路径，如果为空则从根目录获取，否则从路径获取
 """
 def get_one_file_list(id, path=''):
-    data_list = models.drive_list.find_by_id(id)
+    data_list = models.disk.find_by_id(id)
     token = json.loads(json.loads(data_list.token))
-    if path:
-        BaseUrl = config.app_url + '/v1.0/me/drive/root:{}:/children?expand=thumbnails'.format(path)
+    if data_list.types == 1:
+        app_url = config.app_url
     else:
-        BaseUrl = config.app_url + '/v1.0/me/drive/root/children?expand=thumbnails'
-    headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
+        app_url = config.China_app_url
+    if path:
+        BaseUrl = app_url + '/v1.0/me/drive/root:{}:/children?expand=thumbnails'.format(path)
+    else:
+        BaseUrl = app_url + '/v1.0/me/drive/root/children?expand=thumbnails'
+    headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer {}'.format(token["access_token"])}
     try:
         get_res = requests.get(BaseUrl, headers=headers, timeout=30)
         get_res = json.loads(get_res.text)
         if 'error' in get_res.keys():
-            reacquireToken(id)
-            get_one_file_list(id, path)
+            common.reacquireToken(id)
+            return get_one_file_list(id, path)
         else:
             if 'value' in get_res.keys():
                 result = get_res['value']
@@ -56,9 +42,10 @@ def get_one_file_list(id, path=''):
                     result+=pageres
                 return {'code': True, 'msg': '获取成功', 'data': result}
             else:
-                get_one_file_list(id, path)
+                return get_one_file_list(id, path)
     except:
-        get_one_file_list(id, path)
+        pass
+        # return get_one_file_list(id, path)
 
 
 """
@@ -91,7 +78,7 @@ def get_one_file_list_page(token, url, total=[]):
     fileName: 文件夹名字
 """
 def folder_create(id, path, fileName):
-    data_list = models.drive_list.find_by_id(id)
+    data_list = models.disk.find_by_id(id)
     token = json.loads(json.loads(data_list.token))
     if path:
         parent_id = models.mongodb_find_parent_id(id, path)
@@ -107,8 +94,8 @@ def folder_create(id, path, fileName):
     get_res = requests.post(url, headers=headers, data=json.dumps(payload))
     get_res = json.loads(get_res.text)
     if 'error' in get_res.keys():
-        reacquireToken(id)
-        folder_create(id, parent_id, fileName)
+        common.reacquireToken(id)
+        return folder_create(id, path, fileName)
     else:
         return {'code': True, 'msg': '成功', 'data':''}
 
@@ -123,7 +110,7 @@ def folder_create(id, path, fileName):
     new_name: 新文件名字
 """
 def rename_files(id, fileid, new_name):
-    data_list = models.drive_list.find_by_id(id)
+    data_list = models.disk.find_by_id(id)
     token = json.loads(json.loads(data_list.token))
     url = config.app_url + '/v1.0/me/drive/items/{}'.format(fileid)
     headers = {'Authorization': 'bearer {}'.format(token["access_token"]), 'Content-Type': 'application/json'}
@@ -133,8 +120,8 @@ def rename_files(id, fileid, new_name):
     get_res = requests.patch(url, headers=headers, data=json.dumps(payload))
     get_res = json.loads(get_res.text)
     if 'error' in get_res.keys():
-        reacquireToken(id)
-        rename_files(id, fileid, new_name)
+        common.reacquireToken(id)
+        return rename_files(id, fileid, new_name)
     else:
         return {'code': True, 'msg': '成功', 'data':''}
 
@@ -148,7 +135,7 @@ def rename_files(id, fileid, new_name):
     fileid: 源文件id
 """
 def delete_files(id, fileid):
-    data_list = models.drive_list.find_by_id(id)
+    data_list = models.disk.find_by_id(id)
     token = json.loads(json.loads(data_list.token))
     url = config.app_url + '/v1.0/me/drive/items/{}'.format(fileid)
     headers = {'Authorization': 'bearer {}'.format(token["access_token"]), 'Content-Type': 'application/json'}
@@ -156,8 +143,8 @@ def delete_files(id, fileid):
     if get_res.status_code == 204:
         return {'code': True, 'msg': '成功', 'data':''}
     else:
-        reacquireToken(id)
-        delete_files(id, fileid)
+        common.reacquireToken(id)
+        return delete_files(id, fileid)
 
 
 """
@@ -169,7 +156,7 @@ def delete_files(id, fileid):
     type: 更新类型，all全部，dif差异
 """
 def update_cache(drive_id, type):
-    driveinfo = models.drive_list.find_by_drive_id(drive_id)
+    driveinfo = models.disk.find_by_drive_id(drive_id)
     threads = []
     for i in driveinfo:
         command = "python3 {}/app/task/cuteTask.py {} {}".format(os.getcwd(), i.id, type)  # 后台任务文件路

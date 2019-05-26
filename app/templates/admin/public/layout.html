@@ -121,27 +121,10 @@
                         </a>
                         <dl class="layui-nav-child">
 <!--                            <dd class="{% if 'list'== activity_nav %}layui-this{% endif %}">-->
-<!--                                <a href="/admin/task/list">任务列表</a>-->
+<!--                                <a href="/admin/task/list">定时任务</a>-->
 <!--                            </dd>-->
                             <dd class="{% if 'uploads_list'== activity_nav %}layui-this{% endif %}">
                                 <a href="/admin/task/uploads_list">上传列表</a>
-                            </dd>
-                        </dl>
-                    </li>
-                    <li class="layui-nav-item {% if 'users'== top_nav %}layui-nav-itemed{% endif %}">
-                        <a href="javascript:;" lay-tips="用户">
-                            <i class="fa fa-users"></i>
-                            <cite>用户管理</cite>
-                            <span class="layui-nav-more"></span>
-                        </a>
-                        <dl class="layui-nav-child">
-                            <dd class="{% if 'list'== activity_nav %}layui-this{% endif %}">
-                                <a href="/admin/users/list">用户列表</a>
-                            </dd>
-                        </dl>
-                        <dl class="layui-nav-child">
-                            <dd class="{% if 'funds_list'== activity_nav %}layui-this{% endif %}">
-                                <a href="/admin/users/funds_list">资金列表</a>
                             </dd>
                         </dl>
                     </li>
@@ -184,7 +167,11 @@
                     {% for menu in menu_list %}
                         <li class="layui-nav-item {% if menu.top_nav == top_nav %}layui-nav-itemed{% endif %}">
                             <a href="javascript:;" lay-tips="{{ menu.title }}">
-                                <i class="fa fa-cube"></i>
+                                {% if menu.icon %}
+                                    <i class="{{ menu.icon }}"></i>
+                                {% else %}
+                                    <i class="fa fa-cube"></i>
+                                {% endif %}
                                 <cite>{{ menu.title }}</cite>
                                 <span class="layui-nav-more"></span>
                             </a>
@@ -197,18 +184,6 @@
                             </dl>
                         </li>
                     {% endfor %}
-                    <li class="layui-nav-item {% if 'files'== top_nav %}layui-nav-itemed{% endif %}">
-                        <a href="javascript:;" lay-tips="文件">
-                            <i class="fa fa-files-o"></i>
-                            <cite>文件管理</cite>
-                            <span class="layui-nav-more"></span>
-                        </a>
-                        <dl class="layui-nav-child">
-                            <dd class="{% if 'list'== activity_nav %}layui-this{% endif %}">
-                                <a href="/admin/files/files_disk_list">存储列表</a>
-                            </dd>
-                        </dl>
-                    </li>
                     <li class="layui-nav-item {% if 'system'== top_nav %}layui-nav-itemed{% endif %}">
                         <a href="javascript:;" lay-tips="设置">
                             <i class="layui-icon layui-icon-set"></i>

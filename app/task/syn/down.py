@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-import threading,sys,psutil
+import threading, psutil
 import requests
 import time
 import os
@@ -64,11 +64,11 @@ def down_file(url, fileName, drive_id):
     semlock = threading.BoundedSemaphore(threadnum)
     # 默认3线程现在，也可以通过传参的方式设置线程数
     step = filesize // threadnum - 100000000
-    # 文件分块如果大于虚拟内存 则执行优化分块大小
+    # 文件分块如果大于虚拟内存 则执行优化分块大小, 避免系统自动kill掉进程 或 爆溢出
     if step > psutil.virtual_memory().free // threadnum:
         threadnum_size = threadnum
         while step > psutil.virtual_memory().free // threadnum:
-            step = filesize // threadnum_size 
+            step = filesize // threadnum_size
             threadnum_size+=1
     else:
         step = filesize // threadnum

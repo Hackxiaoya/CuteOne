@@ -33,6 +33,13 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">钩子状态</label>
+            <div class="layui-input-block">
+                <input type="radio" name="status" value="1" title="开启" {% if data.status == 1 %}checked{% endif %}>
+                <input type="radio" name="status" value="0" title="关闭" {% if data.status == 0 %}checked{% endif %}>
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label"></label>
             <div class="layui-input-inline">
                 <button id="form-submit" class="layui-btn">保存</button>

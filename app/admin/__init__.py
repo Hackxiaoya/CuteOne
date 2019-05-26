@@ -22,6 +22,7 @@ def menu_list():
                 "type_name": item.type_name,
                 "top_nav": item.top_nav,
                 "activity_nav": item.activity_nav,
+                "icon": item.icon,
                 "children": []
             })
         else:
@@ -31,7 +32,8 @@ def menu_list():
                         "title": item.title,
                         "url": item.url,
                         "top_nav": item.top_nav,
-                        "activity_nav": item.activity_nav
+                        "activity_nav": item.activity_nav,
+                        "icon": item.icon,
                     })
     return dict(menu_list=menu_list)
 
@@ -51,23 +53,20 @@ from .system import views
 from .drive import views
 from .author import views
 from .task import views
-from .syn import views
-from .users import views
 from .hooks import views
 from .model import views
 from .plugin import views
-from .files import views
 
 try:
     model_list = modelModels.model.all()
     if model_list:
-        for item in model_list:
-            importlib.import_module("app.model."+item.name+".admin.views")  # 相当于from app.model.movie.admin import views
-
+        for m in model_list:
+            importlib.import_module("app.model."+m.name+".admin.views")  # 相当于from app.model.movie.admin import views
 
     plugin_list = pluginModels.plugin.all()
     if plugin_list:
         for v in plugin_list:
             importlib.import_module("app.plugin."+v.name+".admin.views")  # 相当于from app.model.movie.admin import views
 except Exception as e:
+    print(e)
     pass

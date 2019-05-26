@@ -1,11 +1,11 @@
 # -*- coding:utf-8 -*-
-import os, sys, json, threading, time
+import os, sys, json
 sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
 from app.admin.drive import models as driveModels
 from app.admin.task import models as taskModels
-from app.admin.drive import logic as driveLogic
 import requests
 import config
+from app import common
 
 """
     推送脚本
@@ -22,7 +22,7 @@ import config
     remotePath: 远程路径
 """
 def upProcess(task_id, drive_id, fileName, remotePath):
-    data_list = driveModels.drive_list.find_by_drive_id(drive_id)
+    data_list = driveModels.disk.find_by_drive_id(drive_id)
     filesize = os.path.getsize(os.getcwd() + "/temp_uploads/" + str(drive_id) + "/" + fileName)
     for item in data_list:
         if filesize > 4194304:
@@ -67,15 +67,19 @@ def putfilesmall(disk_id, dirve_id, fileName, remotePath, times=1):
         times += 1
     if remotePath == "None":
         remotePath = "/"
-    data_list = driveModels.drive_list.find_by_id(disk_id)
+    data_list = driveModels.disk.find_by_id(disk_id)
     token = json.loads(json.loads(data_list.token))
-    url = config.app_url + '/v1.0/me/drive/items/root:{}/{}:/content'.format(remotePath, fileName)
+    if data_list.types == 1:
+        app_url = config.app_url
+    else:
+        app_url = config.China_app_url
+    url = app_url + '/v1.0/me/drive/items/root:{}/{}:/content'.format(remotePath, fileName)
     headers = {'Authorization': 'bearer {}'.format(token["access_token"])}
     pull_res = requests.put(url, headers=headers, data=open(os.getcwd()+"/temp_uploads/" + str(dirve_id) + "/" + fileName, 'rb'))
     pull_res = json.loads(pull_res.text)
     if 'error' in pull_res.keys():
-        driveLogic.reacquireToken(disk_id)
-        putfilesmall(disk_id, dirve_id, fileName, remotePath, times)
+        common.reacquireToken(disk_id)
+        return putfilesmall(disk_id, dirve_id, fileName, remotePath, times)
     else:
         return pull_res
 
@@ -110,9 +114,13 @@ def putfilebig(disk_id, dirve_id, fileName, remotePath):
 def CreateUploadSession(disk_id, fileName, remotePath):
     if remotePath == "None":
         remotePath = "/"
-    data_list = driveModels.drive_list.find_by_id(disk_id)
+    data_list = driveModels.disk.find_by_id(disk_id)
     token = json.loads(json.loads(data_list.token))
-    url = config.app_url + '/v1.0/me/drive/root:{}/{}:/createUploadSession'.format(remotePath,fileName)
+    if data_list.types == 1:
+        app_url = config.app_url
+    else:
+        app_url = config.China_app_url
+    url = app_url + '/v1.0/me/drive/root:{}/{}:/createUploadSession'.format(remotePath,fileName)
     headers = {'Authorization': 'bearer {}'.format(token["access_token"]), 'Content-Type': 'application/json'}
     data = {
         "item": {
@@ -126,8 +134,8 @@ def CreateUploadSession(disk_id, fileName, remotePath):
         else:
             pull_res = json.loads(pull_res.text)
             if 'error' in pull_res.keys():
-                driveLogic.reacquireToken(disk_id)
-                CreateUploadSession(disk_id, fileName, remotePath)
+                common.reacquireToken(disk_id)
+                return CreateUploadSession(disk_id, fileName, remotePath)
             else:
                     return pull_res
     except Exception as e:

@@ -28,9 +28,15 @@ SQLALCHEMY_ECHO = False  # 打印SQL语句 True or False
 MONGO_URI = "mongodb://127.0.0.1:27017/cache"
 
 
-
 """
-    OneDrive API设置
+    OneDrive API接口
 """
 BaseAuthUrl = "https://login.microsoftonline.com"
 app_url = "https://graph.microsoft.com/"
+
+
+"""
+    世纪互联 API接口
+"""
+ChinaAuthUrl = "https://login.chinacloudapi.cn"
+China_app_url = "https://microsoftgraph.chinacloudapi.cn"

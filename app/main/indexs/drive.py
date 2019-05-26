@@ -1,10 +1,9 @@
 # -*- coding:utf-8 -*-
 import re, urllib.parse, json
-from app import app
+from app import app, common
 from flask import render_template, request, make_response, redirect, session, url_for
 from flask_login import current_user
 from app.admin.drive import models as driveModels
-from app.admin.system import models as systemModels
 from app.main import index
 from ..indexs import logic
 import config
@@ -22,6 +21,12 @@ def thereisStr(str,arg):
 
 env = app.jinja_env
 env.filters['thereisStr'] = thereisStr  #注册自定义过滤器
+
+
+def hook(position):
+    return common.hooks(position)
+    # return position
+app.add_template_global(hook, 'hook')
 
 
 
@@ -48,7 +53,7 @@ def drive_list(id):
     else:
         activate = driveModels.drive.find_by_id(id)
         drive_id = activate.id
-    disk_list = driveModels.drive_list.find_by_drive_id(drive_id)
+    disk_list = driveModels.disk.find_by_drive_id(drive_id)
     load_disk_list = []
     for item in disk_list:
         load_disk_list.append({
@@ -83,6 +88,7 @@ def tableSort():
     return dict(sortTable=sortTable, sortType=sortType)
 
 
+
 @index.route('/drive/')
 def drive(id=0):
     drive = request.args.get('drive')
@@ -105,7 +111,7 @@ def drive(id=0):
             disk_id = disk
             driveurl = '{}&disk={}'.format(driveurl, disk)
         else:
-            disk_id = driveModels.drive_list.find_by_chief(drive).id
+            disk_id = driveModels.disk.find_by_chief(drive).id
             driveurl = '{}&disk={}'.format(driveurl, disk_id)
 
         if path:
@@ -117,7 +123,7 @@ def drive(id=0):
     else:
         activate = driveModels.drive.find_by_id(id)
         drive = activate.id
-        disk_id = driveModels.drive_list.find_by_chief(activate.id).id
+        disk_id = driveModels.disk.find_by_chief(activate.id).id
         data = logic.get_data(disk_id, '', search, sortTable, sortType, page_number)
         current_url = '/drive/?drive={}&disk={}&path='.format(activate.id, disk_id)
     return render_template(THEMES+'drive/index.html', activity_nav='index', drive_id=drive, disk_id=disk_id, current_url=current_url, crumbs_url=drive_other_info["crumbs_url"], crumbs_list_data=drive_other_info["crumbs_list_data"], load_disk_list=drive_other_info["load_disk_list"], data=data["data"], pagination=data["pagination"])
