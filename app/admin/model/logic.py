@@ -17,7 +17,9 @@ from ..hooks import models as hooksModels
 def get_model_list():
     path = os.getcwd()+"/app/model"
     path_list = os.listdir(path)
-    path_list.remove("README.md")
+    for p in path_list:
+        if os.path.isdir(os.getcwd()+"/app/model/"+p) is False:
+            path_list.remove(p)
     data_list = []
     for item in path_list:
         conf = configparser.ConfigParser()
