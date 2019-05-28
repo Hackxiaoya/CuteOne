@@ -20,7 +20,7 @@ import config
 SystemInfo = {
     "name": "CuteOne",
     "versionType": "Free",
-    "versions": "3.0.0",
+    "versions": "3.0.1",
     "server": ""
 }
 
@@ -263,6 +263,13 @@ def updete_plugin_info(value):
     pluginModels.plugin.update_by_name(value)
 
 
+"""
+    获取钩子信息
+    name   是个list
+"""
+def get_hooks_info(name):
+    data_list = hooksModels.hooks.find_by_title(name)
+    return data_list
 
 """
     Hooks 钩子渲染
@@ -283,7 +290,8 @@ def hooks(position):
                 result = importlib.import_module("app.plugin." + i.source + ".hook")
             html_res += getattr(result, i.method)()
         return html_res
-    except:
+    except Exception as e:
+        print("钩子渲染出现错误：{}".format(e))
         print("钩子渲染出现错误：" + position)
         pass
 

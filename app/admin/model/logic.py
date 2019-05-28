@@ -177,6 +177,9 @@ def admin_themes(name, status=True):
             if os.path.isdir(model_static):
                 rename_temp_path =  "{}/model/{}/{}".format(os.getcwd(), name, name)
                 os.rename(model_static, rename_temp_path)
+                if os.path.isdir(static_path) is False:
+                    # 如果不存在则创建目录
+                    os.makedirs(static_path)
                 shutil.move(rename_temp_path, static_path)
 
         else:
@@ -186,6 +189,9 @@ def admin_themes(name, status=True):
                 shutil.move(model_templates + "/front", model_themes + "/front")
             if os.path.isdir(static_path):
                 rename_temp_path = "{}/model/{}/{}".format(os.getcwd(), name, name)
+                if os.path.isdir(rename_temp_path) is False:
+                    # 如果不存在则创建目录
+                    os.makedirs(rename_temp_path)
                 shutil.move(static_path, rename_temp_path)
                 os.rename(rename_temp_path, model_static)
     except:
