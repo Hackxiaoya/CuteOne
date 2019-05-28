@@ -26,8 +26,8 @@ CREATE TABLE `cuteone_auth_group`  (
   `auth_group` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '权限ID数组',
   `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述',
   `price` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0.00' COMMENT '价格',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '权限组表' ROW_FORMAT = Dynamic;
 
@@ -43,8 +43,8 @@ CREATE TABLE `cuteone_auth_rule`  (
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
   `login_hide` int(1) NULL DEFAULT 0 COMMENT '登陆显示',
   `status` int(1) NOT NULL DEFAULT 1 COMMENT '是否有效(0:无效,1:有效)',
-  `update_time` datetime(0) NULL DEFAULT '0001-01-01 00:00:00' COMMENT '更新时间',
-  `create_time` datetime(0) NULL DEFAULT '0001-01-01 00:00:00' COMMENT '创建时间',
+  `update_time` datetime NULL DEFAULT '0001-01-01 00:00:00' COMMENT '更新时间',
+  `create_time` datetime NULL DEFAULT '0001-01-01 00:00:00' COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '权限规则表' ROW_FORMAT = Dynamic;
 
@@ -57,8 +57,8 @@ CREATE TABLE `cuteone_config`  (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '配置名称',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '配置说明',
   `value` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '配置值',
-  `update_time` datetime(0) NOT NULL DEFAULT '0001-01-01 00:00:00' COMMENT '更新时间',
-  `create_time` datetime(0) NOT NULL DEFAULT '0001-01-01 00:00:00' COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT '0001-01-01 00:00:00' COMMENT '更新时间',
+  `create_time` datetime NOT NULL DEFAULT '0001-01-01 00:00:00' COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '配置表' ROW_FORMAT = Dynamic;
 
@@ -96,10 +96,10 @@ CREATE TABLE `cuteone_disk`  (
   `token` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '应用Token',
   `chief` int(1) NULL DEFAULT 0 COMMENT '是否是主盘，1为主盘，0为从盘',
   `status` int(1) NULL DEFAULT 1 COMMENT '状态',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新日期',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建日期',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新日期',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建日期',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '网盘列表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '网盘列表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cuteone_drive
@@ -109,10 +109,10 @@ CREATE TABLE `cuteone_drive`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '网盘标题',
   `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '网盘描述',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新日期',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建日期',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新日期',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建日期',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '网盘管理表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '网盘管理表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cuteone_hooks
@@ -127,10 +127,10 @@ CREATE TABLE `cuteone_hooks`  (
   `method` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '钩子方法函数名',
   `position` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '钩子位置',
   `status` int(1) NOT NULL DEFAULT 1 COMMENT '状态',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新日期',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建日期',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新日期',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建日期',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '钩子表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '钩子表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cuteone_menu
@@ -151,10 +151,10 @@ CREATE TABLE `cuteone_menu`  (
   `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
   `sort` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '排序，越大越靠前',
   `status` int(1) NOT NULL DEFAULT 1 COMMENT '状态',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新日期',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建日期',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新日期',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建日期',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 402 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '菜单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '菜单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cuteone_model
@@ -166,10 +166,10 @@ CREATE TABLE `cuteone_model`  (
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
   `config` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '配置',
   `status` int(1) NOT NULL DEFAULT 0 COMMENT '状态',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新日期',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建日期',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新日期',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建日期',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '模型表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '模型表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cuteone_plugin
@@ -181,10 +181,10 @@ CREATE TABLE `cuteone_plugin`  (
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标题',
   `config` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '配资',
   `status` int(1) NOT NULL DEFAULT 0 COMMENT '状态',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新日期',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建日期',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新日期',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建日期',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '插件表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '插件表' ROW_FORMAT = Dynamic;
 
 
 -- ----------------------------
@@ -198,8 +198,7 @@ CREATE TABLE `cuteone_uploads_list`  (
   `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '路径',
   `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '类型',
   `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '状态',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '后台文件上传表' ROW_FORMAT = Dynamic;
-
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '后台文件上传表' ROW_FORMAT = Dynamic;
