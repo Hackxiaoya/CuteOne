@@ -34,11 +34,7 @@ def author_judge_at():
     drive = request.args.get('drive')
     path = '' if request.args.get('path') is None else request.args.get('path')
     if drive:
-        if current_user.get_id() is not None:
-            return logic.author_judge(drive, current_user.id, path)
-            # author = logic.author_judge(drive, 1, path)
-        else:
-            return logic.author_judge(drive, '', path)
+        return logic.author_judge(drive, path)
 
 
 

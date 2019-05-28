@@ -20,7 +20,7 @@ from ...admin.system import models as systemModels
     users_id: 会员ID
     path: 路径
 """
-def author_judge(drive_id, users_id='', path=''):
+def author_judge(drive_id, path=''):
     if path:
         path = path[1:]
         temp = path.split('/')
@@ -28,10 +28,9 @@ def author_judge(drive_id, users_id='', path=''):
         for item in temp:
             temp_path += "/" + item
 
-        # 用户权限判断钩子
-        res = common.hooks_give("model", "users", "author_judge")
-        if res:
-            return True
+        if current_user.get_id() is not None:
+            # 用户权限判断钩子
+            return common.hooks_give("model", "users", "author_judge", drive_id=drive_id, temp_path=temp_path)
         else:
             res = authorModels.authrule.find_by_drive_id(drive_id, temp_path)
             if res:
