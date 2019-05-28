@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_pymongo import PyMongo
+import config
 
 
 login_manager = LoginManager()
@@ -16,8 +17,19 @@ app.config.from_object('config')
 MysqlDB = SQLAlchemy(app)
 MongoDB = PyMongo(app)
 
+"""
+    获取当前主题
+"""
+def currentThemer():
+    return config.THEMES
+
+app.add_template_global(currentThemer, 'currentThemer') #设置全局主题变量
+
+
 async_mode = None
 socketio = SocketIO(app, async_mode=async_mode)
+
+
 
 
 

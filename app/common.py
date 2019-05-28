@@ -301,8 +301,8 @@ def hooks_give(types, name, method, **kwargs):
             result = importlib.import_module("app.model." + name + ".hook")
         else:
             result = importlib.import_module("app.plugin." + name + ".hook")
-        return getattr(result, method)(kwargs)
-    except:
+        return getattr(result, method)(**kwargs)
+    except Exception as e:
         print("钩子调用出现错误：类型|{}，名称|{}，方法|{}，参数|kwargs".format(types, name, method, kwargs))
         pass
 
