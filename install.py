@@ -53,5 +53,5 @@ if __name__ == '__main__':
     dbname = sys.argv[5]
     create_db(host, user, password, port, dbname)
     mysql_res = "mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8".format(user,password,host,port,dbname)
-    mongo_res = "mongodb://{}:{}/cache".format("192.168.31.107", "27017")
+    mongo_res = "mongodb://{}:{}/cache".format("127.0.0.1", "27017")
     edit_config(mysql_res, mongo_res)
