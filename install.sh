@@ -7,6 +7,7 @@ function install_eq(){
     echo "Updateing pip3 compatible"
     echo "Installation requirements..."
     pip3 install -r requirements.txt
+    ln -s /usr/local/python3/bin/uwsgi /usr/bin/uwsgi
     echo "Install requirements compatible"
 }
 
