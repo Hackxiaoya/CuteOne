@@ -5,21 +5,22 @@ try:
     from app.admin.model import models as modelModels
     from app.admin.system import models as systemModels
 except Exception as e:
-    pass
+	print(e)
+	pass
 
 index = Blueprint('/', __name__)  # 创建一个蓝图对象，设置别名
 
 
 # 基本配置
-# @index.context_processor
-# def webconfig():
-#     try:
-#         webconfig = systemModels.config.all()
-#         webconfig.pop('username')
-#         webconfig.pop('password')
-#         return dict(webconfig=webconfig)
-#     except:
-#         pass
+@index.context_processor
+def webconfig():
+    try:
+        webconfig = systemModels.config.all()
+        webconfig.pop('username')
+        webconfig.pop('password')
+        return dict(webconfig=webconfig)
+    except:
+        pass
 
 
 
