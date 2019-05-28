@@ -173,24 +173,14 @@ def admin_themes(name, status=True):
                 if os.path.isdir(model_path + "/front"):
                     shutil.move(model_path + "/front", folder_path + "/front")
             if os.path.isdir(plugin_static):
-                rename_temp_path = "{}/plugin/{}/{}".format(os.getcwd(), name, name)
-                os.rename(plugin_static, rename_temp_path)
-                if os.path.isdir(static_path) is False:
-                    # 如果不存在则创建目录
-                    os.makedirs(static_path)
-                shutil.move(rename_temp_path, static_path)
+                shutil.move(plugin_static, static_path)
         else:
             if os.path.isdir(folder_path + "/admin"):
                 shutil.move(folder_path + "/admin", model_path + "/admin")
             if os.path.isdir(folder_path + "/front"):
                 shutil.move(folder_path + "/front", model_path + "/front")
             if os.path.isdir(static_path):
-                rename_temp_path = "{}/plugin/{}/{}".format(os.getcwd(), name, name)
-                if os.path.isdir(rename_temp_path) is False:
-                    # 如果不存在则创建目录
-                    os.makedirs(rename_temp_path)
-                shutil.move(static_path, rename_temp_path)
-                os.rename(rename_temp_path, plugin_static)
+                shutil.move(static_path, plugin_static)
     except:
         return False
 
