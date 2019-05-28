@@ -101,7 +101,7 @@ def disk_list(id):
         if data_list:
             for result in data_list:
                 json_data["count"] = json_data["count"]+1
-                if result.chief == "1":
+                if result.chief == 1:
                     result.chief = "主盘"
                 else:
                     result.chief = "从盘"
