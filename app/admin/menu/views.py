@@ -115,7 +115,7 @@ def in_menu_edit(id):
             models.menu.update({"id": id, "title": title, "type":type, "activate": activate, "url":url, "sort": sort, "status": status})
         else:
             # 初始化role 并插入数据库
-            role = models.menu(title=title, type=type, url=url, activate=activate, sort=sort, status=status)
+            role = models.menu(title=title, type=type, url=url, activate=activate, postion=0, sort=sort, status=status)
             MysqlDB.session.add(role)
             MysqlDB.session.flush()
             MysqlDB.session.commit()
@@ -163,7 +163,7 @@ def out_menu_edit(id):
             models.menu.update({"id": id, "title": title, "type":type, "url":url, "activate": activate, "sort": sort, "status": status})
         else:
             # 初始化role 并插入数据库
-            role = models.menu(title=title, type=type, url=url, activate=activate, sort=sort, status=status)
+            role = models.menu(title=title, type=type, url=url, activate=activate, postion=1, sort=sort, status=status)
             MysqlDB.session.add(role)
             MysqlDB.session.flush()
             MysqlDB.session.commit()

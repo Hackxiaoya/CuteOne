@@ -110,9 +110,7 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
                             author_if_res = False
                 else:
                     for a in authorpath:
-                        if x["path"]=="" and x["name"] == a["path"].strip("/") and a["login_hide"] == 2:
-                            author_if_res = False
-                        elif x["path"] == a["path"] and a["login_hide"] == 1:
+                        if a["path"] == x["path"]+"/"+x["name"] and a["login_hide"] == 2:
                             author_if_res = False
                 if author_if_res:
                     data.insert(0, x)
@@ -152,14 +150,11 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
                             if x["path"] == "" and x["name"] == a["path"].strip("/") and a["login_hide"] == 1 and a[
                                 "login_hide"] == 2:
                                 author_if_res = False
-                                exit()
                             elif x["path"] == a["path"] and a["login_hide"] == 1 and a["login_hide"] == 2:
                                 author_if_res = False
                     else:
                         for a in authorpath:
-                            if x["path"] == "" and x["name"] == a["path"].strip("/") and a["login_hide"] == 2:
-                                author_if_res = False
-                            elif x["path"] == a["path"] and a["login_hide"] == 1:
+                            if x["name"] == a["path"].strip("/") and a["login_hide"] == 2:
                                 author_if_res = False
                     if author_if_res:
                         data.insert(0, x)
