@@ -136,10 +136,9 @@ def pull_dirve_file(chief_id, file_id):
     data_list = driveModels.disk.find_by_id(chief_id)
     token = json.loads(json.loads(data_list.token))
     if data_list.types == 1:
-        app_url = config.app_url
+        BaseUrl = config.app_url + 'v1.0/me/drive/items/' + file_id
     else:
-        app_url = config.China_app_url
-    BaseUrl = app_url + 'v1.0/me/drive/items/' + file_id
+        BaseUrl = "https://{}-my.sharepoint.cn/_api/v2.0/me/drive/items/{}".format(data_list.other, file_id)
     headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
     try:
         get_res = requests.get(BaseUrl, headers=headers, timeout=30)
@@ -150,6 +149,8 @@ def pull_dirve_file(chief_id, file_id):
         else:
             if '@microsoft.graph.downloadUrl' in get_res.keys():
                 return {"name": get_res["name"], "url": get_res["@microsoft.graph.downloadUrl"]}
+            elif '@content.downloadUrl' in get_res.keys():
+                return {"name": get_res["name"], "url": get_res["@content.downloadUrl"]}
             else:
                 return pull_dirve_file(chief_id, file_id)
     except Exception as e:

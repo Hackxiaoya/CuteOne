@@ -231,55 +231,6 @@ def Pagination_data(data, page):
 
 
 """
-    获取数据真实地址
-    @Author: yyyvy <76836785@qq.com>
-    @Description:
-    @Time: 2019-03-17
-    drive_id: 驱动id
-    disk_id: 网盘id
-    res_id: 资源id
-"""
-def get_downloadUrl(drive_id, disk_id, id):
-    data_list = driveModels.disk.find_by_id(disk_id)
-    token = json.loads(json.loads(data_list.token))
-    if data_list.types == 1:
-        app_url = config.app_url
-    else:
-        app_url = config.China_app_url
-    BaseUrl = app_url + 'v1.0/me/drive/items/' + id
-    headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
-    get_res = requests.get(BaseUrl, headers=headers, timeout=30)
-    get_res = json.loads(get_res.text)
-    if 'error' in get_res.keys():
-        common.reacquireToken(disk_id)
-        return get_downloadUrl(drive_id, disk_id, id)
-    else:
-        if '@microsoft.graph.downloadUrl' in get_res.keys():
-            drivename = "disk_" + str(disk_id)
-            collection = MongoDB.db[drivename]
-            result = collection.find_one({"id": get_res["id"]})
-            if result:
-                collection.update_one({"id":get_res["id"]}, {"$set": {"downloadUrl":get_res["@microsoft.graph.downloadUrl"],"timeout":int(time.time())+300}})
-            else:
-                dic = {
-                    "id": get_res["id"],
-                    "parentReference": get_res["parentReference"]["id"],
-                    "name": get_res["name"],
-                    "file": get_res["file"]["mimeType"],
-                    "path": get_res["parentReference"]["path"].replace("/drive/root:", ""),
-                    "size": get_res["size"],
-                    "createdDateTime": common.utc_to_local(get_res["fileSystemInfo"]["createdDateTime"]),
-                    "lastModifiedDateTime": common.utc_to_local(get_res["fileSystemInfo"]["lastModifiedDateTime"]),
-                    "downloadUrl": get_res["@microsoft.graph.downloadUrl"],
-                    "timeout": int(time.time()) + 300
-                }
-                collection.insert_one(dic)
-            return {"name": get_res["name"], "downloadUrl": get_res["@microsoft.graph.downloadUrl"]}
-        else:
-            return get_downloadUrl(drive_id, disk_id, id)
-
-
-"""
     获取文件下载地址
     @Author: yyyvy <76836785@qq.com>
     @Description:
@@ -294,12 +245,12 @@ def file_url(drive_id, disk_id, id):
     result = collection.find_one({"id": id})
     if result:
         if int(result["timeout"]) <= int(time.time()):
-            get_res = get_downloadUrl(drive_id, disk_id, id)
+            get_res = common.get_downloadUrl(drive_id, disk_id, id)
             return {"name": get_res["name"], "url": get_res["downloadUrl"]}
         else:
             return {"name": result["name"], "url": result["downloadUrl"]}
     else:
-        get_res = get_downloadUrl(drive_id, disk_id, id)
+        get_res = common.get_downloadUrl(drive_id, disk_id, id)
         return {"name": get_res["name"], "url": get_res["downloadUrl"]}
 
 

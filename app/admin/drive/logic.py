@@ -20,13 +20,13 @@ def get_one_file_list(id, path=''):
     data_list = models.disk.find_by_id(id)
     token = json.loads(json.loads(data_list.token))
     if data_list.types == 1:
-        app_url = config.app_url
+        app_url = config.app_url+"/v1.0/me/drive"
     else:
-        app_url = config.China_app_url
+        app_url = "https://{}-my.sharepoint.cn/_api/v2.0/me/drive".format(data_list.other)
     if path:
-        BaseUrl = app_url + '/v1.0/me/drive/root:{}:/children?expand=thumbnails'.format(path)
+        BaseUrl = app_url + '/root:{}:/children?expand=thumbnails'.format(path)
     else:
-        BaseUrl = app_url + '/v1.0/me/drive/root/children?expand=thumbnails'
+        BaseUrl = app_url + '/root/children?expand=thumbnails'
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer {}'.format(token["access_token"])}
     try:
         get_res = requests.get(BaseUrl, headers=headers, timeout=30)
@@ -40,10 +40,17 @@ def get_one_file_list(id, path=''):
                 if '@odata.nextLink' in get_res.keys():
                     pageres = get_one_file_list_page(token, get_res["@odata.nextLink"])
                     result+=pageres
+
+                # 处理世纪互联的地址
+                if data_list.types == 2:
+                    for r in result:
+                        if "folder" not in r:
+                            r["thumbnails"].append({"large":{"url":r["@content.downloadUrl"]}})
                 return {'code': True, 'msg': '获取成功', 'data': result}
             else:
                 return get_one_file_list(id, path)
-    except:
+    except Exception as e:
+        return {'code': False, 'msg': e, 'data': ''}
         pass
         # return get_one_file_list(id, path)
 

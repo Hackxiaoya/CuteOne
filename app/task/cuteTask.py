@@ -1,10 +1,10 @@
 # -*- coding:utf-8 -*-
-import os, sys, json, threading, time
+import os, sys, threading, time
 dir_path = os.path.split(os.path.abspath(sys.argv[0]))[0]
 sys.path.append(dir_path+"/../../")
 sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
 from app import MongoDB
-from app.admin.drive import logic, models
+from app.admin.drive import logic
 from app import common
 
 """
@@ -86,6 +86,10 @@ def task_write(id, data, type):
     # 创建集合 - 不添加一条数据，集合是不会创建的，因为MongoDB是惰性数据库
     drivename = "disk_" + str(id)
     collection = MongoDB.db[drivename]
+    if '@microsoft.graph.downloadUrl' in data.keys():
+        downloadUrl = data["@microsoft.graph.downloadUrl"]
+    else:
+        downloadUrl = data["@content.downloadUrl"]
     if type == "all":
         dic = {
             "id": data["id"],
@@ -96,7 +100,7 @@ def task_write(id, data, type):
             "size": data["size"],
             "createdDateTime": common.utc_to_local(data["fileSystemInfo"]["createdDateTime"]),
             "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"]),
-            "downloadUrl": data["@microsoft.graph.downloadUrl"],
+            "downloadUrl": downloadUrl,
             "timeout": int(time.time()) + 300
         }
         collection.insert_one(dic)
@@ -111,13 +115,13 @@ def task_write(id, data, type):
                 "size": data["size"],
                 "createdDateTime": common.utc_to_local(data["fileSystemInfo"]["createdDateTime"]),
                 "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"]),
-                "downloadUrl": data["@microsoft.graph.downloadUrl"],
+                "downloadUrl": downloadUrl,
                 "timeout": int(time.time()) + 300
             }
             collection.insert_one(dic)
         else:
             collection.update_one({"id": data["id"]}, {
-                "$set": {"downloadUrl": data["@microsoft.graph.downloadUrl"], "timeout": int(time.time()) + 300}})
+                "$set": {"downloadUrl": downloadUrl, "timeout": int(time.time()) + 300}})
 
 
 if __name__ =='__main__':

@@ -10,7 +10,7 @@ from app.admin.system import models as systemModels
 from app.admin.hooks import models as hooksModels
 from app.admin.model import models as modelModels
 from app.admin.plugin import models as pluginModels
-from .admin.drive import models, logic
+from app.admin.drive import models as driveModels, logic as driveLogic
 import config
 
 
@@ -20,7 +20,7 @@ import config
 SystemInfo = {
     "name": "CuteOne",
     "versionType": "Free",
-    "versions": "3.0.4",
+    "versions": "3.0.5",
     "server": ""
 }
 
@@ -189,7 +189,7 @@ def restart():
     获取驱动列表
 """
 def get_drive_list():
-    drive_list = models.drive.all()
+    drive_list = driveModels.drive.all()
     return drive_list
 
 
@@ -197,7 +197,7 @@ def get_drive_list():
     获取指定驱动的网盘列表
 """
 def find_drive_disk_list(drive_id):
-    disk_list = models.disk.find_by_drive_id(drive_id)
+    disk_list = driveModels.disk.find_by_drive_id(drive_id)
     return disk_list
 
 
@@ -205,7 +205,7 @@ def find_drive_disk_list(drive_id):
     获取指定驱动的主盘信息
 """
 def find_drive_chief(drive_id):
-    chief = models.disk.find_by_chief(drive_id)
+    chief = driveModels.disk.find_by_chief(drive_id)
     return chief
 
 
@@ -217,7 +217,7 @@ def find_drive_chief(drive_id):
     id: 网盘ID
 """
 def reacquireToken(id):
-    data_list = models.disk.find_by_id(id)
+    data_list = driveModels.disk.find_by_id(id)
     token = json.loads(json.loads(data_list.token))
     redirect_url = "https://127.0.0.1/auth"
     ReFreshData = 'client_id={client_id}&redirect_uri={redirect_uri}&client_secret={client_secret}&refresh_token={refresh_token}&grant_type=refresh_token'
@@ -228,8 +228,9 @@ def reacquireToken(id):
         url = config.BaseAuthUrl + '/common/oauth2/v2.0/token'
     else:
         url = config.ChinaAuthUrl + '/common/oauth2/token'
+        data = "{}&resource=https://{}-my.sharepoint.cn/".format(data, data_list.other)
     res = requests.post(url, data=data, headers=headers)
-    models.disk.update({"id": id, "token": json.dumps(res.text)}) # 更新数据库的Token
+    driveModels.disk.update({"id": id, "token": json.dumps(res.text)}) # 更新数据库的Token
     return res.text
 
 
@@ -404,3 +405,76 @@ def paginates(count, limit, offset, items):
     else:
         all_page = list(range(1, math.ceil(count / limit) + 1))
     return {"data": items, "pagination": {"count": count, "page": all_page, "now_page": offset}}
+
+
+"""
+    获取文件缓存下载地址
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-5-31
+    drive_id: 驱动id
+    disk_id: 网盘id
+    res_id: 资源id
+"""
+def file_real_url(drive_id, disk_id, id):
+    drivename = "disk_" + str(disk_id)
+    collection = MongoDB.db[drivename]
+    result = collection.find_one({"id": id})
+    if result:
+        if int(result["timeout"]) <= int(time.time()):
+            get_res = get_downloadUrl(drive_id, disk_id, id)
+            return {"name": get_res["name"], "url": get_res["downloadUrl"]}
+        else:
+            return {"name": result["name"], "url": result["downloadUrl"]}
+    else:
+        get_res = get_downloadUrl(drive_id, disk_id, id)
+        return {"name": get_res["name"], "url": get_res["downloadUrl"]}
+
+
+"""
+    从新拉取真实地址
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-5-31
+    drive_id: 驱动id
+    disk_id: 网盘id
+    res_id: 资源id
+"""
+def get_downloadUrl(drive_id, disk_id, id):
+    data_list = driveModels.disk.find_by_id(disk_id)
+    token = json.loads(json.loads(data_list.token))
+    if data_list.types == 1:
+        BaseUrl = "{}v1.0/me/drive/items/{}".format(config.app_url, id)
+    else:
+        BaseUrl = "https://{}-my.sharepoint.cn/_api/v2.0/me/drive/items/{}".format(data_list.other, id)
+    headers = {'Authorization': 'Bearer {}'.format(token["access_token"])}
+    get_res = requests.get(BaseUrl, headers=headers, timeout=30)
+    get_res = json.loads(get_res.text)
+    if 'error' in get_res.keys():
+        reacquireToken(disk_id)
+        return get_downloadUrl(drive_id, disk_id, id)
+    else:
+        if '@microsoft.graph.downloadUrl' in get_res.keys():
+            downloadUrl = get_res["@microsoft.graph.downloadUrl"]
+        else :
+            downloadUrl = get_res["@content.downloadUrl"]
+        drivename = "disk_" + str(disk_id)
+        collection = MongoDB.db[drivename]
+        result = collection.find_one({"id": get_res["id"]})
+        if result:
+            collection.update_one({"id":get_res["id"]}, {"$set": {"downloadUrl":downloadUrl,"timeout":int(time.time())+300}})
+        else:
+            dic = {
+                "id": get_res["id"],
+                "parentReference": get_res["parentReference"]["id"],
+                "name": get_res["name"],
+                "file": get_res["file"]["mimeType"],
+                "path": get_res["parentReference"]["path"].replace("/drive/root:", ""),
+                "size": get_res["size"],
+                "createdDateTime": utc_to_local(get_res["fileSystemInfo"]["createdDateTime"]),
+                "lastModifiedDateTime": utc_to_local(get_res["fileSystemInfo"]["lastModifiedDateTime"]),
+                "downloadUrl": downloadUrl,
+                "timeout": int(time.time()) + 300
+            }
+            collection.insert_one(dic)
+        return {"name": get_res["name"], "downloadUrl": downloadUrl}

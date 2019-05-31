@@ -134,11 +134,15 @@ def disk_edit(drive_id, id):
         drive_id = request.form['drive_id']
         id = request.form['id']
         title = request.form['title']
+        other = request.form['other']
         client_id = request.form['client_id']
         client_secret = request.form['client_secret']
         code = request.form['code']
         types = int(request.form['types'])
         chief = request.form['chief']
+        if types == 2:
+            if other == "":
+                return json.dumps({"code": 1, "msg": "前缀不能为空！"})
 
         if id != '0':
             if code:
@@ -150,7 +154,7 @@ def disk_edit(drive_id, id):
                                            code=code)
                 else:
                     url = config.ChinaAuthUrl + '/common/oauth2/token'
-                    AuthData = 'client_id={client_id}&redirect_uri={redirect_uri}&client_secret={client_secret}&code={code}&grant_type=authorization_code&resource=https://microsoftgraph.chinacloudapi.cn/'
+                    AuthData = 'client_id={client_id}&redirect_uri={redirect_uri}&client_secret={client_secret}&code={code}&grant_type=authorization_code&resource=00000003-0000-0ff1-ce00-000000000000'
                     data = AuthData.format(client_id=client_id, redirect_uri=redirect_url, client_secret=client_secret,
                                            code=code)
 
@@ -163,11 +167,12 @@ def disk_edit(drive_id, id):
                     return json.dumps({"code": 1, "msg": get_res["error_description"]})
                 else:
                     token = json.dumps(res.text)
-                    models.disk.update({"id": id, "title": title, "client_id": client_id, "client_secret": client_secret, "types":types, "chief":chief, "token":token})
+                    models.disk.update({"id": id, "title": title, "other": other, "client_id": client_id, "client_secret": client_secret, "types":types, "chief":chief, "token":token})
+                    common.reacquireToken(id)
                     return json.dumps({"code": 0, "msg": "完成！"})
             else:
                 models.disk.update(
-                    {"id": id, "title": title, "client_id": client_id, "client_secret": client_secret, "types":types, "chief": chief})
+                    {"id": id, "title": title, "client_id": client_id, "other": other, "client_secret": client_secret, "types":types, "chief": chief})
                 return json.dumps({"code": 0, "msg": "完成！"})
         else:
             redirect_url = "https://127.0.0.1/auth"
@@ -178,7 +183,7 @@ def disk_edit(drive_id, id):
                                        code=code)
             else:
                 url = config.ChinaAuthUrl + '/common/oauth2/token'
-                AuthData = 'client_id={client_id}&redirect_uri={redirect_uri}&client_secret={client_secret}&code={code}&grant_type=authorization_code&resource=https://microsoftgraph.chinacloudapi.cn/'
+                AuthData = 'client_id={client_id}&redirect_uri={redirect_uri}&client_secret={client_secret}&code={code}&grant_type=authorization_code&resource=00000003-0000-0ff1-ce00-000000000000'
                 data = AuthData.format(client_id=client_id, redirect_uri=redirect_url, client_secret=client_secret,
                                        code=code)
             headers = {
@@ -191,10 +196,12 @@ def disk_edit(drive_id, id):
             else:
                 token = json.dumps(res.text)
                 # 初始化role 并插入数据库
-                role = models.disk(title=title, drive_id=drive_id, client_id=client_id, client_secret=client_secret, token=token, types=types, chief=chief)
+                role = models.disk(title=title, other=other, drive_id=drive_id, client_id=client_id, client_secret=client_secret, token=token, types=types, chief=chief)
                 MysqlDB.session.add(role)
                 MysqlDB.session.flush()
+                role_id = role.id
                 MysqlDB.session.commit()
+                common.reacquireToken(role_id)
         return json.dumps({"code": 0, "msg": "完成！"})
 
 

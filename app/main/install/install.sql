@@ -90,6 +90,7 @@ CREATE TABLE `cuteone_disk`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `drive_id` int(11) NOT NULL COMMENT '驱动ID',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '标题',
+  `other` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '标识，其他',
   `types` int(1) NOT NULL DEFAULT 1 COMMENT '网盘类型：1 onedrive',
   `client_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用ID，client_id',
   `client_secret` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用机密，client_secret',

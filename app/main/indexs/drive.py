@@ -133,7 +133,7 @@ def video(drive_id, disk_id, id, load=None, source_disk_id=0, source_id=0):
         data = logic.get_load(drive_id, disk_id, source_disk_id, source_id)
         return redirect(url_for('/.video', drive_id=drive_id, disk_id=disk_id, id=data), 301)
     else:
-        data = logic.get_downloadUrl(drive_id, disk_id, id)
+        data = common.get_downloadUrl(drive_id, disk_id, id)
         share_url = "/drive/video/{}/{}/{}".format(drive_id, disk_id, id)
         donw_url = "/drive/down_file/{}/{}/{}".format(drive_id, disk_id, id)
         data["drive_id"] = drive_id

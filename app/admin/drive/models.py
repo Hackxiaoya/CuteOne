@@ -64,6 +64,7 @@ class disk(MysqlDB.Model):
     id = MysqlDB.Column(MysqlDB.INT, primary_key=True)
     drive_id = MysqlDB.Column(MysqlDB.String(255), unique=False)
     title = MysqlDB.Column(MysqlDB.String(255), unique=False)
+    other = MysqlDB.Column(MysqlDB.String(255), unique=False)
     types = MysqlDB.Column(MysqlDB.String(255), unique=False, default=1)
     client_id = MysqlDB.Column(MysqlDB.String(255), unique=False)
     client_secret = MysqlDB.Column(MysqlDB.String(255), unique=False)

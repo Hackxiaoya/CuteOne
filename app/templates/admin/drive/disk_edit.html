@@ -41,8 +41,14 @@
         <div class="layui-form-item">
             <label class="layui-form-label">网盘类型</label>
             <div class="layui-input-block">
-                <input type="radio" name="types" value="1" title="国际版OneDrive" {% if data.types==1 %}checked{% endif %}>
-                <input type="radio" name="types" value="2" title="世纪互联" {% if data.types==2 %}checked{% endif %}>
+                <input type="radio" name="types" value="1" lay-filter="types" title="国际版OneDrive" {% if data.types==1 %}checked{% endif %}>
+                <input type="radio" name="types" value="2" lay-filter="types" title="世纪互联" {% if data.types==2 %}checked{% endif %}>
+            </div>
+        </div>
+        <div class="layui-form-item" id="other" style="display: {% if data.types==2 %}block;{% else %}none;{% endif %}">
+            <label class="layui-form-label">前缀</label>
+            <div class="layui-input-block">
+                <input type="text" name="other" value="{{ data.other or '' }}" placeholder="请输入前缀" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -66,6 +72,14 @@
     layui.use(['jquery', 'form', 'layer'], function(){
         var $ = layui.$; //重点处
         var form = layui.form;
+
+        form.on('radio(types)', function (data) {
+            if(data.value=="2"){
+                $("#other").show()
+            }else{
+                $("#other").hide()
+            }
+        });
 
 
         // 获取onSecret
