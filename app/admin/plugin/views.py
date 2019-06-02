@@ -30,7 +30,7 @@ def plugin_install():
     title = request.form['title']
     name = request.form['name']
     config_info = logic.get_plugin_info(name)
-    if config_info["code"] == 0:
+    if config_info:
         res = logic.install_plugin(name)
         if res:
             # 初始化role 并插入数据库
@@ -47,20 +47,9 @@ def plugin_install():
 
             return json.dumps({"code": 0, "msg": "完成！"})
         else:
-            return json.dumps({"code": 1, "msg": res["msg"]})
+            return json.dumps({"code": 1, "msg": "失败！"})
     else:
-        return json.dumps({"code": 1, "msg": config_info["msg"]})
-
-
-@admin.route('/plugin/update', methods=['GET', 'POST'])
-@common.login_require
-def plugin_update():
-    name = request.form['name']
-    config_info = logic.update_plugin(name)
-    if config_info["code"] == 0:
-        return json.dumps({"code": 0, "msg": "完成！"})
-    else:
-        return json.dumps({"code": 1, "msg": config_info["msg"]})
+        return json.dumps({"code": 1, "msg": "系统版本太低！"})
 
 
 @admin.route('/plugin/uninstall', methods=['GET', 'POST'])
