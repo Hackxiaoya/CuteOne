@@ -32,7 +32,7 @@ def model_install():
     config_info = logic.get_model_info(name)
     if config_info["code"] == 0:
         res = logic.install_model(name)
-        if res:
+        if res["code"] == 0:
             # 初始化role 并插入数据库
             role = models.model(title=title, name=name, status=1)
             MysqlDB.session.add(role)
@@ -47,7 +47,18 @@ def model_install():
 
             return json.dumps({"code": 0, "msg": "完成！"})
         else:
-            return json.dumps({"code": 1, "msg": "失败！"})
+            return json.dumps({"code": 1, "msg": res["msg"]})
+    else:
+        return json.dumps({"code": 1, "msg": config_info["msg"]})
+
+
+@admin.route('/model/update', methods=['GET', 'POST'])
+@common.login_require
+def model_update():
+    name = request.form['name']
+    config_info = logic.update_model(name)
+    if config_info["code"] == 0:
+        return json.dumps({"code": 0, "msg": "完成！"})
     else:
         return json.dumps({"code": 1, "msg": config_info["msg"]})
 

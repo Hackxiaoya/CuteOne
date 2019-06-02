@@ -27,6 +27,7 @@
     <script type="application/javascript" src="{{url_for('static', filename='js/APlayer.min.js')}}"></script>
     <script type="application/javascript" src="{{url_for('static', filename='js/APEFN.js')}}"></script>
 	<script src="{{url_for('static', filename='themes/default/js/mdui.min.js')}}"></script>
+    <script type="application/javascript" src="{{url_for('static', filename='js/clipboard.min.js')}}"></script>
 </head>
 
 <body class="mdui-theme-primary-blue-grey mdui-theme-accent-blue">
@@ -212,6 +213,42 @@
                 }, function(index){
                     window.location.href = url;
                     layer.close(index);
+                });
+            });
+
+            // word文件打开
+            $(".open_word").on("click", function () {
+                event.stopPropagation();    //  阻止事件冒泡
+                var drive = $(this).data("drive"),
+                    disk = $(this).data("disk"),
+                    id = $(this).data("id");
+                var url = "/drive/get_downloadUrl/" + drive + "/" + disk + "/" + id;
+                $.ajax({
+                    url : url,
+                    dataType: 'json',
+                    success: function(data){
+                        window.open("https://view.officeapps.live.com/op/view.aspx?src="+data.url, "_blank");
+                    }
+                });
+            });
+
+            // 外链按钮
+            $(".link_file").on("click", function () {
+                event.stopPropagation();    //  阻止事件冒泡
+                var drive = $(this).data("drive"),
+                    disk = $(this).data("disk"),
+                    id = $(this).data("id"),
+                    name = $(this).data("name");
+                var url = window.location.href + "drive/down_file/" + drive + "/" + disk + "/" + id + "/?filename=" + name;
+                // 复制到剪切板
+                clipboard = new ClipboardJS(this, {
+                    text: function(el) {
+                        return url;
+                    }
+                });
+                clipboard.on('success', function(e) {
+                    layer.msg("已复制外链地址！");
+                    clipboard.destroy();
                 });
             });
 

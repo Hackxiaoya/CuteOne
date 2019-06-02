@@ -38,7 +38,12 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <div class="layui-card">
-                <div class="layui-card-header">Model Setting</div>
+                <div class="layui-card-header">
+                    Model Setting
+                    <span style="color: red;margin-left: 10px;">
+                        获取更多模块，请加QQ群：8331213 (群共享里)
+                    </span>
+                </div>
                 <div class="layui-row layui-form">
                     {% for item in data %}
                     <div class="layui-col-md4">
@@ -65,6 +70,18 @@
                                             By: {{ item.author }}
                                         </div>
                                         <div class="layui-input-inline">
+                                            {% if item.cloud_update == 1 %}
+                                                <button class="layui-btn layui-btn-xs update" data-name="{{ item.name }}">云端有更新</button>
+                                            {% elif item.cloud_update == 2 %}
+                                                <button class="layui-btn layui-btn-normal layui-btn-xs" data-name="{{ item.name }}">当前已最新</button>
+                                            {% elif item.cloud_update == 3 %}
+                                                <button class="layui-btn layui-btn-disabled layui-btn-xs" data-name="{{ item.name }}">获取错误</button>
+                                            {% elif item.cloud_update == 4 %}
+                                                <button class="layui-btn layui-btn-disabled layui-btn-xs" data-name="{{ item.name }}">黑名单</button>
+                                            {% else %}
+                                                <button class="layui-btn layui-btn-disabled layui-btn-xs" data-name="{{ item.name }}">本地模块</button>
+                                            {% endif %}
+
                                             {% if item.status == 1 %}
                                                 <button class="layui-btn layui-btn-danger layui-btn-xs uninstall" data-name="{{ item.name }}">卸载模块</button>
                                             {% else %}
@@ -88,18 +105,25 @@
 <script>
     layui.use(['form', 'layer'], function(){
         var $ = layui.$; //重点处
-        //监听提交
+        //安装模块
         $('.install').on('click', function () {
             var title = $(this).data('title');
             var name = $(this).data('name');
-            layer.confirm('确定安装此模块?'
+            var notify = "<span style='color:red;'>安装模块需要保留cuteone的标识在前端任意位置，否则被检测到，则不能使用在线更新；<br>并且云端会记录您的域名;</span><br>您还确定安装此模块吗?";
+            layer.confirm(notify
                 ,function(index, layero){
                     $.ajax({
                         url: "/admin/model/install"
                         ,type: "POST"
                         ,dataType: "json"
                         ,data: {title:title, name:name}
+                        ,beforeSend: function(){
+                            loading_index = layer.load(1, {
+                                shade: [0.1,'#fff'] //0.1透明度的白色背景
+                            });
+                        }
                         ,success: function (data) {
+                            layer.close(loading_index);
                             if(data.code==0){
                                 layer.msg('成功！', {icon: 1});
                                 location.reload();
@@ -113,9 +137,39 @@
                 }
             );
         });
+
+        $('.update').on('click', function () {
+            var name = $(this).data('name');
+            layer.confirm('确定更新此模块?'
+                ,function(index, layero){
+                    $.ajax({
+                        url: "/admin/model/update"
+                        ,type: "POST"
+                        ,dataType: "json"
+                        ,data: {name:name}
+                        ,beforeSend: function(){
+                            loading_index = layer.load(1, {
+                                shade: [0.1,'#fff'] //0.1透明度的白色背景
+                            });
+                        }
+                        ,success: function (data) {
+                            layer.close(loading_index);
+                            if(data.code==0){
+                                layer.msg('成功！', {icon: 1});
+                                location.reload();
+                                layer.close(index);
+                            }else{
+                                layer.msg(data.msg);
+                                return false;
+                            }
+                        }
+                    });
+                }
+            );
+        });
+
         $('.uninstall').on('click', function () {
             var name = $(this).data('name');
-            console.log(name)
             layer.confirm('确定卸载此模块?'
                 ,function(index, layero){
                     $.ajax({
@@ -123,7 +177,13 @@
                         ,type: "POST"
                         ,dataType: "json"
                         ,data: {name:name}
+                        ,beforeSend: function(){
+                            loading_index = layer.load(1, {
+                                shade: [0.1,'#fff'] //0.1透明度的白色背景
+                            });
+                        }
                         ,success: function (data) {
+                            layer.close(loading_index);
                             if(data.code==0){
                                 layer.msg('成功！', {icon: 1});
                                 location.reload();
