@@ -7,6 +7,9 @@ from app import MongoDB
 from app.admin.drive import logic
 from app import common
 
+# 信号量，同时只允许10个线程运行
+semlock = threading.BoundedSemaphore(10)
+
 """
     后台任务
 """
@@ -26,10 +29,10 @@ def task_getlist(id, path, type):
     else:
         path = ''
     res = logic.get_one_file_list(id, path)
+
+    # 创建集合 - 不添加一条数据，集合是不会创建的，因为MongoDB是惰性数据库
+    collection = MongoDB.db["disk_" + str(id)]
     try:
-        # 创建集合 - 不添加一条数据，集合是不会创建的，因为MongoDB是惰性数据库
-        drivename = "disk_" + str(id)
-        collection = MongoDB.db[drivename]
         for i in res["data"]:
             if type == "all":
                 if "folder" in i.keys():
@@ -44,17 +47,16 @@ def task_getlist(id, path, type):
                         "lastModifiedDateTime": common.utc_to_local(i["fileSystemInfo"]["lastModifiedDateTime"])
                     }
                     collection.insert_one(dic)
+                    semlock.acquire()
                     t = threading.Thread(target=task_getlist, args=(id, "/" + path + "/" + i["name"], type,))
                     t.start()
                 else:
-                    t = threading.Thread(target=task_write, args=(id, i, type,))
+                    semlock.acquire()
+                    t = threading.Thread(target=task_write, args=(id, i,))
                     t.start()
             else:
                 if "folder" in i.keys():
-                    if collection.find_one({"id": i["id"]}):
-                        t = threading.Thread(target=task_getlist, args=(id, "/" + path + "/" + i["name"], type,))
-                        t.start()
-                    else:
+                    if collection.find_one({"file": "folder", "size": i["size"]}) is None:
                         dic = {
                             "id": i["id"],
                             "parentReference": i["parentReference"]["id"],
@@ -66,11 +68,14 @@ def task_getlist(id, path, type):
                             "lastModifiedDateTime": common.utc_to_local(i["fileSystemInfo"]["lastModifiedDateTime"])
                         }
                         collection.insert_one(dic)
+                        semlock.acquire()
                         t = threading.Thread(target=task_getlist, args=(id, "/" + path + "/" + i["name"], type,))
                         t.start()
                 else:
-                    t = threading.Thread(target=task_write, args=(id, i, type,))
+                    semlock.acquire()
+                    t = threading.Thread(target=task_write, args=(id, i,))
                     t.start()
+
     except:
         task_getlist(id, path, type)
 
@@ -82,7 +87,7 @@ def task_getlist(id, path, type):
     @Time: 2019-03-16
     types: 类型
 """
-def task_write(id, data, type):
+def task_write(id, data):
     # 创建集合 - 不添加一条数据，集合是不会创建的，因为MongoDB是惰性数据库
     drivename = "disk_" + str(id)
     collection = MongoDB.db[drivename]
@@ -90,7 +95,11 @@ def task_write(id, data, type):
         downloadUrl = data["@microsoft.graph.downloadUrl"]
     else:
         downloadUrl = data["@content.downloadUrl"]
-    if type == "all":
+    if "thumbnails" in data.keys() and data["thumbnails"]:
+        thumbnails = data["thumbnails"][0]["large"]["url"]
+    else:
+        thumbnails = ""
+    if collection.find_one({"id": data["id"]}) is None:
         dic = {
             "id": data["id"],
             "parentReference": data["parentReference"]["id"],
@@ -100,35 +109,24 @@ def task_write(id, data, type):
             "size": data["size"],
             "createdDateTime": common.utc_to_local(data["fileSystemInfo"]["createdDateTime"]),
             "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"]),
+            "thumbnails": thumbnails,
             "downloadUrl": downloadUrl,
             "timeout": int(time.time()) + 300
         }
         collection.insert_one(dic)
     else:
-        if collection.find_one({"id": data["id"]}) is None:
-            dic = {
-                "id": data["id"],
-                "parentReference": data["parentReference"]["id"],
-                "name": data["name"],
-                "file": data["file"]["mimeType"],
-                "path": data["parentReference"]["path"].replace("/drive/root:", ""),
-                "size": data["size"],
-                "createdDateTime": common.utc_to_local(data["fileSystemInfo"]["createdDateTime"]),
-                "lastModifiedDateTime": common.utc_to_local(data["fileSystemInfo"]["lastModifiedDateTime"]),
-                "downloadUrl": downloadUrl,
-                "timeout": int(time.time()) + 300
-            }
-            collection.insert_one(dic)
-        else:
-            collection.update_one({"id": data["id"]}, {
-                "$set": {"downloadUrl": downloadUrl, "timeout": int(time.time()) + 300}})
+        collection.update_one({"id": data["id"]}, {
+            "$set": {"thumbnails": thumbnails, "downloadUrl": downloadUrl, "timeout": int(time.time()) + 300}})
+    semlock.release()
+
 
 
 if __name__ =='__main__':
     id = sys.argv[1]  # 驱动ID
     type = sys.argv[2]  # 更新类型，all全部，dif差异
-    if type == "all":   # 如果是更新全部
+    if type == "all":  # 如果是更新全部
         drivename = "disk_" + str(id)
-        MongoDB.db[drivename].remove() # 移除集合所有数据
-        MongoDB.db[drivename].drop()   # 删除集合
+        MongoDB.db[drivename].remove()  # 移除集合所有数据
+        MongoDB.db[drivename].drop()  # 删除集合
+
     task_getlist(id, '', type)

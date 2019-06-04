@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-import os
+import os, time
 from flask import request, render_template, json
 from .. import admin
 from ..system import models
@@ -82,9 +82,10 @@ def front():
 @common.login_require
 def upload_logo():
     img = request.files.get('file')
-    file_path = os.getcwd()+"/app/static/uploads/logo.png"
+    name = str(int(time.time()))
+    file_path = os.getcwd()+"/app/static/uploads/"+name+".png"
     img.save(file_path)
-    url = "/static/uploads/logo.png"
+    url = "/static/uploads/"+name+".png"
     return json.dumps({"code": 0, "msg": "", "data": {"src": url}})
 
 
@@ -92,9 +93,10 @@ def upload_logo():
 @common.login_require
 def upload_bg():
     img = request.files.get('file')
-    file_path = os.getcwd()+"/app/static/uploads/site_background.jpg"
+    name = str(int(time.time()))
+    file_path = os.getcwd()+"/app/static/uploads/"+name+".jpg"
     img.save(file_path)
-    url = "/static/uploads/site_background.jpg"
+    url = "/static/uploads/"+name+".jpg"
     return json.dumps({"code": 0, "msg": "", "data": {"src": url}})
 
 

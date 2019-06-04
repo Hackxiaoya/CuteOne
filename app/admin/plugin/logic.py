@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-import os, configparser, json, shutil
+import os, configparser, json, shutil, requests, zipfile
 from app import common
 from app import MysqlDB
 from ..menu import models
@@ -28,8 +28,40 @@ def get_plugin_list():
         temp = {}
         for i in options:
             temp[i[0]] = i[1]
+        cloud_update = detect_update(temp["name"], temp["version"])
+        temp["cloud_update"] = cloud_update
         data_list.append(temp)
     return data_list
+
+
+"""
+    Detect cloud update status
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-6-1
+    name: name
+    version: version
+"""
+def detect_update(name, version):
+    try:
+        server_url = common.SystemInfo["server"] + "cuteone/expand/get_expand"
+        data = {
+            'name': name,
+            'types': 2
+        }
+        get_res = requests.post(server_url, data=data)
+        get_res = json.loads(get_res.text)
+        if get_res["code"] == 4:
+            return 4
+        if get_res["code"] == 0:
+            for i in get_res["data"]["version"]:
+                if i["version"] > version:
+                    return 1    # 云端有新版
+            return 2    # 云端无新版
+        else:
+            return 0    # 云端无此扩展
+    except Exception as e:
+        return 3
 
 
 """
@@ -78,6 +110,14 @@ def get_plugin_info(name):
     @Time: 2019-04-25
 """
 def install_plugin(name):
+    try:
+        server_url = common.SystemInfo["server"] + "cuteone/expand/get_expand"
+        get_res = requests.post(server_url, data={'name': name, 'types': 2})
+        get_res = json.loads(get_res.text)
+        if get_res["code"] == 4:
+            return {"code": 1, "msg": "error"}
+    except:
+            pass
     admin_themes(name, True)
     hook(name, True)
     model_path = '{}/app/plugin/{}/install/'.format(os.getcwd(), name)
@@ -91,7 +131,7 @@ def install_plugin(name):
                 cursor.session.execute(sql_item)
             cursor.session.commit()
         except Exception as e:
-            return False
+            return {"code": 1, "msg": e}
 
     if os.path.isfile(model_path + "menu.json"):
         with open(model_path + "menu.json", "r", encoding="UTF-8") as menu_file:
@@ -123,7 +163,7 @@ def install_plugin(name):
                         MysqlDB.session.add(two_role)
                         MysqlDB.session.flush()
                         MysqlDB.session.commit()
-    return True
+    return {"code": 0, "msg": "成功"}
 
 
 """
@@ -149,6 +189,50 @@ def un_install_plugin(name):
             return False
     models.menu.deldata_by_type_name(name)
     return True
+
+
+"""
+    update Plugin
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2019-04-25
+"""
+def update_plugin(name):
+    try:
+        server_url = common.SystemInfo["server"] + "cuteone/expand/get_expand"
+        get_res = requests.post(server_url, data={'name': name, 'types': 2})
+        get_res = json.loads(get_res.text)
+        if get_res["code"] == 4:
+            return {"code": 1, "msg": "error"}
+    except:
+        return {"code": 1, "msg": "云端请求错误"}
+    path = "{}/app/plugin/{}/config.ini".format(os.getcwd(), name)
+    conf = configparser.ConfigParser()
+    conf.read(path, encoding="utf-8")
+    version = conf.get('config', 'version')
+    admin_themes(name, False)   # 移回释放文件
+    # 备份旧版
+    try:
+        backup_path = "{}/app/backup_path/plugin/{}/{}".format(os.getcwd(), name, version)
+        plugin_path = "{}/app/plugin/{}".format(os.getcwd(), name)
+        if os.path.isdir(backup_path) is False:
+            # 如果不存在则创建目录
+            os.makedirs(backup_path)
+        shutil.move(plugin_path, backup_path)
+    except:
+        return {"code": 1, "msg": "备份文件出错，应该是权限不足"}
+    # 拉取新版
+    for n in get_res["data"]:
+        if n["version"] > version:
+            down_res = requests.get(n["file"])
+            update_file = "{}/app/plugin/{}.zip".format(os.getcwd(), name)
+            with open(update_file, "wb") as f:
+                f.write(down_res.content)
+            f = zipfile.ZipFile(update_file, 'r')
+            for file in f.namelist():
+                f.extract(file, "{}/app/plugin".format(os.getcwd()))
+            admin_themes(name, True)    # 从新释放
+    return {"code": 0, "msg": "成功"}
 
 
 """

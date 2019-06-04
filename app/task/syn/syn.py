@@ -4,7 +4,6 @@ sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
 from app import MongoDB
 from app.admin.drive import logic
 from app.admin.drive import models as driveModels
-from app.admin.task import models as taskModels
 import config
 from app.task.syn import down, uploads
 from app import common
@@ -189,12 +188,13 @@ def contrast_dif(drive_id):
     disk_list_res = []
     # 列出缓存集
     for item in disk_list:
-        if item.chief != "1":
+        if int(item.chief) != 1:
             disk_list_res.append("disk_"+str(item.id))
+
+    collectionList = MongoDB.db.list_collection_names() # 所有集合
     # 缓存集差异对比
     for dbname in disk_list_res:
-        collectionList = MongoDB.db.list_collection_names()
-        if dbname in collectionList:  # 如果存在集合，就进行差异对比
+        if dbname in collectionList:  # 如果存在缓存集合，就进行差异对比
             contrast_dif_one_disk(dbname, drive_id)
         else:
             disk_id = dbname.replace("disk_", "")
