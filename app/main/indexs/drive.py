@@ -144,8 +144,10 @@ def video(drive_id, disk_id, id, load=None, source_disk_id=0, source_id=0):
 
 @index.route('/drive/get_downloadUrl/<int:drive_id>/<int:disk_id>/<string:id>')
 def get_downloadUrl(drive_id, disk_id, id):
-    data = logic.file_url(drive_id, disk_id, id)
-    return json.dumps(data)
+    response = common.file_real_url(drive_id, disk_id, id)
+    data = make_response(redirect(response["downloadUrl"]))
+    data.headers["Content-Disposition"] = "attachment; filename={}".format(response["name"].encode().decode('latin-1'))
+    return data
 
 
 @index.route('/drive/pop_video/<int:drive_id>/<int:disk_id>/<string:id>/')
@@ -156,7 +158,7 @@ def pop_video(drive_id, disk_id, id, load=None, source_disk_id=0, source_id=0):
         data = logic.get_load(drive_id, disk_id, source_disk_id, source_id)
         return redirect(url_for('/.pop_video',drive_id=drive_id, disk_id=disk_id, id=data), 301)
     else:
-        data = logic.file_url(drive_id, disk_id, id)
+        data = common.file_real_url(drive_id, disk_id, id)
         share_url = "/drive/video/{}/{}/{}".format(drive_id, disk_id, id)
         donw_url = "/drive/down_file/{}/{}/{}".format(drive_id, disk_id, id)
         data["drive_id"] = drive_id
@@ -168,8 +170,8 @@ def pop_video(drive_id, disk_id, id, load=None, source_disk_id=0, source_id=0):
 @index.route('/drive/down_file/<int:drive_id>/<int:disk_id>/<string:id>')
 @index.route('/drive/down_file/<int:drive_id>/<int:disk_id>/<string:id>/')
 def down_file(drive_id, disk_id, id):
-    response = logic.file_url(drive_id, disk_id, id)
-    data = make_response(redirect(response["url"]))
+    response = common.file_real_url(drive_id, disk_id, id)
+    data = make_response(redirect(response["downloadUrl"]))
     data.headers["Content-Disposition"] = "attachment; filename={}".format(response["name"].encode().decode('latin-1'))
     return data
 
