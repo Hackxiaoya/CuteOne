@@ -115,6 +115,7 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
                 if author_if_res:
                     data.insert(0, x)
             else:
+                x["thumbnails"] = x["thumbnails"]
                 x["downloadUrl"] = x["downloadUrl"]
                 data.append(x)
     else:
@@ -137,6 +138,7 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
                     if author_if_res:
                         data.insert(0, x)
                 else:
+                    x["thumbnails"] = x["thumbnails"]
                     x["downloadUrl"] = x["downloadUrl"]
                     data.append(x)
             else:
@@ -159,6 +161,7 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
                     if author_if_res:
                         data.insert(0, x)
                 else:
+                    x["thumbnails"] = x["thumbnails"]
                     x["downloadUrl"] = x["downloadUrl"]
                     data.append(x)
     data = Pagination_data(data, page)
@@ -240,18 +243,7 @@ def Pagination_data(data, page):
     res_id: 资源id
 """
 def file_url(drive_id, disk_id, id):
-    drivename = "disk_" + str(disk_id)
-    collection = MongoDB.db[drivename]
-    result = collection.find_one({"id": id})
-    if result:
-        if int(result["timeout"]) <= int(time.time()):
-            get_res = common.get_downloadUrl(drive_id, disk_id, id)
-            return {"name": get_res["name"], "url": get_res["downloadUrl"]}
-        else:
-            return {"name": result["name"], "url": result["downloadUrl"]}
-    else:
-        get_res = common.get_downloadUrl(drive_id, disk_id, id)
-        return {"name": get_res["name"], "url": get_res["downloadUrl"]}
+    return common.file_real_url(drive_id, disk_id, id)
 
 
 """

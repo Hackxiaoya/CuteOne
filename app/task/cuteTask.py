@@ -8,7 +8,7 @@ from app.admin.drive import logic
 from app import common
 
 # 信号量，同时只允许10个线程运行
-semlock = threading.BoundedSemaphore(10)
+# semlock = threading.BoundedSemaphore(10)
 
 """
     后台任务
@@ -47,11 +47,11 @@ def task_getlist(id, path, type):
                         "lastModifiedDateTime": common.utc_to_local(i["fileSystemInfo"]["lastModifiedDateTime"])
                     }
                     collection.insert_one(dic)
-                    semlock.acquire()
+                    # semlock.acquire()
                     t = threading.Thread(target=task_getlist, args=(id, "/" + path + "/" + i["name"], type,))
                     t.start()
                 else:
-                    semlock.acquire()
+                    # semlock.acquire()
                     t = threading.Thread(target=task_write, args=(id, i,))
                     t.start()
             else:
@@ -68,11 +68,11 @@ def task_getlist(id, path, type):
                             "lastModifiedDateTime": common.utc_to_local(i["fileSystemInfo"]["lastModifiedDateTime"])
                         }
                         collection.insert_one(dic)
-                        semlock.acquire()
+                        # semlock.acquire()
                         t = threading.Thread(target=task_getlist, args=(id, "/" + path + "/" + i["name"], type,))
                         t.start()
                 else:
-                    semlock.acquire()
+                    # semlock.acquire()
                     t = threading.Thread(target=task_write, args=(id, i,))
                     t.start()
 
@@ -117,7 +117,7 @@ def task_write(id, data):
     else:
         collection.update_one({"id": data["id"]}, {
             "$set": {"thumbnails": thumbnails, "downloadUrl": downloadUrl, "timeout": int(time.time()) + 300}})
-    semlock.release()
+    # semlock.release()
 
 
 

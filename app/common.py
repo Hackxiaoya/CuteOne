@@ -20,7 +20,7 @@ import config
 SystemInfo = {
     "name": "CuteOne",
     "versionType": "Free",
-    "versions": "3.0.7",
+    "versions": "3.0.8",
     "server": "http://www.cuteone.cn/"
 }
 
@@ -423,12 +423,12 @@ def file_real_url(drive_id, disk_id, id):
     if result:
         if int(result["timeout"]) <= int(time.time()):
             get_res = get_downloadUrl(drive_id, disk_id, id)
-            return {"name": get_res["name"], "url": get_res["downloadUrl"]}
+            return get_res
         else:
-            return {"name": result["name"], "url": result["downloadUrl"]}
+            return {"id": result["id"], "name": result["name"], "size": result["size"], "thumbnails": result["thumbnails"], "downloadUrl": result["downloadUrl"]}
     else:
         get_res = get_downloadUrl(drive_id, disk_id, id)
-        return {"name": get_res["name"], "url": get_res["downloadUrl"]}
+        return get_res
 
 
 """
@@ -458,11 +458,15 @@ def get_downloadUrl(drive_id, disk_id, id):
             downloadUrl = get_res["@microsoft.graph.downloadUrl"]
         else :
             downloadUrl = get_res["@content.downloadUrl"]
+        if "thumbnails" in get_res.keys() and get_res["thumbnails"]:
+            thumbnails = get_res["thumbnails"][0]["large"]["url"]
+        else:
+            thumbnails = ""
         drivename = "disk_" + str(disk_id)
         collection = MongoDB.db[drivename]
         result = collection.find_one({"id": get_res["id"]})
         if result:
-            collection.update_one({"id":get_res["id"]}, {"$set": {"downloadUrl":downloadUrl,"timeout":int(time.time())+300}})
+            collection.update_one({"id":get_res["id"]}, {"$set": {"thumbnails": thumbnails, "downloadUrl":downloadUrl,"timeout":int(time.time())+300}})
         else:
             dic = {
                 "id": get_res["id"],
@@ -473,8 +477,9 @@ def get_downloadUrl(drive_id, disk_id, id):
                 "size": get_res["size"],
                 "createdDateTime": utc_to_local(get_res["fileSystemInfo"]["createdDateTime"]),
                 "lastModifiedDateTime": utc_to_local(get_res["fileSystemInfo"]["lastModifiedDateTime"]),
+                "thumbnails": thumbnails,
                 "downloadUrl": downloadUrl,
                 "timeout": int(time.time()) + 300
             }
             collection.insert_one(dic)
-        return {"name": get_res["name"], "downloadUrl": downloadUrl}
+        return {"id": get_res["id"], "name": get_res["name"], "size": get_res["size"], "thumbnails": thumbnails, "downloadUrl": downloadUrl}
