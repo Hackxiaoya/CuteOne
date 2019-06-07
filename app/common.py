@@ -20,7 +20,7 @@ import config
 SystemInfo = {
     "name": "CuteOne",
     "versionType": "Free",
-    "versions": "3.0.9",
+    "versions": "3.1.0",
     "server": "http://www.cuteone.cn/"
 }
 

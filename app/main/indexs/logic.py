@@ -95,75 +95,54 @@ def get_data(disk_id, path='', search='', sortTable='lastModifiedDateTime', sort
         sortType = pymongo.ASCENDING
     if search is None:
         result = collection.find({"path": path}).sort([(sortTable, sortType)])
-        for x in result:
+    else:
+        result = collection.find({"name": re.compile(search)}).sort([(sortTable, sortType)])
+    for x in result:
+        author_if_res = True
+        if search_type == "1":
             x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
             x["createdDateTime"] = str(x["createdDateTime"])
             x["size"] = common.size_cov(x["size"])
             if x["file"] == "folder":
-                author_if_res = True
                 if current_user.get_id() is not None:
                     for a in authorpath:
-                        if x["path"]=="" and x["name"] == a["path"].strip("/") and a["login_hide"] == 1 and a["login_hide"] == 2:
-                            author_if_res = False
-                            exit()
-                        elif x["path"] == a["path"] and a["login_hide"] == 1 and a["login_hide"] == 2:
+                        if x["name"] == a["path"].strip("/") and a["login_hide"] == 1 and a["login_hide"] == 2:
                             author_if_res = False
                 else:
                     for a in authorpath:
-                        if a["path"] == x["path"]+"/"+x["name"] and a["login_hide"] == 2:
+                        if x["name"] == a["path"].strip("/") and a["login_hide"] == 2:
                             author_if_res = False
                 if author_if_res:
                     data.insert(0, x)
             else:
-                x["thumbnails"] = x["thumbnails"]
-                x["downloadUrl"] = x["downloadUrl"]
                 data.append(x)
-    else:
-        result = collection.find({"name":re.compile(search)}).sort([(sortTable, sortType)])
-        for x in result:
-            if search_type == "1":
-                x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
-                x["createdDateTime"] = str(x["createdDateTime"])
-                x["size"] = common.size_cov(x["size"])
-                if x["file"] == "folder":
-                    author_if_res = True
-                    if current_user.get_id() is not None:
-                        for a in authorpath:
-                            if x["name"] == a["path"].strip("/") and a["login_hide"] == 1 and a["login_hide"] == 2:
-                                author_if_res = False
-                    else:
-                        for a in authorpath:
-                            if x["name"] == a["path"].strip("/") and a["login_hide"] == 2:
-                                author_if_res = False
-                    if author_if_res:
-                        data.insert(0, x)
+        else:
+            x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
+            x["createdDateTime"] = str(x["createdDateTime"])
+            x["size"] = common.size_cov(x["size"])
+            if x["file"] == "folder":
+                if current_user.get_id() is not None:
+                    for a in authorpath:
+                        if x["path"] == "" and x["name"] == a["path"].strip("/") and a["login_hide"] == 1 and a[
+                            "login_hide"] == 2:
+                            author_if_res = False
+                        elif x["path"] == a["path"] and a["login_hide"] == 1 and a["login_hide"] == 2:
+                            author_if_res = False
                 else:
-                    x["thumbnails"] = x["thumbnails"]
-                    x["downloadUrl"] = x["downloadUrl"]
-                    data.append(x)
+                    for a in authorpath:
+                        if x["name"] == a["path"].strip("/") and a["login_hide"] == 2:
+                            author_if_res = False
+                if author_if_res:
+                    data.insert(0, x)
             else:
-                x["lastModifiedDateTime"] = str(x["lastModifiedDateTime"])
-                x["createdDateTime"] = str(x["createdDateTime"])
-                x["size"] = common.size_cov(x["size"])
-                if x["file"] == "folder":
-                    author_if_res = True
-                    if current_user.get_id() is not None:
-                        for a in authorpath:
-                            if x["path"] == "" and x["name"] == a["path"].strip("/") and a["login_hide"] == 1 and a[
-                                "login_hide"] == 2:
-                                author_if_res = False
-                            elif x["path"] == a["path"] and a["login_hide"] == 1 and a["login_hide"] == 2:
-                                author_if_res = False
-                    else:
-                        for a in authorpath:
-                            if x["name"] == a["path"].strip("/") and a["login_hide"] == 2:
-                                author_if_res = False
-                    if author_if_res:
-                        data.insert(0, x)
-                else:
-                    x["thumbnails"] = x["thumbnails"]
-                    x["downloadUrl"] = x["downloadUrl"]
+                if search is None:
                     data.append(x)
+                else:
+                    for a in authorpath:
+                        if x["path"] == a["path"]:
+                            author_if_res = False
+                    if author_if_res:
+                        data.append(x)
     data = Pagination_data(data, page)
     return data
 

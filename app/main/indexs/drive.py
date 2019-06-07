@@ -19,8 +19,14 @@ def thereisStr(str,arg):
     else:
         return False
 
+# URL编码转换
+def urlQuote(str):
+    result = str.replace("+", "%2B")
+    return result
+
 env = app.jinja_env
 env.filters['thereisStr'] = thereisStr  #注册自定义过滤器
+env.filters['urlQuote'] = urlQuote  #注册自定义过滤器
 
 
 def hook(position):
