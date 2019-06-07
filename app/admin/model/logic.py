@@ -284,7 +284,7 @@ def hook(name, status=True):
                 res = res.replace(" ", "")
             menu_data = json.loads(res)
             for i in menu_data["list"]:
-                role = hooksModels.hooks(title=i["title"], description=i["description"], source=name, type=1, method=i["method"], status=1)
+                role = hooksModels.hooks(title=i["title"], description=i["description"], source=name, type=1, method=i["method"], position=i["position"], status=1)
                 MysqlDB.session.add(role)
                 MysqlDB.session.flush()
                 MysqlDB.session.commit()
