@@ -244,7 +244,7 @@ def update_plugin(name):
 def admin_themes(name, status=True):
     model_path = "{}/app/plugin/{}/themes".format(os.getcwd(), name)
     folder_path = "{}/app/templates/plugin/{}".format(os.getcwd(), name)
-    plugin_static = "{}/app/model/{}/static".format(os.getcwd(), name)
+    plugin_static = "{}/app/plugin/{}/static".format(os.getcwd(), name)
     static_path = "{}/app/static/plugin/{}".format(os.getcwd(), name)
     try:
         if status:
