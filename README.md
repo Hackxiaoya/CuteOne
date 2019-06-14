@@ -6,6 +6,11 @@
 > wiki还有很多地方还没来得及更新；所以不能看懂wiki的就看视频吧； 
 > v3.x安装方式：[wiki](https://wiki.cuteone.cn/cuteone-an-zhuang/kai-shi-cuteone-an-zhuang)
 
+## CuteOne PHP版本已内测，名字就叫CuteOneP
+> 获取PHP版本请到群共享下载；  
+> 支持虚拟主机；  
+> mysql做缓存；  
+  
 
 ### OneDrive 玩出花系列：
  [官方演示站](https://demo.cuteone.cn)  
