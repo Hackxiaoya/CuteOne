@@ -7,7 +7,7 @@
 > v3.x安装方式：[wiki](https://wiki.cuteone.cn/cuteone-an-zhuang/kai-shi-cuteone-an-zhuang)
 
 ## CuteOne PHP版本已内测，名字就叫CuteOneP
-> 获取PHP版本请到群共享下载；  
+> 获取PHP版本请到群共享下载或 https://github.com/Hackxiaoya/CuteOneP ；  
 > 支持虚拟主机；  
 > mysql做缓存；  
   
