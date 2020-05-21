@@ -204,6 +204,24 @@ def _file_seek(uid, files_disk_id, fileName, startlength, length):
 
 
 
+"""
+    baidu task pull
+    @Author: yyyvy <76836785@qq.com>
+    @Description:
+    @Time: 2020-05-21
+    msg: msg
+    ip: ip info
+"""
+def pull_page(msg, ip):
+    t_start = time.time()
+    print("%s开始执行, ip:%s, 进程号为%d" % (msg['id'], ip['ip'], os.getpid()))
+    time.sleep(random.random() * 2)
+    # time.sleep(2)
+    t_stop = time.time()
+    print(msg['id'], "执行完毕, ip:%s, 耗时%0.2f" % (ip['ip'], t_stop - t_start))
+    
+    
+    
 if __name__ =='__main__':
     id = sys.argv[1]  # file id
     uid = sys.argv[2]  # uid
