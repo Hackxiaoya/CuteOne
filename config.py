@@ -40,3 +40,11 @@ app_url = "https://graph.microsoft.com/"
 """
 ChinaAuthUrl = "https://login.chinacloudapi.cn"
 China_app_url = "https://microsoftgraph.chinacloudapi.cn"
+
+
+"""
+    世纪互联 API接口 - 新增测试接口
+
+"""
+ChinaAuthUrl = "https://cloudapilogin.chinacloudapi.cn"
+China_app_url = "https://cloudapitest.chinacloudapi.cn"
