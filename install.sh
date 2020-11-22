@@ -1,4 +1,4 @@
-#!/etc/bash
+#!/bin/bash
 
 
 function install_eq(){
